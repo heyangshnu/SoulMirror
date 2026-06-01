@@ -1,0 +1,35 @@
+node_modules/
+dist/
+build/
+.expo/
+.expo-shared/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+.env
+.env.local
+.env.*.local
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.Python
+*.egg-info/
+.coverage
+htmlcov/
+.DS_Store
+*.log
+.idea/
+.vscode/
+coverage/
+uploads/
+
+# Expo 原生工程（EAS Build 会在云端 prebuild，不必提交）
+apps/mobile/ios/
+apps/mobile/android/
+
+# 保留示例 env，忽略真实密钥
+services/api/.env
+services/ai/.env

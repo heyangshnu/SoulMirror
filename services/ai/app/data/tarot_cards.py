@@ -1,0 +1,31 @@
+TAROT_MAJOR = [
+    {"id": 0, "name": "愚者", "nameEn": "The Fool", "upright": "新的开始、信任直觉", "reversed": "鲁莽、逃避责任"},
+    {"id": 1, "name": "魔术师", "nameEn": "The Magician", "upright": "行动力、资源整合", "reversed": "操控、才能浪费"},
+    {"id": 2, "name": "女祭司", "nameEn": "The High Priestess", "upright": "直觉、内在智慧", "reversed": "压抑直觉、表面化"},
+    {"id": 3, "name": "皇后", "nameEn": "The Empress", "upright": "滋养、丰盛、创造力", "reversed": "依赖、创造力受阻"},
+    {"id": 4, "name": "皇帝", "nameEn": "The Emperor", "upright": "结构、权威、稳定", "reversed": "僵化、控制欲"},
+    {"id": 5, "name": "教皇", "nameEn": "The Hierophant", "upright": "传统、指引、信念", "reversed": "打破常规、质疑权威"},
+    {"id": 6, "name": "恋人", "nameEn": "The Lovers", "upright": "选择、联结、价值观", "reversed": "失衡、逃避选择"},
+    {"id": 7, "name": "战车", "nameEn": "The Chariot", "upright": "意志、胜利、前进", "reversed": "失控、方向迷失"},
+    {"id": 8, "name": "力量", "nameEn": "Strength", "upright": "勇气、耐心、内在力量", "reversed": "自我怀疑、软弱"},
+    {"id": 9, "name": "隐者", "nameEn": "The Hermit", "upright": "内省、独处、寻找答案", "reversed": "孤立、拒绝帮助"},
+    {"id": 10, "name": "命运之轮", "nameEn": "Wheel of Fortune", "upright": "转折、周期、机遇", "reversed": "抗拒变化、坏运气感"},
+    {"id": 11, "name": "正义", "nameEn": "Justice", "upright": "公平、因果、清晰", "reversed": "不公、逃避责任"},
+    {"id": 12, "name": "倒吊人", "nameEn": "The Hanged Man", "upright": "暂停、新视角、放手", "reversed": "拖延、无谓牺牲"},
+    {"id": 13, "name": "死神", "nameEn": "Death", "upright": "结束与重生、转化", "reversed": "抗拒改变、停滞"},
+    {"id": 14, "name": "节制", "nameEn": "Temperance", "upright": "平衡、调和、耐心", "reversed": "极端、失衡"},
+    {"id": 15, "name": "恶魔", "nameEn": "The Devil", "upright": "执念、诱惑、阴影", "reversed": "解脱、打破束缚"},
+    {"id": 16, "name": "塔", "nameEn": "The Tower", "upright": "突变、觉醒、旧结构崩塌", "reversed": "恐惧改变、延迟爆发"},
+    {"id": 17, "name": "星星", "nameEn": "The Star", "upright": "希望、疗愈、灵感", "reversed": "失望、信心不足"},
+    {"id": 18, "name": "月亮", "nameEn": "The Moon", "upright": "潜意识、迷雾、直觉", "reversed": "恐惧消散、真相浮现"},
+    {"id": 19, "name": "太阳", "nameEn": "The Sun", "upright": "喜悦、成功、活力", "reversed": "暂时阴霾、过度乐观"},
+    {"id": 20, "name": "审判", "nameEn": "Judgement", "upright": "觉醒、召唤、复盘", "reversed": "自我批判、犹豫"},
+    {"id": 21, "name": "世界", "nameEn": "The World", "upright": "完成、整合、新周期", "reversed": "未完成、缺乏闭环"},
+]
+
+DOMAIN_LABELS = {
+    "love": "感情",
+    "career": "事业",
+    "health": "身心健康",
+    "general": "综合",
+}
