@@ -7,7 +7,7 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.example.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1"
       },
       "android": {
         "buildType": "apk"
@@ -15,7 +15,7 @@
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.example.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1"
       },
       "android": {
         "buildType": "app-bundle"
