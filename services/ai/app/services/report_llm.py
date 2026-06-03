@@ -232,6 +232,7 @@ JSON 格式：
 {
   "title": "报告标题",
   "summary": "一句话摘要（50字内）",
+  "headlineSummary": "150-220字口语化总结，紧扣用户问题，有清晰判断与收尾",
   "themeLabel": "关键词",
   "sections": [{"title": "章节名", "content": "正文"}]
 }"""
@@ -246,9 +247,11 @@ def _validate_ziwei_report(data: dict[str, Any]) -> dict[str, Any]:
     if not clean_sections:
         raise ValueError("no valid sections")
 
+    headline = data.get("headlineSummary")
     return {
         "title": str(data.get("title") or "紫微觉察报告"),
         "summary": str(data.get("summary") or ""),
+        "headlineSummary": str(headline).strip() if headline else "",
         "themeLabel": str(data.get("themeLabel") or "觉察"),
         "sections": clean_sections,
     }
@@ -277,9 +280,16 @@ async def generate_ziwei_report(
         ],
         temperature=0.75,
         max_tokens=3200,
+        timeout=120.0,
     )
 
-    async def _with_headline(report: dict[str, Any]) -> dict[str, Any]:
+    async def _with_headline(report: dict[str, Any], *, skip_llm: bool = False) -> dict[str, Any]:
+        existing = str(report.get("headlineSummary") or "").strip()
+        if existing and len(existing) >= 80:
+            return {**report, "headlineSummary": _trim_headline(existing)}
+        if skip_llm:
+            fallback_text = report.get("summary") or report.get("title") or "觉察报告"
+            return {**report, "headlineSummary": _trim_headline(str(fallback_text))}
         headline = await generate_headline_summary(
             report_title=report["title"],
             sections=report["sections"],
@@ -290,18 +300,18 @@ async def generate_ziwei_report(
 
     if not llm_text:
         base = {**fallback, "testType": test_type, "raw": {**raw, "llmGenerated": False}}
-        return await _with_headline(base)
+        return await _with_headline(base, skip_llm=True)
 
     parsed = _extract_json(llm_text)
     if not parsed:
         base = {**fallback, "testType": test_type, "raw": {**raw, "llmGenerated": False}}
-        return await _with_headline(base)
+        return await _with_headline(base, skip_llm=True)
 
     try:
         report = _validate_ziwei_report(parsed)
     except ValueError:
         base = {**fallback, "testType": test_type, "raw": {**raw, "llmGenerated": False}}
-        return await _with_headline(base)
+        return await _with_headline(base, skip_llm=True)
 
     result = {
         "testType": test_type,
@@ -311,4 +321,6 @@ async def generate_ziwei_report(
         "sections": report["sections"],
         "raw": {**raw, "llmGenerated": True},
     }
+    if report.get("headlineSummary"):
+        result["headlineSummary"] = report["headlineSummary"]
     return await _with_headline(result)

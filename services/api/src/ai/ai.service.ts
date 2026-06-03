@@ -10,7 +10,8 @@ export class AiService {
   constructor(private config: ConfigService) {
     const baseURL =
       this.config.get<string>('AI_SERVICE_URL') ?? 'http://localhost:8001';
-    this.client = axios.create({ baseURL, timeout: 120000 });
+    // 紫微报告需两次 LLM 调用，生产环境预留 5 分钟
+    this.client = axios.create({ baseURL, timeout: 300000 });
   }
 
   async get<T>(path: string): Promise<T> {
