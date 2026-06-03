@@ -743,7 +743,7 @@ pm2 logs soulmirror-api --lines 20
 ```bash
 curl -X POST http://127.0.0.1:3010/v1/auth/send-register-code \
   -H "Content-Type: application/json" \
-  -d '{"email":"你的真实邮箱@example.com","terms_accepted":true,"terms_version":"1.0"}'
+  -d '{"email":"你的真实邮箱@example.com"}'
 ```
 
 期望：`{"message":"验证码已发送"}`
@@ -913,7 +913,7 @@ curl https://api.soulzenai.com/v1/auth/config
 
 curl -X POST https://api.soulzenai.com/v1/auth/send-register-code \
   -H "Content-Type: application/json" \
-  -d '{"email":"你的邮箱","terms_accepted":true,"terms_version":"1.0"}'
+  -d '{"email":"你的邮箱"}'
 ```
 
 **第 5 步完成标志**：HTTPS curl 全通，邮箱能收到验证码。

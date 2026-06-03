@@ -138,7 +138,7 @@ export default function ChartRelationsScreen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: '关系人', headerTintColor: colors.primary }} />
       <ReportGeneratingOverlay visible={!!generatingId} />
-      <Screen>
+      <Screen keyboardAvoid>
         <Text style={styles.desc}>
           添加配偶、子女、父母或兄弟姐妹，生成专属关系解读。最多 6 人，含飞星四化附录。
         </Text>

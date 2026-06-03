@@ -6,6 +6,24 @@ const defaultHost =
 
 export const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? defaultHost;
 
+function formatApiMessage(data: Record<string, unknown>): string | undefined {
+  const msg = data.message ?? data.error;
+  if (Array.isArray(msg)) return msg.join('；');
+  if (typeof msg === 'string' && msg.trim()) return msg;
+  return undefined;
+}
+
+async function parseJsonBody(res: Response): Promise<Record<string, unknown>> {
+  const text = await res.text();
+  if (!text.trim()) return {};
+  try {
+    return JSON.parse(text) as Record<string, unknown>;
+  } catch {
+    const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 120);
+    throw new Error(snippet || `服务器响应异常 (${res.status})`);
+  }
+}
+
 async function request<T>(
   path: string,
   options: RequestInit & { auth?: boolean } = {},
@@ -20,15 +38,21 @@ async function request<T>(
     if (token) headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  } catch {
+    throw new Error('网络连接失败，请检查网络或稍后重试');
+  }
+
+  const data = await parseJsonBody(res);
 
   if (!res.ok) {
     if (res.status === 401 && options.auth !== false) {
       useAuthStore.getState().logout();
       throw new Error('登录已过期，请重新登录');
     }
-    throw new Error(data.message || data.error || `请求失败 (${res.status})`);
+    throw new Error(formatApiMessage(data) || `请求失败 (${res.status})`);
   }
   return data as T;
 }

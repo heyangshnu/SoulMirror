@@ -36,7 +36,7 @@ export default function ProfileSetupScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true, title: '用户画像', headerTintColor: colors.primary }} />
-      <Screen>
+      <Screen keyboardAvoid>
         <Text style={styles.desc}>帮助心镜更懂你，打造专属陪伴体验</Text>
         <Text style={styles.label}>年龄段</Text>
         <View style={styles.chips}>

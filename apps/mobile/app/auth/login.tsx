@@ -165,7 +165,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen>
+    <Screen keyboardAvoid>
       <View style={styles.header}>
         <Text style={styles.logo}>心镜</Text>
         <Text style={styles.tagline}>看见自己，温柔陪伴</Text>

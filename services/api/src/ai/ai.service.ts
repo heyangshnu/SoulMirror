@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 
@@ -29,7 +29,17 @@ export class AiService {
       return res.data;
     } catch (err) {
       this.logger.error(`AI service error POST ${path}`, err);
-      throw err;
+      if (axios.isAxiosError(err)) {
+        if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
+          throw new ServiceUnavailableException('AI 服务未启动，请稍后重试');
+        }
+        const detail =
+          typeof err.response?.data === 'object' && err.response?.data !== null
+            ? JSON.stringify(err.response.data).slice(0, 200)
+            : err.message;
+        throw new ServiceUnavailableException(`报告生成失败：${detail}`);
+      }
+      throw new ServiceUnavailableException('报告生成失败，请稍后重试');
     }
   }
 

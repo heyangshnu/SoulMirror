@@ -46,7 +46,7 @@ export default function ChartSetupScreen() {
     <>
       <Stack.Screen options={{ headerShown: true, title: '紫微斗数', headerTintColor: colors.primary }} />
       <ReportGeneratingOverlay visible={loading} />
-      <Screen>
+      <Screen keyboardAvoid>
         <Text style={styles.desc}>三合派排盘 · 真太阳时校正 · 结合你的近况个性化解读</Text>
 
         <Text style={styles.sectionTitle}>生辰信息</Text>
@@ -93,6 +93,7 @@ export default function ChartSetupScreen() {
             placeholder="例如：刚换工作，有点焦虑但也充满期待…"
             value={currentState}
             onChangeText={setCurrentState}
+            blurOnSubmit={false}
           />
           <Text style={styles.label}>想测算的方向</Text>
           <TextInput
@@ -101,6 +102,7 @@ export default function ChartSetupScreen() {
             placeholder="例如：事业转型、感情走向、如何缓解焦虑…"
             value={focusDirection}
             onChangeText={setFocusDirection}
+            blurOnSubmit={false}
           />
         </Card>
 

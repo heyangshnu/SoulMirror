@@ -59,7 +59,7 @@ export default function VoiceDiaryScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true, title: '语音日记', headerTintColor: colors.primary }} />
-      <Screen>
+      <Screen keyboardAvoid>
         <Text style={styles.desc}>
           内测支持文字输入（ASR：配置 OPENAI_API_KEY 后可传语音）。内容会进入命盘解读与心镜对话背景。
         </Text>

@@ -303,7 +303,7 @@ pm2 restart soulmirror-api
 ```bash
 curl -X POST http://127.0.0.1:3010/v1/auth/send-register-code \
   -H "Content-Type: application/json" \
-  -d '{"email":"你的真实邮箱@example.com","terms_accepted":true,"terms_version":"1.0"}'
+  -d '{"email":"你的真实邮箱@example.com"}'
 ```
 
 **期望**：返回 `{"message":"验证码已发送"}`，邮箱收到主题为「心镜 - 注册验证码」的邮件。
@@ -415,7 +415,7 @@ curl https://api.soulzenai.com/v1/auth/config
 # 用你的真实邮箱再测一次发验证码
 curl -X POST https://api.soulzenai.com/v1/auth/send-register-code \
   -H "Content-Type: application/json" \
-  -d '{"email":"你的邮箱","terms_accepted":true,"terms_version":"1.0"}'
+  -d '{"email":"你的邮箱"}'
 ```
 
 ---
