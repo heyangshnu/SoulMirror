@@ -38,7 +38,7 @@ export class AiService {
           typeof err.response?.data === 'object' && err.response?.data !== null
             ? JSON.stringify(err.response.data).slice(0, 200)
             : err.message;
-        throw new ServiceUnavailableException(`报告生成失败：${detail}`);
+        throw new ServiceUnavailableException(`AI 服务异常：${detail}`);
       }
       throw new ServiceUnavailableException('报告生成失败，请稍后重试');
     }

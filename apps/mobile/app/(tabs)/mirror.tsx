@@ -1,9 +1,11 @@
 import { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   StyleSheet,
   Text,
   TextInput,
@@ -24,49 +26,68 @@ export default function MirrorScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
+  const [offline, setOffline] = useState(false);
   const [init, setInit] = useState(true);
   const listRef = useRef<FlatList>(null);
 
-  const ensureSession = useCallback(async () => {
+  const ensureSession = useCallback(async (): Promise<string> => {
     const sessions = await api.get<{ _id: string }[]>('/bot/sessions');
     if (sessions.length > 0) {
       const s = await api.get<{ _id: string; messages: Message[] }>(`/bot/sessions/${sessions[0]._id}`);
       setSessionId(s._id);
-      setMessages(s.messages.length > 0 ? s.messages : [
-        { role: 'assistant', content: '嗨，最近怎么样？有什么想聊的？' },
-      ]);
-    } else {
-      const created = await api.post<{ _id: string }>('/bot/sessions');
-      setSessionId(created._id);
-      setMessages([
-        { role: 'assistant', content: '嗨，我是心镜。有什么想聊的，随时说。' },
-      ]);
+      setMessages(
+        s.messages.length > 0
+          ? s.messages
+          : [{ role: 'assistant', content: '嗨，最近怎么样？有什么想聊的？' }],
+      );
+      setOffline(false);
+      return s._id;
     }
+    const created = await api.post<{ _id: string }>('/bot/sessions');
+    setSessionId(created._id);
+    setMessages([{ role: 'assistant', content: '嗨，我是心镜。有什么想聊的，随时说。' }]);
+    setOffline(false);
+    return created._id;
   }, []);
+
+  const reloadSession = useCallback(async () => {
+    setInit(true);
+    try {
+      await ensureSession();
+    } catch {
+      setSessionId('local');
+      setOffline(true);
+      setMessages([
+        {
+          role: 'assistant',
+          content: '暂时连不上服务器。请切换 WiFi/流量后点上方「重新连接」，或在「我的」页运行网络诊断。',
+        },
+      ]);
+    } finally {
+      setInit(false);
+    }
+  }, [ensureSession]);
 
   useFocusEffect(
     useCallback(() => {
-      setInit(true);
-      ensureSession()
-        .catch(() => {
-          setSessionId('local');
-          setMessages([
-            { role: 'assistant', content: '你好，我是心镜。请先登录并启动后端服务，即可开始对话。' },
-          ]);
-        })
-        .finally(() => setInit(false));
-    }, [ensureSession]),
+      reloadSession();
+    }, [reloadSession]),
   );
 
   const send = async () => {
-    if (!input.trim() || !sessionId || sessionId === 'local' || streaming) return;
+    if (!input.trim() || streaming) return;
+
     const text = input.trim();
     setInput('');
     setMessages((m) => [...m, { role: 'user', content: text }, { role: 'assistant', content: '' }]);
     setStreaming(true);
 
     try {
-      await streamBotChat(sessionId, text, (delta) => {
+      let sid = sessionId;
+      if (!sid || sid === 'local') {
+        sid = await ensureSession();
+      }
+      await streamBotChat(sid, text, (delta) => {
         setMessages((m) => {
           const next = [...m];
           const last = next[next.length - 1];
@@ -77,15 +98,19 @@ export default function MirrorScreen() {
         });
         listRef.current?.scrollToEnd({ animated: false });
       });
-    } catch {
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '连接暂时中断，请稍后再试。';
       setMessages((m) => {
         const next = [...m];
         const last = next[next.length - 1];
         if (last?.role === 'assistant' && !last.content) {
-          next[next.length - 1] = { ...last, content: '连接暂时中断，请稍后再试。' };
+          next[next.length - 1] = { ...last, content: msg };
         }
         return next;
       });
+      if (msg.includes('网络') || msg.includes('超时')) {
+        setOffline(true);
+      }
     } finally {
       setStreaming(false);
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
@@ -107,8 +132,17 @@ export default function MirrorScreen() {
       keyboardVerticalOffset={90}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>心镜</Text>
-        <Text style={styles.subtitle}>你的专属 AI 陪伴 · 流式对话</Text>
+        <View style={styles.headerRow}>
+          <Text style={styles.title}>心镜</Text>
+          {offline ? (
+            <Pressable onPress={reloadSession} style={styles.retryBtn}>
+              <Text style={styles.retryText}>重新连接</Text>
+            </Pressable>
+          ) : null}
+        </View>
+        <Text style={styles.subtitle}>
+          {offline ? '未连接服务器 · 可切换 WiFi/流量后点重新连接' : '你的专属 AI 陪伴 · 流式对话'}
+        </Text>
       </View>
       <FlatList
         ref={listRef}
@@ -131,6 +165,7 @@ export default function MirrorScreen() {
           onChangeText={setInput}
           multiline
           editable={!streaming}
+          onSubmitEditing={send}
         />
         <Button title="发送" onPress={send} loading={streaming} style={styles.sendBtn} />
       </View>
@@ -141,8 +176,16 @@ export default function MirrorScreen() {
 const styles = StyleSheet.create({
   flex: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 56, paddingHorizontal: spacing.lg, paddingBottom: 12 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   title: { ...typography.hero, fontSize: 24 },
-  subtitle: { ...typography.caption },
+  retryBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.primaryMuted,
+  },
+  retryText: { ...typography.caption, color: colors.primary, fontWeight: '600' },
+  subtitle: { ...typography.caption, marginTop: 4 },
   list: { paddingHorizontal: spacing.lg, paddingBottom: 16 },
   inputRow: {
     flexDirection: 'row',

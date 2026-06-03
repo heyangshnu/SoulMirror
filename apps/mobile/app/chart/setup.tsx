@@ -33,10 +33,17 @@ export default function ChartSetupScreen() {
         currentState: currentState.trim() || undefined,
         focusDirection: focusDirection.trim() || undefined,
       });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : '请检查网络';
+      Alert.alert('保存生辰失败', msg);
+      return;
+    }
+    try {
       const report = await api.post<{ _id: string }>('/chart/reports/natal');
       router.replace(`/chart/result?natalId=${report._id}`);
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '请检查网络与后端');
+      const msg = e instanceof Error ? e.message : '请检查网络与后端';
+      Alert.alert('生成报告失败', msg);
     } finally {
       setLoading(false);
     }

@@ -58,7 +58,13 @@ export class ChartService {
       longitude: dto.longitude,
       timeUnknown: dto.timeUnknown,
     };
-    const natal = buildNatalChart(input);
+    let natal;
+    try {
+      natal = buildNatalChart(input);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new BadRequestException(`排盘失败：${msg}（请确认服务器已执行 npm run chart:build）`);
+    }
     const profile = await this.birthModel.findOneAndUpdate(
       { userId: new Types.ObjectId(userId) },
       {
@@ -89,7 +95,10 @@ export class ChartService {
       );
     }
     await this.syncUserChartContext(userId);
-    return { profile, natal, warning: natal.timeUnknown ? '时辰未知，结果可能不够准确' : undefined };
+    return {
+      ok: true,
+      warning: natal.timeUnknown ? '时辰未知，结果可能不够准确' : undefined,
+    };
   }
 
   async getBirthProfile(userId: string) {
@@ -108,7 +117,13 @@ export class ChartService {
   async generateNatalReport(userId: string) {
     const profile = await this.requireBirthProfile(userId);
     const input = this.toBirthInput(profile);
-    const natal = buildNatalChart(input);
+    let natal;
+    try {
+      natal = buildNatalChart(input);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      throw new BadRequestException(`排盘失败：${msg}（请确认服务器已执行 npm run chart:build）`);
+    }
     const life = await this.getLifeContext(userId);
     const payload = await this.ai.post<ReportPayload>('/ziwei/natal-report', {
       natal,

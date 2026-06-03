@@ -4,7 +4,8 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { api } from '@/lib/api';
+import { API_BASE, api } from './api';
+import { runNetworkCheck } from '@/lib/network-check';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -31,6 +32,16 @@ export default function ProfileScreen() {
       api.get<UserMe>('/user/me').then(setMe).catch(() => {});
     }, []),
   );
+
+  const runDiag = async () => {
+    try {
+      const items = await runNetworkCheck();
+      const lines = items.map((i) => `${i.ok ? '✅' : '❌'} ${i.name}\n${i.detail}`).join('\n\n');
+      Alert.alert('网络诊断', `${lines}\n\n当前 API：${API_BASE}`);
+    } catch (e) {
+      Alert.alert('诊断失败', e instanceof Error ? e.message : '未知错误');
+    }
+  };
 
   const deleteAccount = () => {
     Alert.alert('删除账号', '将永久删除所有数据，确定继续？', [
@@ -80,7 +91,8 @@ export default function ProfileScreen() {
         <Text style={[styles.link, { marginTop: 12 }]}>用户协议</Text>
       </Card>
 
-      <Button title="退出登录" variant="secondary" onPress={() => { logout(); router.replace('/auth/login'); }} />
+      <Button title="网络诊断" variant="secondary" onPress={runDiag} />
+      <Button title="退出登录" variant="secondary" onPress={() => { logout(); router.replace('/auth/login'); }} style={{ marginTop: 12 }} />
       <Button title="一键删除账号" variant="ghost" onPress={deleteAccount} style={{ marginTop: 8 }} />
     </Screen>
   );

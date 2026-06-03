@@ -83,7 +83,7 @@ echo ""
 echo "=========================================="
 if [ "$fail" -eq 0 ]; then
   echo "  基础检查通过。若 App 仍失败，请在点击「生成」时另开终端："
-  echo "    pm2 logs soulmirror-api --lines 0"
+  echo "    pm2 logs soulmirror-api --lines 0    # 优先看这个（AI 无日志说明请求未到 AI）"
   echo "    pm2 logs soulmirror-ai --lines 0"
   echo ""
   echo "  并确认 Nginx proxy_read_timeout ≥ 300s（报告生成约 1～3 分钟）"

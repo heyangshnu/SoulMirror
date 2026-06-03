@@ -20,7 +20,7 @@ async function parseJsonBody(res: Response): Promise<Record<string, unknown>> {
     return JSON.parse(text) as Record<string, unknown>;
   } catch {
     const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 120);
-    throw new Error(snippet || `服务器响应异常 (${res.status})`);
+    throw new Error(snippet ? `${snippet} (HTTP ${res.status})` : `服务器响应异常 (HTTP ${res.status})`);
   }
 }
 

@@ -64,6 +64,7 @@ export class BotService {
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
     res.flushHeaders?.();
 
     let fullReply = '';
@@ -128,7 +129,16 @@ export class BotService {
     const session = await this.getSession(userId, sessionId);
     const user = await this.usersService.findById(userId);
 
+    const chartContext =
+      user?.chartContext ||
+      (await this.chartService.getChartContextForBot(userId).catch(() => ''));
+
+    const reportContext = await this.chartService
+      .getLatestReportSummariesForBot(userId)
+      .catch(() => '');
+
     session.messages.push({ role: 'user', content: message, createdAt: new Date() });
+    await session.save();
 
     const history = session.messages.slice(-20).map((m) => ({
       role: m.role,
@@ -139,11 +149,6 @@ export class BotService {
     if (user?.ageRange) profileParts.push(`年龄段：${user.ageRange}`);
     if (user?.occupation) profileParts.push(`职业：${user.occupation}`);
     if (user?.concern) profileParts.push(`困惑：${user.concern}`);
-
-    const chartContext =
-      user?.chartContext || (await this.chartService.getChartContextForBot(userId));
-
-    const reportContext = await this.chartService.getLatestReportSummariesForBot(userId);
 
     const aiBody = {
       message,
