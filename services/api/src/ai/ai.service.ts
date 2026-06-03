@@ -32,4 +32,14 @@ export class AiService {
       throw err;
     }
   }
+
+  streamPost(path: string, data: unknown): Promise<NodeJS.ReadableStream> {
+    return this.client
+      .post(path, data, { responseType: 'stream', timeout: 0 })
+      .then((res) => res.data as NodeJS.ReadableStream)
+      .catch((err) => {
+        this.logger.error(`AI service stream error POST ${path}`, err);
+        throw err;
+      });
+  }
 }

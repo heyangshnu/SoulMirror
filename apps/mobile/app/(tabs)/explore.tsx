@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { type Href, useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { TestCard } from '@/components/ui/TestCard';
+import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -12,13 +13,6 @@ type CatalogItem = {
   subtitle: string;
   duration: string;
   icon: string;
-};
-
-const ROUTES: Record<string, string> = {
-  bazi: '/tests/bazi',
-  mbti: '/tests/mbti',
-  tarot: '/tests/tarot',
-  palm: '/tests/palm',
 };
 
 export default function ExploreScreen() {
@@ -33,10 +27,7 @@ export default function ExploreScreen() {
         .then((res) => setItems(res.items))
         .catch(() =>
           setItems([
-            { type: 'bazi', title: '八字命盘', subtitle: '传统命理 × 现代心理', duration: '约 5 分钟', icon: 'moon.stars' },
-            { type: 'mbti', title: 'MBTI 人格', subtitle: '28 题精简版', duration: '约 8 分钟', icon: 'brain' },
-            { type: 'tarot', title: '塔罗占卜', subtitle: '三牌阵解读', duration: '约 3 分钟', icon: 'sparkles' },
-            { type: 'palm', title: '手相分析', subtitle: '掌纹 AI 解读', duration: '约 4 分钟', icon: 'hand.raised' },
+            { type: 'ziwei', title: '紫微斗数', subtitle: '三合派排盘 · 个性化觉察', duration: '约 3 分钟', icon: 'star.circle' },
           ]),
         )
         .finally(() => setLoading(false));
@@ -47,21 +38,29 @@ export default function ExploreScreen() {
     <Screen>
       <Text style={styles.brand}>心镜 SoulMirror</Text>
       <Text style={styles.title}>探索自我</Text>
-      <Text style={styles.subtitle}>选择一种方式，开启专属洞察之旅</Text>
+      <Text style={styles.subtitle}>紫微斗数 · 结合你的近况，生成专属觉察</Text>
 
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : (
-        items.map((item) => (
-          <TestCard
-            key={item.type}
-            title={item.title}
-            subtitle={item.subtitle}
-            duration={item.duration}
-            icon={item.icon}
-            onPress={() => router.push(ROUTES[item.type] as '/tests/bazi')}
-          />
-        ))
+        <>
+          {items.map((item) => (
+            <TestCard
+              key={item.type}
+              title={item.title}
+              subtitle={item.subtitle}
+              duration={item.duration}
+              icon={item.icon}
+              onPress={() => router.push('/chart/setup' as Href)}
+            />
+          ))}
+
+          <View style={styles.quickRow}>
+            <Button title="我的解读" variant="secondary" onPress={() => router.push('/chart/result' as Href)} style={styles.quickBtn} />
+            <Button title="关系人" variant="secondary" onPress={() => router.push('/chart/relations' as Href)} style={styles.quickBtn} />
+          </View>
+          <Button title="语音日记" variant="secondary" onPress={() => router.push('/chart/voice-diary' as Href)} />
+        </>
       )}
     </Screen>
   );
@@ -71,4 +70,6 @@ const styles = StyleSheet.create({
   brand: { ...typography.small, color: colors.primary, marginTop: spacing.md, fontWeight: '600' },
   title: { ...typography.hero, marginTop: 8 },
   subtitle: { ...typography.caption, marginBottom: spacing.lg },
+  quickRow: { flexDirection: 'row', gap: 10, marginTop: 8, marginBottom: 8 },
+  quickBtn: { flex: 1 },
 });

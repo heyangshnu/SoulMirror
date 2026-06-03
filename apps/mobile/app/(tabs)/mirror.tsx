@@ -14,6 +14,7 @@ import { Screen } from '@/components/ui/Screen';
 import { ChatBubble } from '@/components/ui/ChatBubble';
 import { Button } from '@/components/ui/Button';
 import { api } from '@/lib/api';
+import { streamBotChat } from '@/lib/chat-stream';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 type Message = { role: string; content: string; createdAt?: string };
@@ -22,7 +23,7 @@ export default function MirrorScreen() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [streaming, setStreaming] = useState(false);
   const [init, setInit] = useState(true);
   const listRef = useRef<FlatList>(null);
 
@@ -31,23 +32,14 @@ export default function MirrorScreen() {
     if (sessions.length > 0) {
       const s = await api.get<{ _id: string; messages: Message[] }>(`/bot/sessions/${sessions[0]._id}`);
       setSessionId(s._id);
-      setMessages(s.messages);
-      if (s.messages.length === 0) {
-        setMessages([
-          {
-            role: 'assistant',
-            content: '你好，我是你的心镜陪伴者。最近有什么想聊聊的吗？',
-          },
-        ]);
-      }
+      setMessages(s.messages.length > 0 ? s.messages : [
+        { role: 'assistant', content: '嗨，最近怎么样？有什么想聊的？' },
+      ]);
     } else {
       const created = await api.post<{ _id: string }>('/bot/sessions');
       setSessionId(created._id);
       setMessages([
-        {
-          role: 'assistant',
-          content: '你好，我是你的心镜陪伴者。完成测试后，我会更懂你。最近有什么想聊聊的吗？',
-        },
+        { role: 'assistant', content: '嗨，我是心镜。有什么想聊的，随时说。' },
       ]);
     }
   }, []);
@@ -67,25 +59,36 @@ export default function MirrorScreen() {
   );
 
   const send = async () => {
-    if (!input.trim() || !sessionId || sessionId === 'local') return;
+    if (!input.trim() || !sessionId || sessionId === 'local' || streaming) return;
     const text = input.trim();
     setInput('');
-    setMessages((m) => [...m, { role: 'user', content: text }]);
-    setLoading(true);
+    setMessages((m) => [...m, { role: 'user', content: text }, { role: 'assistant', content: '' }]);
+    setStreaming(true);
+
     try {
-      const res = await api.post<{ reply: string; crisis: boolean }>(
-        `/bot/sessions/${sessionId}/messages`,
-        { message: text },
-      );
-      setMessages((m) => [...m, { role: 'assistant', content: res.reply }]);
-      setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
+      await streamBotChat(sessionId, text, (delta) => {
+        setMessages((m) => {
+          const next = [...m];
+          const last = next[next.length - 1];
+          if (last?.role === 'assistant') {
+            next[next.length - 1] = { ...last, content: last.content + delta };
+          }
+          return next;
+        });
+        listRef.current?.scrollToEnd({ animated: false });
+      });
     } catch {
-      setMessages((m) => [
-        ...m,
-        { role: 'assistant', content: '连接暂时中断，请稍后再试。' },
-      ]);
+      setMessages((m) => {
+        const next = [...m];
+        const last = next[next.length - 1];
+        if (last?.role === 'assistant' && !last.content) {
+          next[next.length - 1] = { ...last, content: '连接暂时中断，请稍后再试。' };
+        }
+        return next;
+      });
     } finally {
-      setLoading(false);
+      setStreaming(false);
+      setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
     }
   };
 
@@ -105,14 +108,19 @@ export default function MirrorScreen() {
     >
       <View style={styles.header}>
         <Text style={styles.title}>心镜</Text>
-        <Text style={styles.subtitle}>你的专属 AI 陪伴</Text>
+        <Text style={styles.subtitle}>你的专属 AI 陪伴 · 流式对话</Text>
       </View>
       <FlatList
         ref={listRef}
         data={messages}
         keyExtractor={(_, i) => String(i)}
         contentContainerStyle={styles.list}
-        renderItem={({ item }) => <ChatBubble role={item.role as 'user' | 'assistant'} content={item.content} />}
+        renderItem={({ item }) => (
+          <ChatBubble
+            role={item.role as 'user' | 'assistant'}
+            content={item.content || (streaming ? '…' : '')}
+          />
+        )}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
       />
       <View style={styles.inputRow}>
@@ -122,8 +130,9 @@ export default function MirrorScreen() {
           value={input}
           onChangeText={setInput}
           multiline
+          editable={!streaming}
         />
-        <Button title="发送" onPress={send} loading={loading} style={styles.sendBtn} />
+        <Button title="发送" onPress={send} loading={streaming} style={styles.sendBtn} />
       </View>
     </KeyboardAvoidingView>
   );

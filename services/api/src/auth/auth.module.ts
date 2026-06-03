@@ -4,10 +4,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SmsCode, SmsCodeSchema } from '../schemas/sms-code.schema';
+import { EmailOtp, EmailOtpSchema } from '../schemas/email-otp.schema';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { EmailService } from './email/email.service';
 import { JwtStrategy } from './jwt.strategy';
+import { SmsService } from './sms/sms.service';
 
 @Module({
   imports: [
@@ -21,10 +24,13 @@ import { JwtStrategy } from './jwt.strategy';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([{ name: SmsCode.name, schema: SmsCodeSchema }]),
+    MongooseModule.forFeature([
+      { name: SmsCode.name, schema: SmsCodeSchema },
+      { name: EmailOtp.name, schema: EmailOtpSchema },
+    ]),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, SmsService, EmailService],
   exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

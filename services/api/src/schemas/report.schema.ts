@@ -27,10 +27,16 @@ export class Report {
   summary: string;
 
   @Prop()
+  headlineSummary?: string;
+
+  @Prop()
   score?: number;
 
   @Prop()
   scoreLabel?: string;
+
+  @Prop()
+  themeLabel?: string;
 
   @Prop({ type: [ReportSection], default: [] })
   sections: ReportSection[];

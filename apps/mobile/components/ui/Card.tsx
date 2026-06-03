@@ -12,7 +12,10 @@ export function Card({ children, onPress, style }: Props) {
   const inner = <View style={[styles.card, style]}>{children}</View>;
   if (onPress) {
     return (
-      <Pressable onPress={onPress} style={({ pressed }) => pressed && styles.pressed}>
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.wrap, pressed && styles.pressed]}
+      >
         {inner}
       </Pressable>
     );
@@ -21,6 +24,7 @@ export function Card({ children, onPress, style }: Props) {
 }
 
 const styles = StyleSheet.create({
+  wrap: { alignSelf: 'stretch' },
   card: {
     backgroundColor: colors.card,
     borderRadius: radius.lg,

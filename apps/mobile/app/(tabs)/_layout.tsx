@@ -50,9 +50,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="memorial"
         options={{
-          title: '纪念',
+          title: '缘分',
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'calendar', android: 'calendar_today', web: 'calendar_today' }} tintColor={color} size={24} />
+            <SymbolView name={{ ios: 'person.2', android: 'group', web: 'group' }} tintColor={color} size={24} />
           ),
         }}
       />

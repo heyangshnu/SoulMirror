@@ -24,4 +24,8 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   nickname?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  discoverable?: boolean;
 }

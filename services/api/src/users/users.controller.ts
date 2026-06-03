@@ -13,6 +13,7 @@ export class UsersController {
     const user = await this.usersService.findById(req.user.userId);
     return {
       id: user?._id,
+      email: user?.email,
       phone: user?.phone,
       nickname: user?.nickname,
       ageRange: user?.ageRange,
@@ -20,6 +21,7 @@ export class UsersController {
       concern: user?.concern,
       botTone: user?.botTone ?? 'gentle',
       anonymousMode: user?.anonymousMode ?? false,
+      discoverable: user?.discoverable ?? false,
     };
   }
 

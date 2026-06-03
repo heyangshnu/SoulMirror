@@ -24,6 +24,10 @@ async function request<T>(
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
+    if (res.status === 401 && options.auth !== false) {
+      useAuthStore.getState().logout();
+      throw new Error('登录已过期，请重新登录');
+    }
     throw new Error(data.message || data.error || `请求失败 (${res.status})`);
   }
   return data as T;
@@ -39,5 +43,7 @@ export const api = {
     }),
   put: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'PUT', body: body ? JSON.stringify(body) : undefined }),
+  patch: <T>(path: string, body?: unknown) =>
+    request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
 };

@@ -16,6 +16,8 @@ export class ReportsService {
       summary: payload.summary,
       score: payload.score,
       scoreLabel: payload.scoreLabel,
+      themeLabel: payload.themeLabel,
+      headlineSummary: payload.headlineSummary,
       sections: payload.sections,
       raw: payload.raw,
     });
@@ -35,6 +37,28 @@ export class ReportsService {
     });
     if (!report) throw new NotFoundException('报告不存在');
     return report;
+  }
+
+  findLatestByTypes(userId: string, types: string[]) {
+    return Promise.all(
+      types.map((testType) =>
+        this.reportModel
+          .findOne({ userId: new Types.ObjectId(userId), testType })
+          .sort({ createdAt: -1 })
+          .exec(),
+      ),
+    );
+  }
+
+  findLatestLiunian(userId: string, year: number) {
+    return this.reportModel
+      .findOne({
+        userId: new Types.ObjectId(userId),
+        testType: 'ziwei_liunian',
+        'raw.year': year,
+      })
+      .sort({ createdAt: -1 })
+      .exec();
   }
 
   async toggleFavorite(userId: string, reportId: string) {

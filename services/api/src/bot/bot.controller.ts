@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
+import type { Response } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { BotService } from './bot.service';
 import { SendMessageDto } from './dto/send-message.dto';
@@ -30,5 +31,15 @@ export class BotController {
     @Body() dto: SendMessageDto,
   ) {
     return this.botService.sendMessage(req.user.userId, id, dto.message);
+  }
+
+  @Post('sessions/:id/messages/stream')
+  streamMessage(
+    @Req() req: { user: { userId: string } },
+    @Param('id') id: string,
+    @Body() dto: SendMessageDto,
+    @Res() res: Response,
+  ) {
+    return this.botService.streamMessage(req.user.userId, id, dto.message, res);
   }
 }

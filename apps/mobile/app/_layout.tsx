@@ -45,8 +45,10 @@ export default function RootLayout() {
         <Stack.Screen name="tests/mbti" />
         <Stack.Screen name="tests/tarot" />
         <Stack.Screen name="tests/palm" />
+        <Stack.Screen name="chart" options={{ headerShown: false }} />
         <Stack.Screen name="profile/setup" />
         <Stack.Screen name="report/[id]" options={{ headerShown: true, title: '测试报告', headerTintColor: colors.primary }} />
+        <Stack.Screen name="social/chat/[friendId]" options={{ headerShown: true }} />
       </Stack>
     </SafeAreaProvider>
   );

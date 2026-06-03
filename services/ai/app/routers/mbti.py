@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from app.data.mbti_questions import MBTI_DESCRIPTIONS, MBTI_QUESTIONS
-from app.services.llm import chat_completion
+from app.services.report_llm import generate_test_report
 
 router = APIRouter()
 
@@ -26,7 +26,6 @@ def score_mbti(answers: list[AnswerItem]) -> tuple[str, dict[str, int]]:
         if not q:
             continue
         pole = q["pole"]
-        # 1-3 倾向反对极，4-5 倾向该题 pole
         weight = a.value - 3
         if weight == 0:
             continue
@@ -44,55 +43,16 @@ def score_mbti(answers: list[AnswerItem]) -> tuple[str, dict[str, int]]:
     return mbti_type, scores
 
 
-def build_mbti_report(mbti_type: str, scores: dict, profile_hint: str | None) -> dict:
-    desc = MBTI_DESCRIPTIONS.get(mbti_type, "独特的人格组合")
-    sections = [
-        {
-            "title": "类型概览",
-            "content": f"你的 MBTI 类型为 **{mbti_type}**（{desc}）。这一结果反映你在大体上处理信息、做决定与组织生活的方式偏好，而非固定标签。",
-        },
-        {
-            "title": "认知功能倾向",
-            "content": (
-                f"外向/内向 (E/I)：{'外向' if mbti_type[0] == 'E' else '内向'}倾向更显著。\n"
-                f"感觉/直觉 (S/N)：{'感觉' if mbti_type[1] == 'S' else '直觉'}型思维更占主导。\n"
-                f"思考/情感 (T/F)：{'思考' if mbti_type[2] == 'T' else '情感'}维度在决策中更突出。\n"
-                f"判断/知觉 (J/P)：{'判断' if mbti_type[3] == 'J' else '知觉'}型生活方式更符合你。"
-            ),
-        },
-        {
-            "title": "优势与成长",
-            "content": (
-                f"作为 {mbti_type}，你往往具备该类型公认的天然优势，同时也可能在压力下放大某些盲点。"
-                "建议把本报告当作自我觉察的起点：在重要关系中，留意你与不同类型者的互补与摩擦。"
-            ),
-        },
-        {
-            "title": "情感与关系",
-            "content": (
-                "在亲密关系与友谊中，理解自己的能量来源（独处或社交）以及沟通风格，"
-                "能帮助你更清晰地表达需求，减少「别人应该怎样对我」的隐性期待。"
-            ),
-        },
-        {
-            "title": "职业与发展",
-            "content": (
-                "职业选择不必被四个字母限制，但你可以借此筛选更能发挥天赋的工作环境："
-                "是需要结构化流程，还是开放探索？是人际密集，还是深度专注？"
-            ),
-        },
-    ]
-    if profile_hint:
-        sections.append({"title": "结合你的近况", "content": profile_hint})
-
+def _fallback_mbti(mbti_type: str, desc: str) -> dict:
     return {
         "testType": "mbti",
         "title": f"MBTI · {mbti_type}",
         "summary": desc,
-        "score": min(100, max(60, 70 + (scores.get(mbti_type[0], 0) % 20))),
+        "score": 75,
         "scoreLabel": mbti_type,
-        "sections": sections,
-        "raw": {"mbtiType": mbti_type, "scores": scores},
+        "sections": [
+            {"title": "报告生成中", "content": "AI 服务暂不可用，请稍后重试或检查 DEEPSEEK_API_KEY 配置。"},
+        ],
     }
 
 
@@ -104,14 +64,27 @@ def get_questions():
 @router.post("/submit")
 async def submit(body: MbtiSubmitBody):
     mbti_type, scores = score_mbti(body.answers)
-    report = build_mbti_report(mbti_type, scores, body.profile_hint)
+    desc = MBTI_DESCRIPTIONS.get(mbti_type, "独特的人格组合")
 
-    llm_prompt = (
-        f"用户 MBTI 为 {mbti_type}。请用温暖、专业的中文扩写一段 300 字左右的个性化解读，"
-        "涵盖情感、职业、自我成长，不要使用迷信表述。"
+    raw = {"mbtiType": mbti_type, "type": mbti_type, "scores": scores}
+
+    dim_lines = "\n".join(
+        f"- {k}：{v} 分" for k, v in scores.items() if v > 0
     )
-    extra = await chat_completion([{"role": "user", "content": llm_prompt}])
-    if extra:
-        report["sections"].append({"title": "AI 深度解读", "content": extra})
+    context = (
+        f"MBTI 类型：{mbti_type}\n"
+        f"类型描述：{desc}\n"
+        f"各维度得分：\n{dim_lines}\n"
+        f"答题数量：{len(body.answers)}\n"
+        f"用户近况补充：{body.profile_hint or '无'}\n\n"
+        "请从类型概览、认知倾向、优势与盲点、情感关系、职业与发展等角度撰写报告。"
+        f"score 应反映该用户在本类型内的自我认知清晰度与成长潜力（类型为 {mbti_type}）。"
+    )
 
+    report = await generate_test_report(
+        "mbti",
+        context,
+        raw=raw,
+        fallback=_fallback_mbti(mbti_type, desc),
+    )
     return report

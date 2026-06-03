@@ -23,32 +23,21 @@ pip install -r requirements.txt -q
 deactivate
 cd ../..
 
-# 从 .env 读取 AI 端口，默认 8010
-AI_PORT=8010
-if [ -f services/ai/.env ]; then
-  AI_PORT=$(grep -E '^PORT=' services/ai/.env | cut -d= -f2 | tr -d ' ')
-  AI_PORT=${AI_PORT:-8010}
-fi
-
-API_PORT=3010
-if [ -f services/api/.env ]; then
-  API_PORT=$(grep -E '^PORT=' services/api/.env | cut -d= -f2 | tr -d ' ')
-  API_PORT=${API_PORT:-3010}
-fi
-
-echo "==> 重启 PM2 进程 (API:$API_PORT AI:$AI_PORT)"
+echo "==> 重启 PM2 进程"
 pm2 delete soulmirror-api 2>/dev/null || true
 pm2 delete soulmirror-ai 2>/dev/null || true
 
-pm2 start services/api/dist/main.js --name soulmirror-api
-pm2 start "services/ai/.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port $AI_PORT" \
-  --name soulmirror-ai \
-  --cwd "$APP_DIR/services/ai" \
-  --interpreter none
+chmod +x services/ai/run-prod.sh
+pm2 start ecosystem.config.cjs
 
 pm2 save
 
+API_PORT=3010
+AI_PORT=8010
+[ -f services/api/.env ] && API_PORT=$(grep -E '^PORT=' services/api/.env | cut -d= -f2 | tr -d ' ')
+[ -f services/ai/.env ] && AI_PORT=$(grep -E '^PORT=' services/ai/.env | cut -d= -f2 | tr -d ' ')
+
 echo ""
 echo "✅ 后端部署完成"
-echo "验证：curl http://127.0.0.1:$API_PORT/v1/tests/catalog"
-echo "验证：curl http://127.0.0.1:$AI_PORT/health"
+echo "验证：curl http://127.0.0.1:${API_PORT}/v1/tests/catalog"
+echo "验证：curl http://127.0.0.1:${AI_PORT}/health"
