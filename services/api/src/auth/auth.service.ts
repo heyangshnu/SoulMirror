@@ -36,11 +36,53 @@ export class AuthService {
 
   getConfig() {
     return {
+      phone_password_enabled: true,
       email_verify_enabled: this.emailService.isVerifyEnabled(),
       email_dev_mode: this.emailService.isDevDelivery(),
       terms_version: TERMS_VERSION,
       terms_required: true,
     };
+  }
+
+  // ── Phone + password ──
+
+  async registerPhone(
+    phone: string,
+    password: string,
+    options: { termsAccepted: boolean; termsVersion: string },
+  ) {
+    if (!options.termsAccepted) {
+      throw new BadRequestException('请先同意用户协议');
+    }
+    if (options.termsVersion !== TERMS_VERSION) {
+      throw new BadRequestException('协议版本已更新，请刷新后重试');
+    }
+
+    const normalized = phone.trim();
+    const existing = await this.usersService.findByPhone(normalized);
+    if (existing) throw new ConflictException('该手机号已注册');
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const user = await this.usersService.create({
+      phone: normalized,
+      passwordHash,
+      nickname: `用户${normalized.slice(-4)}`,
+      termsAcceptedAt: new Date(),
+      termsVersion: options.termsVersion,
+    });
+
+    return this.buildAuthResponse(user);
+  }
+
+  async loginPhone(phone: string, password: string) {
+    const normalized = phone.trim();
+    const user = await this.usersService.findByPhone(normalized);
+    if (!user?.passwordHash || user.status !== 'active') {
+      throw new UnauthorizedException('手机号或密码错误');
+    }
+    const ok = await bcrypt.compare(password, user.passwordHash);
+    if (!ok) throw new UnauthorizedException('手机号或密码错误');
+    return this.buildAuthResponse(user);
   }
 
   // ── SMS (legacy) ──

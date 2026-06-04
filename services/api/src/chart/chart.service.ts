@@ -133,7 +133,7 @@ export class ChartService {
     const report = await this.reports.create(userId, { ...payload, testType: 'ziwei_natal', raw: { natal } });
     const headline = payload.headlineSummary ?? payload.summary;
     await this.users.setTestSummary(userId, headline);
-    return report;
+    return this.toCreatedReport(report);
   }
 
   async generateDaxianReport(userId: string) {
@@ -149,7 +149,7 @@ export class ChartService {
     });
     const report = await this.reports.create(userId, { ...payload, testType: 'ziwei_daxian', raw: { horoscope } });
     await this.users.setTestSummary(userId, payload.headlineSummary ?? payload.summary);
-    return report;
+    return this.toCreatedReport(report);
   }
 
   async generateLiunianReport(userId: string, year?: number) {
@@ -173,10 +173,8 @@ export class ChartService {
       raw: { horoscope, flyingStar, year: y },
     });
     await this.users.setTestSummary(userId, payload.headlineSummary ?? payload.summary);
-    return report;
+    return this.toCreatedReport(report);
   }
-
-  async listRelations(userId: string) {
     return this.relationModel.find({ userId: new Types.ObjectId(userId) }).exec();
   }
 
@@ -241,11 +239,12 @@ export class ChartService {
       flyingStar,
       personalContext,
     });
-    return this.reports.create(userId, {
+    const report = await this.reports.create(userId, {
       ...payload,
       testType: 'ziwei_relation',
       raw: { relationId, relationType: relation.relationType },
     });
+    return this.toCreatedReport(report);
   }
 
   async getReportHub(userId: string, year?: number) {
@@ -264,6 +263,14 @@ export class ChartService {
       daxian: daxian ? this.toReportCard(daxian) : null,
       liunian: liunianReport ? this.toReportCard(liunianReport) : null,
       year: y,
+    };
+  }
+
+  private toCreatedReport(report: { _id: { toString(): string }; title: string; testType: string }) {
+    return {
+      _id: report._id.toString(),
+      title: report.title,
+      testType: report.testType,
     };
   }
 

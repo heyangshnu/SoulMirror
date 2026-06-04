@@ -1,10 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -15,8 +12,10 @@ import { useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { ChatBubble } from '@/components/ui/ChatBubble';
 import { Button } from '@/components/ui/Button';
+import { KeyboardChatLayout } from '@/components/ui/KeyboardChatLayout';
 import { api } from '@/lib/api';
 import { streamBotChat } from '@/lib/chat-stream';
+import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 type Message = { role: string; content: string; createdAt?: string };
@@ -29,8 +28,12 @@ export default function MirrorScreen() {
   const [offline, setOffline] = useState(false);
   const [init, setInit] = useState(true);
   const listRef = useRef<FlatList>(null);
+  const { token, hydrated } = useAuthStore();
 
   const ensureSession = useCallback(async (): Promise<string> => {
+    if (!hydrated || !token) {
+      throw new Error('登录状态加载中，请稍后重试');
+    }
     const sessions = await api.get<{ _id: string }[]>('/bot/sessions');
     if (sessions.length > 0) {
       const s = await api.get<{ _id: string; messages: Message[] }>(`/bot/sessions/${sessions[0]._id}`);
@@ -48,9 +51,10 @@ export default function MirrorScreen() {
     setMessages([{ role: 'assistant', content: '嗨，我是心镜。有什么想聊的，随时说。' }]);
     setOffline(false);
     return created._id;
-  }, []);
+  }, [hydrated, token]);
 
   const reloadSession = useCallback(async () => {
+    if (!hydrated) return;
     setInit(true);
     try {
       await ensureSession();
@@ -66,12 +70,13 @@ export default function MirrorScreen() {
     } finally {
       setInit(false);
     }
-  }, [ensureSession]);
+  }, [ensureSession, hydrated]);
 
   useFocusEffect(
     useCallback(() => {
+      if (!hydrated) return;
       reloadSession();
-    }, [reloadSession]),
+    }, [reloadSession, hydrated]),
   );
 
   const send = async () => {
@@ -117,7 +122,7 @@ export default function MirrorScreen() {
     }
   };
 
-  if (init) {
+  if (init || !hydrated) {
     return (
       <Screen scroll={false}>
         <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
@@ -126,11 +131,7 @@ export default function MirrorScreen() {
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.flex}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={90}
-    >
+    <KeyboardChatLayout>
       <View style={styles.header}>
         <View style={styles.headerRow}>
           <Text style={styles.title}>心镜</Text>
@@ -146,6 +147,7 @@ export default function MirrorScreen() {
       </View>
       <FlatList
         ref={listRef}
+        style={styles.listFlex}
         data={messages}
         keyExtractor={(_, i) => String(i)}
         contentContainerStyle={styles.list}
@@ -161,6 +163,7 @@ export default function MirrorScreen() {
         <TextInput
           style={styles.input}
           placeholder="说说你的感受…"
+          placeholderTextColor={colors.textMuted}
           value={input}
           onChangeText={setInput}
           multiline
@@ -169,12 +172,12 @@ export default function MirrorScreen() {
         />
         <Button title="发送" onPress={send} loading={streaming} style={styles.sendBtn} />
       </View>
-    </KeyboardAvoidingView>
+    </KeyboardChatLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
+  listFlex: { flex: 1 },
   header: { paddingTop: 56, paddingHorizontal: spacing.lg, paddingBottom: 12 },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   title: { ...typography.hero, fontSize: 24 },
@@ -206,6 +209,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: colors.border,
+    color: colors.text,
   },
   sendBtn: { height: 44, minWidth: 72 },
 });

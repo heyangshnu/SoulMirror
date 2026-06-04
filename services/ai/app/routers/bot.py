@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
+import re
 
 from app.services.crisis import check_crisis
 from app.services.llm import chat_completion, stream_chat_completion
@@ -33,6 +34,21 @@ class ChatBody(BaseModel):
     history: list[dict[str, str]] = Field(default_factory=list)
 
 
+def _is_mostly_english(text: str) -> bool:
+    latin = len(re.findall(r"[A-Za-z]", text))
+    cjk = len(re.findall(r"[\u4e00-\u9fff]", text))
+    return latin >= 3 and latin > cjk
+
+
+def _language_hint(message: str) -> str:
+    if _is_mostly_english(message):
+        return (
+            "\n\nThe user's latest message is in English. "
+            "Reply in natural, friendly English. Keep the same length and tone rules."
+        )
+    return ""
+
+
 def _build_messages(body: ChatBody) -> list[dict[str, str]]:
     tone = TONE_PREFIX.get(body.tone, TONE_PREFIX["gentle"])
     system = (
@@ -43,6 +59,7 @@ def _build_messages(body: ChatBody) -> list[dict[str, str]]:
         "当用户提供了解读报告总结时，基于报告理解 ta 的处境，给简短有针对性的回应；"
         "用日常口语，避免「宫位」「四化」等命理术语。"
         "问题与报告相关时，可自然引述一处（如「你报告里提到过…」），不要机械复读。"
+        f"{_language_hint(body.message)}"
     )
     if body.report_context:
         system += (
@@ -110,8 +127,14 @@ async def chat_stream(body: ChatBody):
 
 
 def _fallback_reply(message: str, tone: str) -> str:
+    if _is_mostly_english(message):
+        if tone == "rational":
+            return "Got it. What's the main thing stuck in your head?"
+        if tone == "humorous":
+            return "Yeah, that's a lot. Want to unpack it a bit?"
+        return "I hear you. What part matters most to you right now?"
     if tone == "rational":
-        return f"嗯，听到了。你现在最卡的是哪一块？"
+        return "嗯，听到了。你现在最卡的是哪一块？"
     if tone == "humorous":
-        return f"哈，这事确实有点绕。具体咋回事，再说说？"
-    return f"嗯，我听到了。此刻你最在意的是哪一部分？"
+        return "哈，这事确实有点绕。具体咋回事，再说说？"
+    return "嗯，我听到了。此刻你最在意的是哪一部分？"

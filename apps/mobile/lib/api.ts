@@ -62,7 +62,7 @@ export const api = {
   post: <T>(path: string, body?: unknown, auth = true) =>
     request<T>(path, {
       method: 'POST',
-      body: body ? JSON.stringify(body) : undefined,
+      body: JSON.stringify(body ?? {}),
       auth,
     }),
   put: <T>(path: string, body?: unknown) =>

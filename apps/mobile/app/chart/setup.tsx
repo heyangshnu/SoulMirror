@@ -39,7 +39,7 @@ export default function ChartSetupScreen() {
       return;
     }
     try {
-      const report = await api.post<{ _id: string }>('/chart/reports/natal');
+      const report = await api.post<{ _id: string }>('/chart/reports/natal', {});
       router.replace(`/chart/result?natalId=${report._id}`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : '请检查网络与后端';

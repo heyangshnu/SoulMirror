@@ -4,7 +4,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { API_BASE, api } from './api';
+import { API_BASE, api } from '@/lib/api';
 import { runNetworkCheck } from '@/lib/network-check';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -68,7 +68,7 @@ export default function ProfileScreen() {
 
       <Card>
         <Text style={styles.name}>{me.nickname || user?.nickname || '心镜用户'}</Text>
-        <Text style={styles.phone}>{me.phone || user?.phone || ''}</Text>
+        <Text style={styles.phone}>{me.phone || user?.phone || '未绑定手机'}</Text>
         <Text style={styles.meta}>机器人语气：{TONE_LABELS[me.botTone || 'gentle']}</Text>
       </Card>
 

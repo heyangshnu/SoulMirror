@@ -2,8 +2,6 @@ import { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -12,6 +10,7 @@ import {
 import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ChatBubble } from '@/components/ui/ChatBubble';
 import { Button } from '@/components/ui/Button';
+import { KeyboardChatLayout } from '@/components/ui/KeyboardChatLayout';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -63,16 +62,13 @@ export default function FriendChatScreen() {
   return (
     <>
       <Stack.Screen options={{ title: '好友聊天', headerTintColor: colors.primary }} />
-      <KeyboardAvoidingView
-        style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={90}
-      >
+      <KeyboardChatLayout hasHeader>
         {loading ? (
           <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
         ) : (
           <FlatList
             ref={listRef}
+            style={styles.listFlex}
             data={messages}
             keyExtractor={(_, i) => String(i)}
             contentContainerStyle={styles.list}
@@ -90,19 +86,20 @@ export default function FriendChatScreen() {
           <TextInput
             style={styles.input}
             placeholder="输入消息…"
+            placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}
             multiline
           />
           <Button title="发送" onPress={send} loading={sending} style={styles.sendBtn} />
         </View>
-      </KeyboardAvoidingView>
+      </KeyboardChatLayout>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: colors.background },
+  listFlex: { flex: 1 },
   list: { padding: spacing.lg, paddingBottom: 16 },
   empty: { ...typography.caption, textAlign: 'center', marginTop: 40 },
   inputRow: {
@@ -112,6 +109,7 @@ const styles = StyleSheet.create({
     gap: 8,
     borderTopWidth: 1,
     borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   input: {
     flex: 1,
@@ -123,6 +121,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: colors.border,
+    color: colors.text,
   },
   sendBtn: { height: 44, minWidth: 72 },
 });

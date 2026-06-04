@@ -7,6 +7,7 @@ import {
   SendRegisterCodeDto,
   SendResetCodeDto,
 } from './dto/email-auth.dto';
+import { LoginPhoneDto, RegisterPhoneDto } from './dto/phone-auth.dto';
 import { LoginSmsDto, SendSmsDto } from './dto/send-sms.dto';
 
 @Controller('auth')
@@ -31,6 +32,19 @@ export class AuthController {
       termsAccepted: dto.terms_accepted,
       termsVersion: dto.terms_version,
     });
+  }
+
+  @Post('phone/register')
+  registerPhone(@Body() dto: RegisterPhoneDto) {
+    return this.authService.registerPhone(dto.phone, dto.password, {
+      termsAccepted: dto.terms_accepted,
+      termsVersion: dto.terms_version,
+    });
+  }
+
+  @Post('phone/login')
+  loginPhone(@Body() dto: LoginPhoneDto) {
+    return this.authService.loginPhone(dto.phone, dto.password);
   }
 
   @Post('login')

@@ -26,9 +26,7 @@ export function Screen({
   style,
 }: Props) {
   const insets = useSafeAreaInsets();
-  const inner = (
-    <View style={[padded && styles.padded, style]}>{children}</View>
-  );
+  const inner = <View style={[padded && styles.padded, style]}>{children}</View>;
 
   const scrollContent = scroll ? (
     <ScrollView
@@ -37,7 +35,7 @@ export function Screen({
       automaticallyAdjustKeyboardInsets={keyboardAvoid}
       contentContainerStyle={[
         styles.scroll,
-        { paddingBottom: insets.bottom + (keyboardAvoid ? 160 : 100) },
+        { paddingBottom: insets.bottom + (keyboardAvoid ? 200 : 100) },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -61,7 +59,7 @@ export function Screen({
     <KeyboardAvoidingView
       style={styles.root}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 8 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
     >
       {container}
     </KeyboardAvoidingView>
