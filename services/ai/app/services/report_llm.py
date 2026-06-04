@@ -227,7 +227,11 @@ User data:
 {context}"""
         if personal_context:
             user_prompt += f"\n\nPersonal context:\n{personal_context}"
-        user_prompt += "\n\nGenerate the full personalized report JSON in English."
+        user_prompt += (
+            "\n\nGenerate the full personalized report JSON. "
+            "CRITICAL: Every user-visible string (title, summary, headlineSummary, all section titles and bodies) "
+            "must be in English only, even if the input data below is in Chinese."
+        )
     else:
         user_prompt = f"""测试类型：{test_type}
 
@@ -368,7 +372,10 @@ Chart and cycle data:
 {context}"""
         if personal_context:
             user_prompt += f"\n\nPersonal context:\n{personal_context}"
-        user_prompt += "\n\nGenerate the full healing-oriented Zi Wei report JSON in English."
+        user_prompt += (
+            "\n\nGenerate the full healing-oriented Zi Wei report JSON. "
+            "CRITICAL: All JSON text fields must be in English only, even if chart data below is in Chinese."
+        )
     else:
         user_prompt = f"""报告类型：{test_type}
 

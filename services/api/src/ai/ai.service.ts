@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { REQUEST } from '@nestjs/core';
 import axios, { AxiosInstance } from 'axios';
 import type { Request } from 'express';
-import { parseLocale, type AppLocale } from '../common/locale';
+import { parseRequestLocale, type AppLocale } from '../common/locale';
 
 @Injectable({ scope: Scope.REQUEST })
 export class AiService {
@@ -19,7 +19,7 @@ export class AiService {
   }
 
   get locale(): AppLocale {
-    return parseLocale(this.req.headers['accept-language']);
+    return parseRequestLocale(this.req.headers);
   }
 
   private withLocale(data: unknown): Record<string, unknown> {

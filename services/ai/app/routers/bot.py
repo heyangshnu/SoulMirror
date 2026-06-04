@@ -77,6 +77,9 @@ def _build_messages(body: ChatBody) -> list[dict[str, str]]:
         system = (
             "You are Mirror, SoulMirror's AI companion for emotional support and self-exploration. "
             f"{friend}{tone} "
+            "CRITICAL: You MUST reply in English only. "
+            "Even if report summaries, chart context, or chat history are in Chinese, "
+            "still respond in natural English. "
             "No medical diagnosis; no fatalistic fortune-telling; encourage feelings and small actions. "
             "If the user is in crisis, guide them to professional help. "
             "When report summaries are provided, use them for short, relevant replies—everyday language, "

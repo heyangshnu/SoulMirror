@@ -52,6 +52,7 @@ async function request<T>(
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Accept-Language': loc === 'en' ? 'en' : 'zh-CN',
+    'X-App-Locale': loc,
     ...(options.headers as Record<string, string>),
   };
 

@@ -1,6 +1,15 @@
 import { Platform } from 'react-native';
 import { API_BASE } from './api';
 import { useAuthStore } from '@/store/auth';
+import { useLocaleStore } from '@/store/locale';
+
+function localeHeaders(): Record<string, string> {
+  const loc = useLocaleStore.getState().locale;
+  return {
+    'Accept-Language': loc === 'en' ? 'en' : 'zh-CN',
+    'X-App-Locale': loc,
+  };
+}
 
 function consumeSseChunk(raw: string, onDelta: (text: string) => void): string {
   const lines = raw.split('\n');
@@ -35,6 +44,9 @@ function streamBotChatXhr(
     xhr.setRequestHeader('Authorization', `Bearer ${token}`);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.setRequestHeader('Accept', 'text/event-stream');
+    const lang = localeHeaders();
+    xhr.setRequestHeader('Accept-Language', lang['Accept-Language']);
+    xhr.setRequestHeader('X-App-Locale', lang['X-App-Locale']);
     xhr.timeout = 120000;
 
     let lineBuffer = '';
@@ -82,6 +94,7 @@ async function streamBotChatFetch(
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
       Accept: 'text/event-stream',
+      ...localeHeaders(),
     },
     body: JSON.stringify({ message }),
   });
@@ -135,7 +148,6 @@ export async function streamBotChat(
   message: string,
   onDelta: (text: string) => void,
 ): Promise<void> {
-  // React Native 上 XHR 流式更可靠；Web 用 fetch
   if (Platform.OS === 'web') {
     await streamBotChatFetch(sessionId, message, onDelta);
   } else {
