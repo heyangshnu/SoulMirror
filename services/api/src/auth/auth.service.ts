@@ -16,6 +16,7 @@ import { SmsCode } from '../schemas/sms-code.schema';
 import { UsersService } from '../users/users.service';
 import { EmailService } from './email/email.service';
 import { SmsService } from './sms/sms.service';
+import { assertValidPhone } from './phone.util';
 
 const TERMS_VERSION = '1.0';
 const OTP_TTL_MS = 15 * 60 * 1000;
@@ -37,6 +38,7 @@ export class AuthService {
   getConfig() {
     return {
       phone_password_enabled: true,
+      email_password_enabled: true,
       email_verify_enabled: this.emailService.isVerifyEnabled(),
       email_dev_mode: this.emailService.isDevDelivery(),
       terms_version: TERMS_VERSION,
@@ -58,15 +60,16 @@ export class AuthService {
       throw new BadRequestException('协议版本已更新，请刷新后重试');
     }
 
-    const normalized = phone.trim();
+    const normalized = assertValidPhone(phone);
     const existing = await this.usersService.findByPhone(normalized);
     if (existing) throw new ConflictException('该手机号已注册');
 
     const passwordHash = await bcrypt.hash(password, 10);
+    const suffix = normalized.replace(/\D/g, '').slice(-4) || '0000';
     const user = await this.usersService.create({
       phone: normalized,
       passwordHash,
-      nickname: `用户${normalized.slice(-4)}`,
+      nickname: `用户${suffix}`,
       termsAcceptedAt: new Date(),
       termsVersion: options.termsVersion,
     });
@@ -75,7 +78,7 @@ export class AuthService {
   }
 
   async loginPhone(phone: string, password: string) {
-    const normalized = phone.trim();
+    const normalized = assertValidPhone(phone);
     const user = await this.usersService.findByPhone(normalized);
     if (!user?.passwordHash || user.status !== 'active') {
       throw new UnauthorizedException('手机号或密码错误');

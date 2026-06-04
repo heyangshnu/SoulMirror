@@ -1,5 +1,6 @@
 import Svg, { Circle } from 'react-native-svg';
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from '@/hooks/useTranslation';
 import { colors, typography } from '@/theme/tokens';
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 };
 
 export function ProgressRing({ score, label, size = 120 }: Props) {
+  const { t } = useTranslation();
   const stroke = 8;
   const r = (size - stroke) / 2;
   const circumference = 2 * Math.PI * r;
@@ -16,7 +18,6 @@ export function ProgressRing({ score, label, size = 120 }: Props) {
 
   return (
     <View style={styles.wrap}>
-      {/* 圆环 + 分数：固定高度容器，overflow 防止溢出 */}
       <View style={[styles.ringBox, { width: size, height: size }]}>
         <Svg width={size} height={size} style={styles.ringSvg}>
           <Circle
@@ -44,9 +45,8 @@ export function ProgressRing({ score, label, size = 120 }: Props) {
         <Text style={styles.score}>{score}</Text>
       </View>
 
-      {/* 圆环下方独立区域，不与分数层叠 */}
       <View style={styles.meta}>
-        <Text style={styles.scoreHint}>综合能量指数</Text>
+        <Text style={styles.scoreHint}>{t('progress.energyIndex')}</Text>
         {label ? (
           <Text style={styles.label} numberOfLines={2}>
             {label}

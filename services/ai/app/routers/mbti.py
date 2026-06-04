@@ -2,6 +2,8 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from app.data.mbti_questions import MBTI_DESCRIPTIONS, MBTI_QUESTIONS
+from app.data.mbti_questions_en import MBTI_QUESTIONS_EN
+from app.services.locale_util import is_english
 from app.services.report_llm import generate_test_report
 
 router = APIRouter()
@@ -15,6 +17,7 @@ class AnswerItem(BaseModel):
 class MbtiSubmitBody(BaseModel):
     answers: list[AnswerItem]
     profile_hint: str | None = None
+    locale: str = "zh"
 
 
 def score_mbti(answers: list[AnswerItem]) -> tuple[str, dict[str, int]]:
@@ -57,8 +60,8 @@ def _fallback_mbti(mbti_type: str, desc: str) -> dict:
 
 
 @router.get("/questions")
-def get_questions():
-    return {"questions": MBTI_QUESTIONS}
+def get_questions(locale: str = "zh"):
+    return {"questions": MBTI_QUESTIONS_EN if is_english(locale) else MBTI_QUESTIONS}
 
 
 @router.post("/submit")
@@ -86,5 +89,6 @@ async def submit(body: MbtiSubmitBody):
         context,
         raw=raw,
         fallback=_fallback_mbti(mbti_type, desc),
+        locale=body.locale,
     )
     return report

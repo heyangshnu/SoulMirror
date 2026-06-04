@@ -133,6 +133,9 @@ export class ChartService {
     const report = await this.reports.create(userId, { ...payload, testType: 'ziwei_natal', raw: { natal } });
     const headline = payload.headlineSummary ?? payload.summary;
     await this.users.setTestSummary(userId, headline);
+    await this.users.updateMatchProfile(userId, {
+      scores: { ziwei_natal: 75 },
+    });
     return this.toCreatedReport(report);
   }
 

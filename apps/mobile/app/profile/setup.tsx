@@ -3,17 +3,15 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { Stack, useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
+import { useTranslation, toneLabel } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 const AGE_OPTIONS = ['18-24', '25-30', '31-40', '41+'];
-const TONES = [
-  { id: 'gentle', label: '温柔' },
-  { id: 'rational', label: '理性' },
-  { id: 'humorous', label: '幽默' },
-];
+const TONE_IDS = ['gentle', 'rational', 'humorous'] as const;
 
 export default function ProfileSetupScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [ageRange, setAgeRange] = useState('');
   const [occupation, setOccupation] = useState('');
@@ -27,7 +25,7 @@ export default function ProfileSetupScreen() {
       await api.put('/user/profile', { ageRange, occupation, concern, botTone });
       router.replace('/(tabs)/explore');
     } catch (e) {
-      Alert.alert('保存失败', e instanceof Error ? e.message : '请稍后重试');
+      Alert.alert(t('persona.saveFail'), e instanceof Error ? e.message : t('common.retryLater'));
     } finally {
       setLoading(false);
     }
@@ -35,10 +33,10 @@ export default function ProfileSetupScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '用户画像', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('persona.nav'), headerTintColor: colors.primary }} />
       <Screen keyboardAvoid>
-        <Text style={styles.desc}>帮助心镜更懂你，打造专属陪伴体验</Text>
-        <Text style={styles.label}>年龄段</Text>
+        <Text style={styles.desc}>{t('persona.subtitle')}</Text>
+        <Text style={styles.label}>{t('persona.ageRange')}</Text>
         <View style={styles.chips}>
           {AGE_OPTIONS.map((a) => (
             <Pressable key={a} style={[styles.chip, ageRange === a && styles.chipActive]} onPress={() => setAgeRange(a)}>
@@ -46,26 +44,26 @@ export default function ProfileSetupScreen() {
             </Pressable>
           ))}
         </View>
-        <Text style={styles.label}>职业（可选）</Text>
-        <TextInput style={styles.input} placeholder="如：设计师" value={occupation} onChangeText={setOccupation} />
-        <Text style={styles.label}>当前困惑</Text>
+        <Text style={styles.label}>{t('persona.occupation')}</Text>
+        <TextInput style={styles.input} placeholder={t('persona.occupationPh')} value={occupation} onChangeText={setOccupation} />
+        <Text style={styles.label}>{t('persona.concern')}</Text>
         <TextInput
           style={[styles.input, styles.multiline]}
-          placeholder="最近在想什么？"
+          placeholder={t('persona.concernPh')}
           value={concern}
           onChangeText={setConcern}
           multiline
         />
-        <Text style={styles.label}>机器人语气</Text>
+        <Text style={styles.label}>{t('persona.botTone')}</Text>
         <View style={styles.chips}>
-          {TONES.map((t) => (
-            <Pressable key={t.id} style={[styles.chip, botTone === t.id && styles.chipActive]} onPress={() => setBotTone(t.id)}>
-              <Text style={[styles.chipText, botTone === t.id && styles.chipTextActive]}>{t.label}</Text>
+          {TONE_IDS.map((id) => (
+            <Pressable key={id} style={[styles.chip, botTone === id && styles.chipActive]} onPress={() => setBotTone(id)}>
+              <Text style={[styles.chipText, botTone === id && styles.chipTextActive]}>{toneLabel(t, id)}</Text>
             </Pressable>
           ))}
         </View>
-        <Button title="完成" onPress={save} loading={loading} style={{ marginTop: 24 }} />
-        <Button title="稍后再说" variant="ghost" onPress={() => router.replace('/(tabs)/explore')} />
+        <Button title={t('persona.done')} onPress={save} loading={loading} style={{ marginTop: 24 }} />
+        <Button title={t('persona.later')} variant="ghost" onPress={() => router.replace('/(tabs)/explore')} />
       </Screen>
     </>
   );

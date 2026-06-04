@@ -1,15 +1,31 @@
 import { Platform } from 'react-native';
+import { translate } from '@/lib/i18n';
+import { localizeApiError } from '@/lib/translate-api-error';
 import { useAuthStore } from '@/store/auth';
+import { useLocaleStore } from '@/store/locale';
 
 const defaultHost =
   Platform.OS === 'android' ? 'http://10.0.2.2:3000/v1' : 'http://localhost:3000/v1';
 
 export const API_BASE = process.env.EXPO_PUBLIC_API_URL ?? defaultHost;
 
+function locale() {
+  return useLocaleStore.getState().locale;
+}
+
+function t(key: string, params?: Record<string, string | number>) {
+  return translate(locale(), key, params);
+}
+
 function formatApiMessage(data: Record<string, unknown>): string | undefined {
   const msg = data.message ?? data.error;
-  if (Array.isArray(msg)) return msg.join('；');
-  if (typeof msg === 'string' && msg.trim()) return msg;
+  const sep = locale() === 'en' ? '; ' : '；';
+  if (Array.isArray(msg)) {
+    return msg.map((m) => localizeApiError(String(m), locale())).join(sep);
+  }
+  if (typeof msg === 'string' && msg.trim()) {
+    return localizeApiError(msg, locale());
+  }
   return undefined;
 }
 
@@ -20,7 +36,11 @@ async function parseJsonBody(res: Response): Promise<Record<string, unknown>> {
     return JSON.parse(text) as Record<string, unknown>;
   } catch {
     const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 120);
-    throw new Error(snippet ? `${snippet} (HTTP ${res.status})` : `服务器响应异常 (HTTP ${res.status})`);
+    throw new Error(
+      snippet
+        ? `${snippet} (HTTP ${res.status})`
+        : t('errors.serverResponse', { status: res.status }),
+    );
   }
 }
 
@@ -28,8 +48,10 @@ async function request<T>(
   path: string,
   options: RequestInit & { auth?: boolean } = {},
 ): Promise<T> {
+  const loc = locale();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'Accept-Language': loc === 'en' ? 'en' : 'zh-CN',
     ...(options.headers as Record<string, string>),
   };
 
@@ -42,7 +64,7 @@ async function request<T>(
   try {
     res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   } catch {
-    throw new Error('网络连接失败，请检查网络或稍后重试');
+    throw new Error(t('errors.network'));
   }
 
   const data = await parseJsonBody(res);
@@ -50,9 +72,9 @@ async function request<T>(
   if (!res.ok) {
     if (res.status === 401 && options.auth !== false) {
       useAuthStore.getState().logout();
-      throw new Error('登录已过期，请重新登录');
+      throw new Error(t('errors.sessionExpired'));
     }
-    throw new Error(formatApiMessage(data) || `请求失败 (${res.status})`);
+    throw new Error(formatApiMessage(data) || t('errors.requestFailed', { status: res.status }));
   }
   return data as T;
 }

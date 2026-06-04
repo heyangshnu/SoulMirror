@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { useTranslation } from '@/hooks/useTranslation';
 import { useAuthStore } from '@/store/auth';
 import { colors } from '@/theme/tokens';
 
@@ -19,6 +20,7 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const { t } = useTranslation();
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
@@ -52,7 +54,7 @@ export default function RootLayout() {
         <Stack.Screen name="tests/palm" />
         <Stack.Screen name="chart" options={{ headerShown: false }} />
         <Stack.Screen name="profile/setup" />
-        <Stack.Screen name="report/[id]" options={{ headerShown: true, title: '测试报告', headerTintColor: colors.primary }} />
+        <Stack.Screen name="report/[id]" options={{ headerShown: true, title: t('reportDetail.stackTitle'), headerTintColor: colors.primary }} />
         <Stack.Screen name="social/chat/[friendId]" options={{ headerShown: true }} />
       </Stack>
     </SafeAreaProvider>

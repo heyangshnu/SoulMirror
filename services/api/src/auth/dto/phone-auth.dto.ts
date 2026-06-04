@@ -1,7 +1,7 @@
-import { IsBoolean, IsString, Matches, MinLength } from 'class-validator';
+import { IsBoolean, IsString, MinLength } from 'class-validator';
 
 export class RegisterPhoneDto {
-  @Matches(/^1\d{10}$/, { message: '请输入有效手机号' })
+  @IsString()
   phone: string;
 
   @IsString()
@@ -16,7 +16,7 @@ export class RegisterPhoneDto {
 }
 
 export class LoginPhoneDto {
-  @Matches(/^1\d{10}$/, { message: '请输入有效手机号' })
+  @IsString()
   phone: string;
 
   @IsString()

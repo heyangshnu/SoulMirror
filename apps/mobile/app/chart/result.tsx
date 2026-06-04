@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ReportGeneratingOverlay } from '@/components/ui/ReportGeneratingOverlay';
 import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -33,6 +34,7 @@ function SummaryCard({
   onGenerate,
   onDetail,
   extra,
+  t,
 }: {
   label: string;
   report: ReportCard | null;
@@ -40,6 +42,7 @@ function SummaryCard({
   onGenerate?: () => void;
   onDetail?: () => void;
   extra?: string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }) {
   return (
     <Card style={styles.summaryCard}>
@@ -56,18 +59,19 @@ function SummaryCard({
         <>
           <ReportSummaryText variant="primary">{report.headlineSummary}</ReportSummaryText>
           <Pressable onPress={onDetail} style={styles.detailLink}>
-            <Text style={styles.detailLinkText}>查看完整解读</Text>
+            <Text style={styles.detailLinkText}>{t('common.viewFull')}</Text>
             <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} size={14} tintColor={colors.primary} />
           </Pressable>
         </>
       ) : (
-        <Button title={`生成${label}解读`} onPress={onGenerate} loading={loading} style={{ marginTop: 8 }} />
+        <Button title={t('chart.generateLabel', { label })} onPress={() => onGenerate?.()} loading={loading} style={{ marginTop: 8 }} />
       )}
     </Card>
   );
 }
 
 export default function ChartResultScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const { natalId: _natalId } = useLocalSearchParams<{ natalId?: string }>();
   const [hub, setHub] = useState<HubData | null>(null);
@@ -92,7 +96,7 @@ export default function ChartResultScreen() {
       await api.post('/chart/reports/daxian');
       load();
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '');
+      Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : '');
     } finally {
       setGenLoading(null);
     }
@@ -104,7 +108,7 @@ export default function ChartResultScreen() {
       await api.post('/chart/reports/liunian', { year });
       load();
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '');
+      Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : '');
     } finally {
       setGenLoading(null);
     }
@@ -112,7 +116,7 @@ export default function ChartResultScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '紫微解读', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('chart.resultNav'), headerTintColor: colors.primary }} />
       <ReportGeneratingOverlay visible={genLoading !== null} />
       <Screen>
         {loading && !hub ? (
@@ -120,36 +124,39 @@ export default function ChartResultScreen() {
         ) : (
           <>
             <SummaryCard
-              label="本命总结"
+              label={t('chart.natalSummary')}
               report={hub?.natal ?? null}
               onDetail={() => hub?.natal && router.push(`/report/${hub.natal._id}?mode=detail`)}
+              t={t}
             />
 
             <SummaryCard
-              label="大限解读"
+              label={t('chart.daxian')}
               report={hub?.daxian ?? null}
               loading={genLoading === 'daxian'}
               onGenerate={genDaxian}
               onDetail={() => hub?.daxian && router.push(`/report/${hub.daxian._id}?mode=detail`)}
-              extra={hub?.horoscope?.decadal ? `当前大限 ${hub.horoscope.decadal.range}` : undefined}
+              extra={hub?.horoscope?.decadal ? t('chart.daxianRange', { range: hub.horoscope.decadal.range }) : undefined}
+              t={t}
             />
 
             <SummaryCard
-              label={`${year} 流年解读`}
+              label={t('chart.liunian', { year })}
               report={hub?.liunian ?? null}
               loading={genLoading === 'liunian'}
               onGenerate={genLiunian}
               onDetail={() => hub?.liunian && router.push(`/report/${hub.liunian._id}?mode=detail`)}
-              extra={hub?.horoscope?.yearly ? `流年焦点 · ${hub.horoscope.yearly.palace}` : undefined}
+              extra={hub?.horoscope?.yearly ? t('chart.liunianFocus', { palace: hub.horoscope.yearly.palace }) : undefined}
+              t={t}
             />
 
             <View style={styles.yearRow}>
-              <Button title="← 上一年" variant="secondary" onPress={() => setYear((y) => y - 1)} style={styles.yearBtn} />
-              <Button title="下一年 →" variant="secondary" onPress={() => setYear((y) => y + 1)} style={styles.yearBtn} />
+              <Button title={t('chart.prevYear')} variant="secondary" onPress={() => setYear((y) => y - 1)} style={styles.yearBtn} />
+              <Button title={t('chart.nextYear')} variant="secondary" onPress={() => setYear((y) => y + 1)} style={styles.yearBtn} />
             </View>
 
-            <Button title="与心镜聊聊" onPress={() => router.push('/(tabs)/mirror')} style={{ marginTop: 8 }} />
-            <Text style={styles.disclaimer}>仅供自我觉察与娱乐参考，不构成专业诊断或决策依据。</Text>
+            <Button title={t('common.chatWithMirror')} onPress={() => router.push('/(tabs)/mirror')} style={{ marginTop: 8 }} />
+            <Text style={styles.disclaimer}>{t('reportDetail.disclaimer')}</Text>
           </>
         )}
       </Screen>

@@ -117,7 +117,11 @@ export class BotService {
       res.write('data: [DONE]\n\n');
       res.end();
     } catch {
-      res.write(`data: ${JSON.stringify({ delta: '连接暂时中断，请稍后再试。' })}\n\n`);
+      const offline =
+        this.ai.locale === 'en'
+          ? 'Connection interrupted. Please try again.'
+          : '连接暂时中断，请稍后再试。';
+      res.write(`data: ${JSON.stringify({ delta: offline })}\n\n`);
       res.write('data: [DONE]\n\n');
       res.end();
     }
@@ -145,10 +149,11 @@ export class BotService {
       content: m.content,
     }));
 
+    const en = this.ai.locale === 'en';
     const profileParts: string[] = [];
-    if (user?.ageRange) profileParts.push(`年龄段：${user.ageRange}`);
-    if (user?.occupation) profileParts.push(`职业：${user.occupation}`);
-    if (user?.concern) profileParts.push(`困惑：${user.concern}`);
+    if (user?.ageRange) profileParts.push(en ? `Age: ${user.ageRange}` : `年龄段：${user.ageRange}`);
+    if (user?.occupation) profileParts.push(en ? `Job: ${user.occupation}` : `职业：${user.occupation}`);
+    if (user?.concern) profileParts.push(en ? `Concern: ${user.concern}` : `困惑：${user.concern}`);
 
     const aiBody = {
       message,

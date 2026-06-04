@@ -5,6 +5,7 @@ import { ChatRequest, ChatRequestDocument } from '../schemas/chat-request.schema
 import { DirectChat, DirectChatDocument } from '../schemas/direct-chat.schema';
 import { Friendship, FriendshipDocument } from '../schemas/friendship.schema';
 import { MatchProfile } from '../schemas/user.schema';
+import { ReportsService } from '../reports/reports.service';
 import { UsersService } from '../users/users.service';
 
 const MBTI_COMPAT: Record<string, string[]> = {
@@ -41,9 +42,28 @@ export class SocialService {
     @InjectModel(Friendship.name) private friendshipModel: Model<FriendshipDocument>,
     @InjectModel(DirectChat.name) private directChatModel: Model<DirectChatDocument>,
     private usersService: UsersService,
+    private reportsService: ReportsService,
   ) {}
 
+  /** 已有报告但缺少 matchProfile 时自动补齐（兼容仅完成紫微报告的用户） */
+  private async ensureMatchProfile(userId: string): Promise<boolean> {
+    const user = await this.usersService.findById(userId);
+    const existing =
+      !!user?.matchProfile?.scores && Object.keys(user.matchProfile.scores).length > 0;
+    if (existing) return true;
+
+    const latest = await this.reportsService.findByUser(userId);
+    const report = latest[0];
+    if (!report) return false;
+
+    await this.usersService.updateMatchProfile(userId, {
+      scores: { [report.testType]: report.score ?? 75 },
+    });
+    return true;
+  }
+
   async getDiscoverStatus(userId: string) {
+    await this.ensureMatchProfile(userId);
     const user = await this.usersService.findById(userId);
     const hasProfile = !!user?.matchProfile?.scores && Object.keys(user.matchProfile.scores).length > 0;
     return {
@@ -54,19 +74,21 @@ export class SocialService {
   }
 
   async setDiscoverable(userId: string, discoverable: boolean) {
+    await this.ensureMatchProfile(userId);
     const user = await this.usersService.findById(userId);
     const hasProfile = !!user?.matchProfile?.scores && Object.keys(user.matchProfile.scores).length > 0;
     if (discoverable && !hasProfile) {
-      throw new BadRequestException('请先完成至少一项探索测试后再开启磁场匹配');
+      throw new BadRequestException('请先完成本命解读或至少一项探索测试后再开启磁场匹配');
     }
     await this.usersService.updateProfile(userId, { discoverable });
     return { discoverable };
   }
 
   async discover(userId: string) {
+    await this.ensureMatchProfile(userId);
     const me = await this.usersService.findById(userId);
     if (!me?.matchProfile?.scores || Object.keys(me.matchProfile.scores).length === 0) {
-      throw new BadRequestException('请先完成探索测试');
+      throw new BadRequestException('请先完成本命解读或探索测试');
     }
 
     const friendIds = await this.getFriendUserIds(userId);

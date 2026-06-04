@@ -11,6 +11,7 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -37,6 +38,7 @@ type ChatRequest = {
 };
 
 export default function ConnectionsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState<'discover' | 'friends' | 'requests'>('discover');
   const [discoverable, setDiscoverable] = useState(false);
@@ -80,17 +82,17 @@ export default function ConnectionsScreen() {
       setDiscoverable(value);
       if (value) load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : '无法开启');
+      alert(e instanceof Error ? e.message : t('memorial.enableFail'));
     }
   };
 
   const requestChat = async (toUserId: string) => {
     try {
-      await api.post('/social/chat-requests', { toUserId, message: '你好，磁场很合，想和你聊聊' });
-      alert('申请已发送');
+      await api.post('/social/chat-requests', { toUserId, message: t('memorial.requestMsg') });
+      alert(t('memorial.requestSent'));
       load();
     } catch (e) {
-      alert(e instanceof Error ? e.message : '发送失败');
+      alert(e instanceof Error ? e.message : t('memorial.requestFail'));
     }
   };
 
@@ -104,18 +106,19 @@ export default function ConnectionsScreen() {
       .map(([k, v]) => `${k.toUpperCase()} ${v}`)
       .join(' · ');
 
+  const tabRequests =
+    incoming.length > 0 ? `${t('memorial.tabRequests')}(${incoming.length})` : t('memorial.tabRequests');
+
   return (
     <Screen>
-      <Text style={styles.title}>缘分</Text>
-      <Text style={styles.subtitle}>基于探索结果，寻找磁场相合的人</Text>
+      <Text style={styles.title}>{t('memorial.title')}</Text>
+      <Text style={styles.subtitle}>{t('memorial.subtitle')}</Text>
 
       <Card>
         <View style={styles.switchRow}>
           <View style={{ flex: 1 }}>
-            <Text style={styles.switchLabel}>开启磁场匹配</Text>
-            <Text style={styles.switchHint}>
-              {hasProfile ? '可被其他用户搜索到' : '请先完成至少一项探索测试'}
-            </Text>
+            <Text style={styles.switchLabel}>{t('memorial.matchToggle')}</Text>
+            <Text style={styles.switchHint}>{hasProfile ? t('memorial.matchOn') : t('memorial.matchOff')}</Text>
           </View>
           <Switch
             value={discoverable}
@@ -128,10 +131,18 @@ export default function ConnectionsScreen() {
       </Card>
 
       <View style={styles.tabs}>
-        {(['discover', 'friends', 'requests'] as const).map((t) => (
-          <Pressable key={t} onPress={() => setTab(t)} style={[styles.tabBtn, tab === t && styles.tabBtnActive]}>
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
-              {t === 'discover' ? '发现' : t === 'friends' ? '好友' : `申请${incoming.length ? `(${incoming.length})` : ''}`}
+        {(['discover', 'friends', 'requests'] as const).map((tabKey) => (
+          <Pressable
+            key={tabKey}
+            onPress={() => setTab(tabKey)}
+            style={[styles.tabBtn, tab === tabKey && styles.tabBtnActive]}
+          >
+            <Text style={[styles.tabText, tab === tabKey && styles.tabTextActive]}>
+              {tabKey === 'discover'
+                ? t('memorial.tabDiscover')
+                : tabKey === 'friends'
+                  ? t('memorial.tabFriends')
+                  : tabRequests}
             </Text>
           </Pressable>
         ))}
@@ -141,41 +152,60 @@ export default function ConnectionsScreen() {
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : tab === 'discover' ? (
         matches.length === 0 ? (
-          <Card><Text style={styles.empty}>暂无匹配用户，开启匹配后稍后再来看看</Text></Card>
+          <Card>
+            <Text style={styles.empty}>{t('memorial.emptyDiscover')}</Text>
+          </Card>
         ) : (
           matches.map((u) => (
             <Card key={u.id}>
               <View style={styles.userRow}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.userName}>{u.nickname}</Text>
-                  {u.mbti && <Text style={styles.userMeta}>MBTI · {u.mbti}</Text>}
+                  {u.mbti && (
+                    <Text style={styles.userMeta}>
+                      {t('common.mbti')} · {u.mbti}
+                    </Text>
+                  )}
                   <Text style={styles.userScores}>{scoreSummary(u.scores)}</Text>
                 </View>
                 <View style={styles.compatBadge}>
                   <Text style={styles.compatText}>{u.compatibility}%</Text>
-                  <Text style={styles.compatLabel}>契合</Text>
+                  <Text style={styles.compatLabel}>{t('memorial.compatibility')}</Text>
                 </View>
               </View>
-              <Button title="申请聊天" variant="secondary" onPress={() => requestChat(u.id)} style={{ marginTop: 12 }} />
+              <Button
+                title={t('memorial.requestChat')}
+                variant="secondary"
+                onPress={() => requestChat(u.id)}
+                style={{ marginTop: 12 }}
+              />
             </Card>
           ))
         )
       ) : tab === 'friends' ? (
         friends.length === 0 ? (
-          <Card><Text style={styles.empty}>还没有好友，去发现页申请聊天吧</Text></Card>
+          <Card>
+            <Text style={styles.empty}>{t('memorial.emptyFriends')}</Text>
+          </Card>
         ) : (
           friends.map((f) => (
             <Pressable key={f.id} onPress={() => router.push(`/social/chat/${f.id}`)}>
               <Card>
                 <Text style={styles.userName}>{f.nickname}</Text>
-                {f.mbti && <Text style={styles.userMeta}>MBTI · {f.mbti}</Text>}
+                {f.mbti && (
+                  <Text style={styles.userMeta}>
+                    {t('common.mbti')} · {f.mbti}
+                  </Text>
+                )}
                 <Text style={styles.userScores}>{scoreSummary(f.scores)}</Text>
               </Card>
             </Pressable>
           ))
         )
       ) : incoming.length === 0 ? (
-        <Card><Text style={styles.empty}>暂无待处理的聊天申请</Text></Card>
+        <Card>
+          <Text style={styles.empty}>{t('memorial.emptyRequests')}</Text>
+        </Card>
       ) : (
         incoming.map((r) => (
           <Card key={r.id}>
@@ -183,8 +213,13 @@ export default function ConnectionsScreen() {
             <Text style={styles.userScores}>{scoreSummary(r.user.scores)}</Text>
             {r.message && <Text style={styles.reqMsg}>「{r.message}」</Text>}
             <View style={styles.reqActions}>
-              <Button title="拒绝" variant="secondary" onPress={() => respond(r.id, false)} style={styles.reqBtn} />
-              <Button title="通过" onPress={() => respond(r.id, true)} style={styles.reqBtn} />
+              <Button
+                title={t('memorial.reject')}
+                variant="secondary"
+                onPress={() => respond(r.id, false)}
+                style={styles.reqBtn}
+              />
+              <Button title={t('memorial.accept')} onPress={() => respond(r.id, true)} style={styles.reqBtn} />
             </View>
           </Card>
         ))

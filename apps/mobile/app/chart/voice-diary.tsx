@@ -4,10 +4,12 @@ import { Stack } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 export default function VoiceDiaryScreen() {
+  const { t } = useTranslation();
   const [text, setText] = useState('');
   const [focus, setFocus] = useState('');
   const [entries, setEntries] = useState<string[]>([]);
@@ -30,9 +32,9 @@ export default function VoiceDiaryScreen() {
       await api.post('/chart/voice-diary', { text: text.trim() });
       setText('');
       await loadContext();
-      Alert.alert('已保存', '日记已纳入命盘生活背景');
+      Alert.alert(t('chart.saved'), t('chart.diarySavedHint'));
     } catch (e) {
-      Alert.alert('保存失败', e instanceof Error ? e.message : '');
+      Alert.alert(t('persona.saveFail'), e instanceof Error ? e.message : '');
     } finally {
       setLoading(false);
     }
@@ -41,16 +43,16 @@ export default function VoiceDiaryScreen() {
   const saveFocus = async () => {
     if (!focus.trim()) return;
     await api.put('/chart/weekly-focus', { focus: focus.trim() });
-    Alert.alert('已更新本周焦点');
+    Alert.alert(t('chart.focusUpdated'));
   };
 
   const syncChat = async () => {
     setLoading(true);
     try {
       await api.post('/chart/chat-summary');
-      Alert.alert('已同步', '近期聊天摘要已写入命盘背景');
+      Alert.alert(t('chart.synced'), t('chart.chatSyncedHint'));
     } catch (e) {
-      Alert.alert('同步失败', e instanceof Error ? e.message : '请先与心镜聊聊');
+      Alert.alert(t('chart.syncFail'), e instanceof Error ? e.message : t('chart.chatFirst'));
     } finally {
       setLoading(false);
     }
@@ -58,35 +60,33 @@ export default function VoiceDiaryScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '语音日记', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('chart.voiceNav'), headerTintColor: colors.primary }} />
       <Screen keyboardAvoid>
-        <Text style={styles.desc}>
-          内测支持文字输入（ASR：配置 OPENAI_API_KEY 后可传语音）。内容会进入命盘解读与心镜对话背景。
-        </Text>
+        <Text style={styles.desc}>{t('chart.voiceDesc')}</Text>
 
         <Card>
-          <Text style={styles.label}>今日日记</Text>
+          <Text style={styles.label}>{t('chart.todayDiary')}</Text>
           <TextInput
             style={styles.area}
             multiline
-            placeholder="说说今天的心情与觉察…"
+            placeholder={t('chart.diaryPh')}
             value={text}
             onChangeText={setText}
           />
-          <Button title="保存日记" onPress={saveDiary} loading={loading} />
+          <Button title={t('chart.saveDiary')} onPress={saveDiary} loading={loading} />
         </Card>
 
         <Card>
-          <Text style={styles.label}>本周焦点</Text>
-          <TextInput style={styles.input} value={focus} onChangeText={setFocus} placeholder="如：稳定情绪、改善沟通" />
-          <Button title="更新焦点" variant="secondary" onPress={saveFocus} />
+          <Text style={styles.label}>{t('chart.weeklyFocus')}</Text>
+          <TextInput style={styles.input} value={focus} onChangeText={setFocus} placeholder={t('chart.weeklyPh')} />
+          <Button title={t('chart.updateFocus')} variant="secondary" onPress={saveFocus} />
         </Card>
 
-        <Button title="同步聊天摘要到命盘" variant="secondary" onPress={syncChat} loading={loading} />
+        <Button title={t('chart.syncChat')} variant="secondary" onPress={syncChat} loading={loading} />
 
         {entries.length > 0 && (
           <Card>
-            <Text style={styles.label}>最近日记</Text>
+            <Text style={styles.label}>{t('chart.recentDiary')}</Text>
             {entries.slice(-5).reverse().map((e, i) => (
               <Text key={i} style={styles.entry}>· {e}</Text>
             ))}

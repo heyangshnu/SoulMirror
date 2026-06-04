@@ -1,22 +1,40 @@
-import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import { Inject, Injectable, Logger, Scope, ServiceUnavailableException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { REQUEST } from '@nestjs/core';
 import axios, { AxiosInstance } from 'axios';
+import type { Request } from 'express';
+import { parseLocale, type AppLocale } from '../common/locale';
 
-@Injectable()
+@Injectable({ scope: Scope.REQUEST })
 export class AiService {
   private readonly client: AxiosInstance;
   private readonly logger = new Logger(AiService.name);
 
-  constructor(private config: ConfigService) {
-    const baseURL =
-      this.config.get<string>('AI_SERVICE_URL') ?? 'http://localhost:8001';
-    // 紫微报告需两次 LLM 调用，生产环境预留 5 分钟
+  constructor(
+    private config: ConfigService,
+    @Inject(REQUEST) private readonly req: Request,
+  ) {
+    const baseURL = this.config.get<string>('AI_SERVICE_URL') ?? 'http://localhost:8001';
     this.client = axios.create({ baseURL, timeout: 300000 });
   }
 
-  async get<T>(path: string): Promise<T> {
+  get locale(): AppLocale {
+    return parseLocale(this.req.headers['accept-language']);
+  }
+
+  private withLocale(data: unknown): Record<string, unknown> {
+    const locale = this.locale;
+    if (data && typeof data === 'object' && !Array.isArray(data)) {
+      return { ...(data as Record<string, unknown>), locale };
+    }
+    return { locale, data };
+  }
+
+  async get<T>(path: string, params?: Record<string, string>): Promise<T> {
     try {
-      const res = await this.client.get<T>(path);
+      const res = await this.client.get<T>(path, {
+        params: { ...params, locale: this.locale },
+      });
       return res.data;
     } catch (err) {
       this.logger.error(`AI service error GET ${path}`, err);
@@ -26,7 +44,7 @@ export class AiService {
 
   async post<T>(path: string, data: unknown): Promise<T> {
     try {
-      const res = await this.client.post<T>(path, data);
+      const res = await this.client.post<T>(path, this.withLocale(data));
       return res.data;
     } catch (err) {
       this.logger.error(`AI service error POST ${path}`, err);
@@ -46,7 +64,7 @@ export class AiService {
 
   streamPost(path: string, data: unknown): Promise<NodeJS.ReadableStream> {
     return this.client
-      .post(path, data, { responseType: 'stream', timeout: 0 })
+      .post(path, this.withLocale(data), { responseType: 'stream', timeout: 0 })
       .then((res) => res.data as NodeJS.ReadableStream)
       .catch((err) => {
         this.logger.error(`AI service stream error POST ${path}`, err);

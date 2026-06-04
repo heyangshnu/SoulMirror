@@ -1,4 +1,5 @@
 import { Image, Modal, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from '@/hooks/useTranslation';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
 const GENERATING_IMAGE = require('@/assets/images/report-generating.png');
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export function ReportGeneratingOverlay({ visible }: Props) {
+  const { t } = useTranslation();
+
   return (
     <Modal visible={visible} transparent animationType="fade" statusBarTranslucent>
       <View style={styles.backdrop}>
@@ -15,7 +18,7 @@ export function ReportGeneratingOverlay({ visible }: Props) {
           <View style={styles.imageWrap}>
             <Image source={GENERATING_IMAGE} style={styles.image} resizeMode="cover" />
           </View>
-          <Text style={styles.message}>报告生成中，请耐心等待。</Text>
+          <Text style={styles.message}>{t('chart.overlayGenerating')}</Text>
         </View>
       </View>
     </Modal>

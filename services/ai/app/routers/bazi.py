@@ -17,6 +17,7 @@ class BaziSubmitBody(BaseModel):
     gender: str = Field(pattern="^(male|female)$")
     calendar: str = Field(default="solar", pattern="^(solar|lunar)$")
     birthPlace: str | None = None
+    locale: str = "zh"
 
 
 def simple_pillars(dt: datetime) -> tuple[str, str, str, str]:
@@ -67,4 +68,5 @@ async def submit(body: BaziSubmitBody):
         context,
         raw=raw,
         fallback=_fallback_bazi(day, pillars),
+        locale=body.locale,
     )

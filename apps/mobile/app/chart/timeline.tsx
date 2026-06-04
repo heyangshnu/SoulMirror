@@ -4,6 +4,7 @@ import { Stack, useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -14,6 +15,7 @@ type Horoscope = {
 };
 
 export default function ChartTimelineScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [data, setData] = useState<Horoscope | null>(null);
   const [year, setYear] = useState(new Date().getFullYear());
@@ -43,7 +45,7 @@ export default function ChartTimelineScreen() {
       const report = await api.post<{ _id: string }>(path, body);
       router.push(`/report/${report._id}`);
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '请先完成紫微建档');
+      Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : t('chart.needSetup'));
     } finally {
       setReportLoading(null);
     }
@@ -51,24 +53,26 @@ export default function ChartTimelineScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '大限 · 流年', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('chart.timelineNav'), headerTintColor: colors.primary }} />
       <Screen>
         {loading ? (
           <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
         ) : !data ? (
           <View>
-            <Text style={styles.empty}>请先完成紫微建档</Text>
-            <Button title="去建档" onPress={() => router.push('/chart/setup')} />
+            <Text style={styles.empty}>{t('chart.needSetup')}</Text>
+            <Button title={t('common.goSetup')} onPress={() => router.push('/chart/setup')} />
           </View>
         ) : (
           <>
             <Card>
-              <Text style={styles.cardTitle}>当前 {data.currentAge} 岁</Text>
-              <Text style={styles.cardBody}>大限 {data.decadal.range}</Text>
-              <Text style={styles.cardBody}>大限命宫 · {data.decadal.palace}</Text>
-              <Text style={styles.cardSub}>主星：{(data.decadal.majorStars || []).join('、') || '—'}</Text>
+              <Text style={styles.cardTitle}>{t('chart.currentAge', { age: data.currentAge })}</Text>
+              <Text style={styles.cardBody}>{t('chart.daxianRangeShort', { range: data.decadal.range })}</Text>
+              <Text style={styles.cardBody}>{t('chart.daxianPalace', { palace: data.decadal.palace })}</Text>
+              <Text style={styles.cardSub}>
+                {t('chart.majorStars', { stars: (data.decadal.majorStars || []).join('、') || '—' })}
+              </Text>
               <Button
-                title="生成大限报告"
+                title={t('chart.genDaxian')}
                 onPress={() => genReport('daxian')}
                 loading={reportLoading === 'daxian'}
                 style={{ marginTop: 12 }}
@@ -76,15 +80,17 @@ export default function ChartTimelineScreen() {
             </Card>
 
             <Card>
-              <Text style={styles.cardTitle}>{year} 流年</Text>
-              <Text style={styles.cardBody}>流年命宫 · {data.yearly.palace}</Text>
-              <Text style={styles.cardSub}>主星：{(data.yearly.majorStars || []).join('、') || '—'}</Text>
+              <Text style={styles.cardTitle}>{t('chart.liunianYear', { year })}</Text>
+              <Text style={styles.cardBody}>{t('chart.liunianPalace', { palace: data.yearly.palace })}</Text>
+              <Text style={styles.cardSub}>
+                {t('chart.majorStars', { stars: (data.yearly.majorStars || []).join('、') || '—' })}
+              </Text>
               <View style={styles.row}>
-                <Button title="←" variant="secondary" onPress={() => setYear((y) => y - 1)} style={styles.yearBtn} />
-                <Button title="→" variant="secondary" onPress={() => setYear((y) => y + 1)} style={styles.yearBtn} />
+                <Button title={t('chart.prevYearBtn')} variant="secondary" onPress={() => setYear((y) => y - 1)} style={styles.yearBtn} />
+                <Button title={t('chart.nextYearBtn')} variant="secondary" onPress={() => setYear((y) => y + 1)} style={styles.yearBtn} />
               </View>
               <Button
-                title={`生成 ${year} 流年报告`}
+                title={t('chart.genLiunian', { year })}
                 onPress={() => genReport('liunian')}
                 loading={reportLoading === 'liunian'}
                 style={{ marginTop: 12 }}

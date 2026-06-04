@@ -4,6 +4,7 @@ import { type Href, useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { TestCard } from '@/components/ui/TestCard';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -15,7 +16,20 @@ type CatalogItem = {
   icon: string;
 };
 
+function localizeItem(item: CatalogItem, t: (k: string) => string): CatalogItem {
+  if (item.type === 'ziwei') {
+    return {
+      ...item,
+      title: t('explore.ziweiTitle'),
+      subtitle: t('explore.ziweiSubtitle'),
+      duration: t('explore.ziweiDuration'),
+    };
+  }
+  return item;
+}
+
 export default function ExploreScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -24,21 +38,24 @@ export default function ExploreScreen() {
     useCallback(() => {
       api
         .get<{ items: CatalogItem[] }>('/tests/catalog', false)
-        .then((res) => setItems(res.items))
+        .then((res) => setItems(res.items.map((i) => localizeItem(i, t))))
         .catch(() =>
           setItems([
-            { type: 'ziwei', title: '紫微斗数', subtitle: '三合派排盘 · 个性化觉察', duration: '约 3 分钟', icon: 'star.circle' },
+            localizeItem(
+              { type: 'ziwei', title: '', subtitle: '', duration: '', icon: 'star.circle' },
+              t,
+            ),
           ]),
         )
         .finally(() => setLoading(false));
-    }, []),
+    }, [t]),
   );
 
   return (
     <Screen>
-      <Text style={styles.brand}>心镜 SoulMirror</Text>
-      <Text style={styles.title}>探索自我</Text>
-      <Text style={styles.subtitle}>紫微斗数 · 结合你的近况，生成专属觉察</Text>
+      <Text style={styles.brand}>{t('common.brand')}</Text>
+      <Text style={styles.title}>{t('explore.title')}</Text>
+      <Text style={styles.subtitle}>{t('explore.subtitle')}</Text>
 
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
@@ -56,10 +73,24 @@ export default function ExploreScreen() {
           ))}
 
           <View style={styles.quickRow}>
-            <Button title="我的解读" variant="secondary" onPress={() => router.push('/chart/result' as Href)} style={styles.quickBtn} />
-            <Button title="关系人" variant="secondary" onPress={() => router.push('/chart/relations' as Href)} style={styles.quickBtn} />
+            <Button
+              title={t('explore.myReading')}
+              variant="secondary"
+              onPress={() => router.push('/chart/result' as Href)}
+              style={styles.quickBtn}
+            />
+            <Button
+              title={t('explore.relations')}
+              variant="secondary"
+              onPress={() => router.push('/chart/relations' as Href)}
+              style={styles.quickBtn}
+            />
           </View>
-          <Button title="语音日记" variant="secondary" onPress={() => router.push('/chart/voice-diary' as Href)} />
+          <Button
+            title={t('explore.voiceDiary')}
+            variant="secondary"
+            onPress={() => router.push('/chart/voice-diary' as Href)}
+          />
         </>
       )}
     </Screen>

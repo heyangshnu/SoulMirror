@@ -2,9 +2,12 @@ import { Tabs } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import { Platform } from 'react-native';
 import Colors from '@/constants/Colors';
+import { useTranslation } from '@/hooks/useTranslation';
 import { colors } from '@/theme/tokens';
 
 export default function TabLayout() {
+  const { t } = useTranslation();
+
   return (
     <Tabs
       screenOptions={{
@@ -23,7 +26,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: '探索',
+          title: t('tabs.explore'),
           tabBarIcon: ({ color }) => (
             <SymbolView name={{ ios: 'sparkles', android: 'star', web: 'star' }} tintColor={color} size={24} />
           ),
@@ -32,7 +35,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="reports"
         options={{
-          title: '报告',
+          title: t('tabs.reports'),
           tabBarIcon: ({ color }) => (
             <SymbolView name={{ ios: 'doc.text', android: 'description', web: 'description' }} tintColor={color} size={24} />
           ),
@@ -41,16 +44,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name="mirror"
         options={{
-          title: '心镜',
+          title: t('tabs.mirror'),
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'bubble.left.and.bubble.right', android: 'chat', web: 'chat' }} tintColor={color} size={24} />
+            <SymbolView
+              name={{ ios: 'bubble.left.and.bubble.right', android: 'chat', web: 'chat' }}
+              tintColor={color}
+              size={24}
+            />
           ),
         }}
       />
       <Tabs.Screen
         name="memorial"
         options={{
-          title: '缘分',
+          title: t('tabs.connections'),
           tabBarIcon: ({ color }) => (
             <SymbolView name={{ ios: 'person.2', android: 'group', web: 'group' }} tintColor={color} size={24} />
           ),
@@ -59,7 +66,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          title: '我的',
+          title: t('tabs.profile'),
           tabBarIcon: ({ color }) => (
             <SymbolView name={{ ios: 'person.circle', android: 'person', web: 'person' }} tintColor={color} size={24} />
           ),

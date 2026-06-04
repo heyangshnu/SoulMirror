@@ -3,10 +3,12 @@ import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 export default function BaziTestScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [birthDate, setBirthDate] = useState('1995-06-15');
   const [birthTime, setBirthTime] = useState('10:30');
@@ -26,7 +28,7 @@ export default function BaziTestScreen() {
       });
       router.replace(`/report/${report._id}`);
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '请检查网络与后端服务');
+      Alert.alert(t('tests.genFail'), e instanceof Error ? e.message : t('tests.checkBackend'));
     } finally {
       setLoading(false);
     }
@@ -34,22 +36,22 @@ export default function BaziTestScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '八字命盘', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('tests.baziNav'), headerTintColor: colors.primary }} />
       <Screen>
-        <Text style={styles.desc}>输入出生信息，获取四柱与性格、事业、感情解读</Text>
-        <Text style={styles.label}>出生日期 (YYYY-MM-DD)</Text>
+        <Text style={styles.desc}>{t('tests.baziDesc')}</Text>
+        <Text style={styles.label}>{t('tests.birthDate')}</Text>
         <TextInput style={styles.input} value={birthDate} onChangeText={setBirthDate} />
-        <Text style={styles.label}>出生时间 (HH:mm)</Text>
+        <Text style={styles.label}>{t('tests.birthTime')}</Text>
         <TextInput style={styles.input} value={birthTime} onChangeText={setBirthTime} />
-        <Text style={styles.label}>性别</Text>
+        <Text style={styles.label}>{t('tests.gender')}</Text>
         <View style={styles.row}>
-          <Button title="女" variant={gender === 'female' ? 'primary' : 'secondary'} onPress={() => setGender('female')} style={styles.half} />
-          <Button title="男" variant={gender === 'male' ? 'primary' : 'secondary'} onPress={() => setGender('male')} style={styles.half} />
+          <Button title={t('common.female')} variant={gender === 'female' ? 'primary' : 'secondary'} onPress={() => setGender('female')} style={styles.half} />
+          <Button title={t('common.male')} variant={gender === 'male' ? 'primary' : 'secondary'} onPress={() => setGender('male')} style={styles.half} />
         </View>
-        <Text style={styles.label}>出生地（可选）</Text>
-        <TextInput style={styles.input} placeholder="如：上海" value={birthPlace} onChangeText={setBirthPlace} />
-        <Button title="生成命盘报告" onPress={submit} loading={loading} style={{ marginTop: 24 }} />
-        <Text style={styles.disclaimer}>仅供自我探索与娱乐参考，不构成命理或医疗建议。</Text>
+        <Text style={styles.label}>{t('tests.birthPlaceOptional')}</Text>
+        <TextInput style={styles.input} placeholder={t('tests.birthPlacePh')} value={birthPlace} onChangeText={setBirthPlace} />
+        <Button title={t('tests.genBazi')} onPress={submit} loading={loading} style={{ marginTop: 24 }} />
+        <Text style={styles.disclaimer}>{t('reportDetail.disclaimer')}</Text>
       </Screen>
     </>
   );

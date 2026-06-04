@@ -3,6 +3,7 @@ import re
 from typing import Any, Optional
 
 from app.services.llm import chat_completion
+from app.services.locale_util import is_english
 
 HEADLINE_SUMMARY_SYSTEM = """请根据以下报告内容和用户个性化需求，生成一段总结性的话。要求：
 
@@ -38,6 +39,79 @@ JSON 格式：
 }
 
 dominantElement 仅八字测试需要（五行：金木水火土之一），其他测试可省略该字段。"""
+
+HEADLINE_SUMMARY_SYSTEM_EN = """Write one cohesive summary paragraph for the report below.
+
+Requirements:
+- 120-180 words in natural English; complete sentences with a clear ending.
+- Plain language—avoid jargon (palaces, flying stars, etc.).
+- Tie to the user's focus (career, relationships, wellbeing) with one gentle actionable insight.
+- Warm, encouraging tone; optional closing metaphor.
+- Output only the summary text—no title, JSON, or markdown."""
+
+REPORT_SYSTEM_EN = """You are SoulMirror's self-exploration report writer.
+Generate a personalized, warm report in **English** from the user's test data.
+
+Rules:
+1. Entertainment and self-reflection only—not medical or deterministic fate claims
+2. Translate symbols (BaZi, tarot, palm lines) into psychological insight language
+3. score: integer 0-100 reflecting energy, coherence, growth potential
+4. scoreLabel: 2-4 word keyword (e.g. Flow, Harmony, Awakening)
+5. sections: 4-6 chapters, 120-200 words each, specific not generic
+6. Output **valid JSON only**—no markdown fences
+
+JSON shape:
+{
+  "title": "Report title",
+  "summary": "One-line summary (under 30 words)",
+  "score": 82,
+  "scoreLabel": "Keyword",
+  "sections": [{"title": "Chapter", "content": "Body"}],
+  "dominantElement": "Wood"
+}
+
+dominantElement only for BaZi (Metal/Wood/Water/Fire/Earth); omit for other tests."""
+
+ZIWEI_SYSTEM_EN = """You are SoulMirror's Zi Wei (Purple Star) interpreter.
+Write a healing-oriented, non-fatalistic report in **English** from structured chart data.
+
+Rules:
+1. Self-reflection and entertainment only—not medical or fortune-telling
+2. Translate stars/palaces into psychological growth language
+3. Frame challenging stars as "integration themes," never fear-mongering
+4. No numeric scores or percentages
+5. themeLabel: 2-4 word theme keyword
+6. sections: 4-6 chapters, 120-200 words each; use the user's personal context
+7. Valid JSON only
+
+JSON shape:
+{
+  "title": "Report title",
+  "summary": "Short summary",
+  "headlineSummary": "120-180 word spoken-style summary with clear takeaway",
+  "themeLabel": "Theme",
+  "sections": [{"title": "Chapter", "content": "Body"}]
+}"""
+
+
+def _headline_system(locale: str | None) -> str:
+    return HEADLINE_SUMMARY_SYSTEM_EN if is_english(locale) else HEADLINE_SUMMARY_SYSTEM
+
+
+def _report_system(locale: str | None) -> str:
+    return REPORT_SYSTEM_EN if is_english(locale) else REPORT_SYSTEM
+
+
+def _ziwei_system(locale: str | None) -> str:
+    return ZIWEI_SYSTEM_EN if is_english(locale) else ZIWEI_SYSTEM
+
+
+def _default_title(locale: str | None) -> str:
+    return "Exploration Report" if is_english(locale) else "探索报告"
+
+
+def _default_ziwei_title(locale: str | None) -> str:
+    return "Zi Wei Insight Report" if is_english(locale) else "紫微觉察报告"
 
 
 def _extract_json(text: str) -> Optional[dict[str, Any]]:
@@ -76,15 +150,22 @@ async def generate_headline_summary(
     sections: list[dict[str, str]],
     personal_context: str | None = None,
     fallback: str | None = None,
+    locale: str | None = "zh",
 ) -> str:
     body = "\n".join(f"【{s['title']}】{s['content']}" for s in sections)
-    user_prompt = f"报告标题：{report_title}\n\n报告正文：\n{body}"
-    if personal_context:
-        user_prompt += f"\n\n用户个性化需求：\n{personal_context}"
+    if is_english(locale):
+        body = "\n".join(f"[{s['title']}] {s['content']}" for s in sections)
+        user_prompt = f"Report title: {report_title}\n\nReport body:\n{body}"
+        if personal_context:
+            user_prompt += f"\n\nUser context:\n{personal_context}"
+    else:
+        user_prompt = f"报告标题：{report_title}\n\n报告正文：\n{body}"
+        if personal_context:
+            user_prompt += f"\n\n用户个性化需求：\n{personal_context}"
 
     llm_text = await chat_completion(
         [
-            {"role": "system", "content": HEADLINE_SUMMARY_SYSTEM},
+            {"role": "system", "content": _headline_system(locale)},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.7,
@@ -120,7 +201,7 @@ def _validate_report(data: dict[str, Any]) -> dict[str, Any]:
     score = max(0, min(100, score))
 
     return {
-        "title": str(data.get("title") or "探索报告"),
+        "title": str(data.get("title") or _default_title(None)),
         "summary": str(data.get("summary") or ""),
         "score": score,
         "scoreLabel": str(data.get("scoreLabel") or "Insight"),
@@ -136,19 +217,29 @@ async def generate_test_report(
     raw: dict[str, Any],
     fallback: dict[str, Any],
     personal_context: str | None = None,
+    locale: str | None = "zh",
 ) -> dict[str, Any]:
     """Call DeepSeek to produce report JSON; fall back to template if unavailable."""
-    user_prompt = f"""测试类型：{test_type}
+    if is_english(locale):
+        user_prompt = f"""Test type: {test_type}
+
+User data:
+{context}"""
+        if personal_context:
+            user_prompt += f"\n\nPersonal context:\n{personal_context}"
+        user_prompt += "\n\nGenerate the full personalized report JSON in English."
+    else:
+        user_prompt = f"""测试类型：{test_type}
 
 用户数据：
 {context}"""
-    if personal_context:
-        user_prompt += f"\n\n用户个性化背景：\n{personal_context}"
-    user_prompt += "\n\n请基于以上数据生成完整的个性化报告 JSON。"
+        if personal_context:
+            user_prompt += f"\n\n用户个性化背景：\n{personal_context}"
+        user_prompt += "\n\n请基于以上数据生成完整的个性化报告 JSON。"
 
     llm_text = await chat_completion(
         [
-            {"role": "system", "content": REPORT_SYSTEM},
+            {"role": "system", "content": _report_system(locale)},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.75,
@@ -158,10 +249,11 @@ async def generate_test_report(
     if not llm_text:
         result = {**fallback, "raw": {**raw, "llmGenerated": False}}
         headline = await generate_headline_summary(
-            report_title=result.get("title", "探索报告"),
+            report_title=result.get("title", _default_title(locale)),
             sections=result.get("sections", []),
             personal_context=personal_context,
             fallback=result.get("summary"),
+            locale=locale,
         )
         result["headlineSummary"] = headline
         return result
@@ -170,10 +262,11 @@ async def generate_test_report(
     if not parsed:
         result = {**fallback, "raw": {**raw, "llmGenerated": False, "llmError": "parse_failed"}}
         headline = await generate_headline_summary(
-            report_title=result.get("title", "探索报告"),
+            report_title=result.get("title", _default_title(locale)),
             sections=result.get("sections", []),
             personal_context=personal_context,
             fallback=result.get("summary"),
+            locale=locale,
         )
         result["headlineSummary"] = headline
         return result
@@ -183,10 +276,11 @@ async def generate_test_report(
     except ValueError:
         result = {**fallback, "raw": {**raw, "llmGenerated": False, "llmError": "validation_failed"}}
         headline = await generate_headline_summary(
-            report_title=result.get("title", "探索报告"),
+            report_title=result.get("title", _default_title(locale)),
             sections=result.get("sections", []),
             personal_context=personal_context,
             fallback=result.get("summary"),
+            locale=locale,
         )
         result["headlineSummary"] = headline
         return result
@@ -196,6 +290,7 @@ async def generate_test_report(
         sections=report["sections"],
         personal_context=personal_context,
         fallback=report["summary"],
+        locale=locale,
     )
 
     result: dict[str, Any] = {
@@ -249,7 +344,7 @@ def _validate_ziwei_report(data: dict[str, Any]) -> dict[str, Any]:
 
     headline = data.get("headlineSummary")
     return {
-        "title": str(data.get("title") or "紫微觉察报告"),
+        "title": str(data.get("title") or _default_ziwei_title(None)),
         "summary": str(data.get("summary") or ""),
         "headlineSummary": str(headline).strip() if headline else "",
         "themeLabel": str(data.get("themeLabel") or "觉察"),
@@ -264,18 +359,28 @@ async def generate_ziwei_report(
     raw: dict[str, Any],
     fallback: dict[str, Any],
     personal_context: str | None = None,
+    locale: str | None = "zh",
 ) -> dict[str, Any]:
-    user_prompt = f"""报告类型：{test_type}
+    if is_english(locale):
+        user_prompt = f"""Report type: {test_type}
+
+Chart and cycle data:
+{context}"""
+        if personal_context:
+            user_prompt += f"\n\nPersonal context:\n{personal_context}"
+        user_prompt += "\n\nGenerate the full healing-oriented Zi Wei report JSON in English."
+    else:
+        user_prompt = f"""报告类型：{test_type}
 
 命盘与运势数据：
 {context}"""
-    if personal_context:
-        user_prompt += f"\n\n用户个性化背景：\n{personal_context}"
-    user_prompt += "\n\n请生成完整的治愈向紫微解读报告 JSON。"
+        if personal_context:
+            user_prompt += f"\n\n用户个性化背景：\n{personal_context}"
+        user_prompt += "\n\n请生成完整的治愈向紫微解读报告 JSON。"
 
     llm_text = await chat_completion(
         [
-            {"role": "system", "content": ZIWEI_SYSTEM},
+            {"role": "system", "content": _ziwei_system(locale)},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.75,
@@ -295,6 +400,7 @@ async def generate_ziwei_report(
             sections=report["sections"],
             personal_context=personal_context,
             fallback=report.get("summary"),
+            locale=locale,
         )
         return {**report, "headlineSummary": headline}
 

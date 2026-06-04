@@ -4,6 +4,8 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
+import { useTranslation, reportTypeLabel } from '@/hooks/useTranslation';
+import { useLocaleStore } from '@/store/locale';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -18,18 +20,9 @@ type Report = {
   createdAt: string;
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  ziwei_natal: '本命',
-  ziwei_daxian: '大限',
-  ziwei_liunian: '流年',
-  ziwei_relation: '关系',
-  mbti: 'MBTI',
-  tarot: '塔罗',
-  palm: '手相',
-  bazi: '八字',
-};
-
 export default function ReportsScreen() {
+  const { t } = useTranslation();
+  const locale = useLocaleStore((s) => s.locale);
   const router = useRouter();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,21 +38,23 @@ export default function ReportsScreen() {
     }, []),
   );
 
+  const dateLocale = locale === 'en' ? 'en-US' : 'zh-CN';
+
   return (
     <Screen>
-      <Text style={styles.title}>我的报告</Text>
-      <Text style={styles.subtitle}>每一次探索，都是更了解自己的一步</Text>
+      <Text style={styles.title}>{t('reports.title')}</Text>
+      <Text style={styles.subtitle}>{t('reports.subtitle')}</Text>
 
       {loading ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
       ) : reports.length === 0 ? (
         <Card>
-          <Text style={styles.empty}>还没有报告，去「探索」完成第一次测试吧</Text>
+          <Text style={styles.empty}>{t('reports.empty')}</Text>
         </Card>
       ) : (
         reports.map((r) => {
           const headline = r.headlineSummary ?? r.summary;
-          const label = r.themeLabel ?? TYPE_LABEL[r.testType] ?? r.testType;
+          const label = r.themeLabel ?? reportTypeLabel(t, r.testType);
           const isZiwei = r.testType.startsWith('ziwei');
           return (
             <Card
@@ -78,10 +73,10 @@ export default function ReportsScreen() {
               <ReportSummaryText>{headline}</ReportSummaryText>
               {!isZiwei && (
                 <Pressable onPress={() => router.push(`/report/${r._id}?mode=detail`)}>
-                  <Text style={styles.link}>查看完整解读 →</Text>
+                  <Text style={styles.link}>{t('reports.viewFull')}</Text>
                 </Pressable>
               )}
-              <Text style={styles.date}>{new Date(r.createdAt).toLocaleDateString('zh-CN')}</Text>
+              <Text style={styles.date}>{new Date(r.createdAt).toLocaleDateString(dateLocale)}</Text>
             </Card>
           );
         })

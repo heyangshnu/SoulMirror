@@ -7,22 +7,19 @@ import { Button } from '@/components/ui/Button';
 import { API_BASE, api } from '@/lib/api';
 import { runNetworkCheck } from '@/lib/network-check';
 import { useAuthStore } from '@/store/auth';
+import { useTranslation, toneLabel } from '@/hooks/useTranslation';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 type UserMe = {
   nickname?: string;
   phone?: string;
+  email?: string;
   botTone?: string;
   anonymousMode?: boolean;
 };
 
-const TONE_LABELS: Record<string, string> = {
-  gentle: '温柔',
-  rational: '理性',
-  humorous: '幽默',
-};
-
 export default function ProfileScreen() {
+  const { t, locale, setLocale } = useTranslation();
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const [me, setMe] = useState<UserMe>({});
@@ -35,19 +32,19 @@ export default function ProfileScreen() {
 
   const runDiag = async () => {
     try {
-      const items = await runNetworkCheck();
+      const items = await runNetworkCheck(locale);
       const lines = items.map((i) => `${i.ok ? '✅' : '❌'} ${i.name}\n${i.detail}`).join('\n\n');
-      Alert.alert('网络诊断', `${lines}\n\n当前 API：${API_BASE}`);
+      Alert.alert(t('profile.diagTitle'), `${lines}\n\n${t('profile.currentApi')}${API_BASE}`);
     } catch (e) {
-      Alert.alert('诊断失败', e instanceof Error ? e.message : '未知错误');
+      Alert.alert(t('profile.diagFail'), e instanceof Error ? e.message : t('profile.unknownError'));
     }
   };
 
   const deleteAccount = () => {
-    Alert.alert('删除账号', '将永久删除所有数据，确定继续？', [
-      { text: '取消', style: 'cancel' },
+    Alert.alert(t('profile.deleteTitle'), t('profile.deleteMsg'), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: '删除',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -55,7 +52,7 @@ export default function ProfileScreen() {
             logout();
             router.replace('/auth/login');
           } catch (e) {
-            Alert.alert('失败', e instanceof Error ? e.message : '请稍后重试');
+            Alert.alert(t('common.fail'), e instanceof Error ? e.message : t('common.retryLater'));
           }
         },
       },
@@ -64,36 +61,76 @@ export default function ProfileScreen() {
 
   return (
     <Screen>
-      <Text style={styles.title}>我的</Text>
+      <Text style={styles.title}>{t('profile.title')}</Text>
 
       <Card>
-        <Text style={styles.name}>{me.nickname || user?.nickname || '心镜用户'}</Text>
-        <Text style={styles.phone}>{me.phone || user?.phone || '未绑定手机'}</Text>
-        <Text style={styles.meta}>机器人语气：{TONE_LABELS[me.botTone || 'gentle']}</Text>
+        <Text style={styles.name}>{me.nickname || user?.nickname || t('profile.defaultName')}</Text>
+        <Text style={styles.phone}>
+          {me.phone || user?.phone || me.email || user?.email || t('profile.noPhone')}
+        </Text>
+        <Text style={styles.meta}>
+          {t('profile.botTone')}
+          {toneLabel(t, me.botTone)}
+        </Text>
+      </Card>
+
+      <Card>
+        <Text style={styles.sectionLabel}>{t('profile.language')}</Text>
+        <View style={styles.langRow}>
+          <Pressable
+            onPress={() => setLocale('zh')}
+            style={[styles.langBtn, locale === 'zh' && styles.langBtnActive]}
+          >
+            <Text style={[styles.langText, locale === 'zh' && styles.langTextActive]}>
+              {t('profile.languageZh')}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setLocale('en')}
+            style={[styles.langBtn, locale === 'en' && styles.langBtnActive]}
+          >
+            <Text style={[styles.langText, locale === 'en' && styles.langTextActive]}>
+              {t('profile.languageEn')}
+            </Text>
+          </Pressable>
+        </View>
       </Card>
 
       <Pressable onPress={() => router.push('/profile/setup')}>
         <Card>
-          <Text style={styles.link}>编辑用户画像</Text>
+          <Text style={styles.link}>{t('profile.editPersona')}</Text>
         </Card>
       </Pressable>
 
       <Card>
         <View style={styles.row}>
-          <Text style={styles.link}>匿名模式</Text>
+          <Text style={styles.link}>{t('profile.anonymous')}</Text>
           <Switch value={me.anonymousMode} disabled trackColor={{ true: colors.primary }} />
         </View>
-        <Text style={styles.hint}>开启后减少可选信息采集</Text>
+        <Text style={styles.hint}>{t('profile.anonymousHint')}</Text>
       </Card>
 
       <Card>
-        <Text style={styles.link}>隐私政策</Text>
-        <Text style={[styles.link, { marginTop: 12 }]}>用户协议</Text>
+        <Text style={styles.link}>{t('profile.privacy')}</Text>
+        <Text style={[styles.link, { marginTop: 12 }]}>{t('profile.terms')}</Text>
       </Card>
 
-      <Button title="网络诊断" variant="secondary" onPress={runDiag} />
-      <Button title="退出登录" variant="secondary" onPress={() => { logout(); router.replace('/auth/login'); }} style={{ marginTop: 12 }} />
-      <Button title="一键删除账号" variant="ghost" onPress={deleteAccount} style={{ marginTop: 8 }} />
+      <Button title={t('profile.networkDiag')} variant="secondary" onPress={runDiag} />
+      <Button
+        title={t('profile.logout')}
+        variant="secondary"
+        onPress={() => {
+          logout();
+          router.replace('/auth/login');
+        }}
+        style={{ marginTop: 12 }}
+      />
+      <Button
+        title={t('profile.deleteAccount')}
+        variant="ghost"
+        onPress={deleteAccount}
+        style={{ marginTop: 8 }}
+      />
     </Screen>
   );
 }
@@ -104,6 +141,18 @@ const styles = StyleSheet.create({
   phone: { ...typography.caption, marginTop: 4 },
   meta: { ...typography.small, marginTop: 8 },
   link: { ...typography.body, fontWeight: '500' },
+  sectionLabel: { ...typography.body, fontWeight: '600', marginBottom: 10 },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   hint: { ...typography.small, marginTop: 8 },
+  langRow: { flexDirection: 'row', gap: 10 },
+  langBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: colors.backgroundSecondary,
+    alignItems: 'center',
+  },
+  langBtnActive: { backgroundColor: colors.primaryMuted },
+  langText: { ...typography.caption, fontWeight: '600', color: colors.textSecondary },
+  langTextActive: { color: colors.primary },
 });

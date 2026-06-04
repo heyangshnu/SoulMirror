@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from app.data.tarot_cards import DOMAIN_LABELS, TAROT_MAJOR
+from app.services.locale_util import is_english
 from app.services.report_llm import generate_test_report
 
 router = APIRouter()
@@ -12,6 +13,7 @@ router = APIRouter()
 class TarotDrawBody(BaseModel):
     domain: str = Field(pattern="^(love|career|health|general)$")
     seed: int | None = None
+    locale: str = "zh"
 
 
 def _fallback_tarot(domain_label: str, card_name: str) -> dict:
@@ -31,7 +33,7 @@ def _fallback_tarot(domain_label: str, card_name: str) -> dict:
 async def draw(body: TarotDrawBody):
     rng = random.Random(body.seed)
     picked = rng.sample(TAROT_MAJOR, 3)
-    positions = ["过去", "现在", "建议"]
+    positions = ["Past", "Present", "Advice"] if is_english(body.locale) else ["过去", "现在", "建议"]
     cards = []
     for i, card in enumerate(picked):
         upright = rng.random() > 0.35
@@ -68,4 +70,5 @@ async def draw(body: TarotDrawBody):
         context,
         raw=raw,
         fallback=_fallback_tarot(domain_label, cards[1]["name"]),
+        locale=body.locale,
     )

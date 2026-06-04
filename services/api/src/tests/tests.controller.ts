@@ -1,6 +1,7 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Headers } from '@nestjs/common';
+import { parseLocale } from '../common/locale';
 
-const CATALOG = [
+const CATALOG_ZH = [
   {
     type: 'ziwei',
     title: '紫微斗数',
@@ -11,10 +12,22 @@ const CATALOG = [
   },
 ];
 
+const CATALOG_EN = [
+  {
+    type: 'ziwei',
+    title: 'Zi Wei (Purple Star)',
+    subtitle: 'San He chart · personal insights',
+    duration: '~3 min',
+    icon: 'star.circle',
+    primary: true,
+  },
+];
+
 @Controller('tests')
 export class TestsController {
   @Get('catalog')
-  catalog() {
-    return { items: CATALOG };
+  catalog(@Headers('accept-language') acceptLanguage?: string) {
+    const locale = parseLocale(acceptLanguage);
+    return { items: locale === 'en' ? CATALOG_EN : CATALOG_ZH };
   }
 }

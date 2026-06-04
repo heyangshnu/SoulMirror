@@ -5,6 +5,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -20,6 +21,7 @@ type Report = {
 };
 
 export default function ReportDetailScreen() {
+  const { t } = useTranslation();
   const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
   const router = useRouter();
   const [report, setReport] = useState<Report | null>(null);
@@ -32,7 +34,7 @@ export default function ReportDetailScreen() {
   if (!report) {
     return (
       <>
-        <Stack.Screen options={{ title: '报告' }} />
+        <Stack.Screen options={{ title: t('reportDetail.nav') }} />
         <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
       </>
     );
@@ -46,7 +48,7 @@ export default function ReportDetailScreen() {
     <>
       <Stack.Screen
         options={{
-          title: isDetailOnly ? '完整解读' : report.title,
+          title: isDetailOnly ? t('reportDetail.full') : report.title,
           headerTintColor: colors.primary,
         }}
       />
@@ -58,12 +60,12 @@ export default function ReportDetailScreen() {
                 <Text style={styles.badgeText}>{keyword}</Text>
               </View>
             ) : null}
-            <Text style={styles.headlineTitle}>一句话总结</Text>
+            <Text style={styles.headlineTitle}>{t('reportDetail.headline')}</Text>
             <ReportSummaryText variant="primary">{headline}</ReportSummaryText>
           </Card>
         )}
 
-        <Text style={styles.detailTitle}>{isDetailOnly ? '详细解读' : '展开阅读'}</Text>
+        <Text style={styles.detailTitle}>{isDetailOnly ? t('reportDetail.sections') : t('reportDetail.expand')}</Text>
 
         {report.sections.map((s, i) => (
           <Card key={i}>
@@ -73,17 +75,17 @@ export default function ReportDetailScreen() {
         ))}
 
         {!isZiwei && report.score != null ? (
-          <Text style={styles.legacyScore}>参考指数 {report.score}</Text>
+          <Text style={styles.legacyScore}>{t('reportDetail.score', { score: report.score })}</Text>
         ) : null}
 
         {isZiwei && isDetailOnly ? (
           <Pressable onPress={() => router.back()}>
-            <Text style={styles.backLink}>← 返回总结页</Text>
+            <Text style={styles.backLink}>{t('reportDetail.backSummary')}</Text>
           </Pressable>
         ) : null}
 
-        <Button title="与心镜聊聊" onPress={() => router.push('/(tabs)/mirror')} style={{ marginTop: 8 }} />
-        <Text style={styles.disclaimer}>本报告仅供自我探索与娱乐参考，不构成专业诊断或决策依据。</Text>
+        <Button title={t('common.chatWithMirror')} onPress={() => router.push('/(tabs)/mirror')} style={{ marginTop: 8 }} />
+        <Text style={styles.disclaimer}>{t('reportDetail.disclaimer')}</Text>
       </Screen>
     </>
   );

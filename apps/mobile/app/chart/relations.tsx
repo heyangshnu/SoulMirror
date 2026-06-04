@@ -13,6 +13,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ReportGeneratingOverlay } from '@/components/ui/ReportGeneratingOverlay';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, radius, spacing, typography } from '@/theme/tokens';
 
@@ -23,15 +24,13 @@ type Relation = {
   birthDate: string;
 };
 
-const TYPE_LABEL: Record<string, string> = {
-  spouse: '配偶',
-  child: '子女',
-  parent: '父母',
-  sibling: '兄弟姐妹',
-  other: '其他',
-};
-
 const RELATION_TYPES = ['spouse', 'child', 'parent', 'sibling'] as const;
+
+function relationTypeLabel(t: (key: string) => string, type: string) {
+  const key = `chart.relationTypes.${type}`;
+  const label = t(key);
+  return label === key ? type : label;
+}
 
 function Chip({
   label,
@@ -53,6 +52,7 @@ function Chip({
 }
 
 export default function ChartRelationsScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [items, setItems] = useState<Relation[]>([]);
   const [loading, setLoading] = useState(true);
@@ -79,7 +79,7 @@ export default function ChartRelationsScreen() {
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
   const add = async () => {
-    if (!name.trim()) return Alert.alert('请填写姓名');
+    if (!name.trim()) return Alert.alert(t('chart.nameRequired'));
     setSaving(true);
     try {
       await api.post('/chart/relations', {
@@ -94,30 +94,30 @@ export default function ChartRelationsScreen() {
       setName('');
       load();
     } catch (e) {
-      Alert.alert('添加失败', e instanceof Error ? e.message : '最多 6 人');
+      Alert.alert(t('chart.addFail'), e instanceof Error ? e.message : t('chart.maxRelations'));
     } finally {
       setSaving(false);
     }
   };
 
-  const genReport = async (id: string, relationName: string) => {
+  const genReport = async (id: string) => {
     if (generatingId) return;
     setGeneratingId(id);
     try {
       const report = await api.post<{ _id: string }>(`/chart/relations/${id}/report`);
       router.push(`/report/${report._id}`);
     } catch (e) {
-      Alert.alert('生成失败', e instanceof Error ? e.message : '');
+      Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : '');
     } finally {
       setGeneratingId(null);
     }
   };
 
   const remove = (id: string, relationName: string) => {
-    Alert.alert('删除关系人', `确定删除「${relationName}」吗？`, [
-      { text: '取消', style: 'cancel' },
+    Alert.alert(t('chart.deleteRelationTitle'), t('chart.deleteRelationMsg', { name: relationName }), [
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: '删除',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: async () => {
           setDeletingId(id);
@@ -125,7 +125,7 @@ export default function ChartRelationsScreen() {
             await api.delete(`/chart/relations/${id}`);
             load();
           } catch (e) {
-            Alert.alert('删除失败', e instanceof Error ? e.message : '');
+            Alert.alert(t('chart.deleteFail'), e instanceof Error ? e.message : '');
           } finally {
             setDeletingId(null);
           }
@@ -136,22 +136,20 @@ export default function ChartRelationsScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '关系人', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('chart.relationsNav'), headerTintColor: colors.primary }} />
       <ReportGeneratingOverlay visible={!!generatingId} />
       <Screen keyboardAvoid>
-        <Text style={styles.desc}>
-          添加配偶、子女、父母或兄弟姐妹，生成专属关系解读。最多 6 人，含飞星四化附录。
-        </Text>
+        <Text style={styles.desc}>{t('chart.relationsDesc')}</Text>
 
         {loading ? (
           <ActivityIndicator color={colors.primary} style={styles.loader} />
         ) : items.length === 0 ? (
           <Card>
-            <Text style={styles.empty}>还没有关系人，点击下方按钮添加第一位</Text>
+            <Text style={styles.empty}>{t('chart.relationsEmpty')}</Text>
           </Card>
         ) : (
           <>
-            <Text style={styles.sectionTitle}>已添加 · {items.length}/6</Text>
+            <Text style={styles.sectionTitle}>{t('chart.addedCount', { n: items.length })}</Text>
             {items.map((r) => {
               const isGenerating = generatingId === r._id;
               const isDeleting = deletingId === r._id;
@@ -160,18 +158,18 @@ export default function ChartRelationsScreen() {
                 <Card key={r._id} style={styles.personCard}>
                   <Text style={styles.name}>{r.name}</Text>
                   <Text style={styles.meta}>
-                    {TYPE_LABEL[r.relationType] ?? r.relationType} · {r.birthDate}
+                    {relationTypeLabel(t, r.relationType)} · {r.birthDate}
                   </Text>
                   <View style={styles.row}>
                     <Button
-                      title={isGenerating ? '生成中…' : '关系报告'}
-                      onPress={() => genReport(r._id, r.name)}
+                      title={isGenerating ? t('common.generating') : t('chart.relationReport')}
+                      onPress={() => genReport(r._id)}
                       loading={isGenerating}
                       disabled={busy && !isGenerating}
                       style={styles.flex}
                     />
                     <Button
-                      title="删除"
+                      title={t('common.delete')}
                       variant="secondary"
                       onPress={() => remove(r._id, r.name)}
                       loading={isDeleting}
@@ -187,41 +185,41 @@ export default function ChartRelationsScreen() {
 
         {showForm ? (
           <Card style={styles.formCard}>
-            <Text style={styles.formTitle}>添加关系人</Text>
+            <Text style={styles.formTitle}>{t('chart.addRelation')}</Text>
 
-            <Text style={styles.label}>姓名</Text>
+            <Text style={styles.label}>{t('chart.name')}</Text>
             <TextInput
               style={styles.input}
-              placeholder="请输入姓名"
+              placeholder={t('chart.namePh')}
               value={name}
               onChangeText={setName}
             />
 
-            <Text style={styles.label}>关系</Text>
+            <Text style={styles.label}>{t('chart.relationType')}</Text>
             <View style={styles.chips}>
-              {RELATION_TYPES.map((t) => (
+              {RELATION_TYPES.map((rt) => (
                 <Chip
-                  key={t}
-                  label={TYPE_LABEL[t]}
-                  selected={relationType === t}
-                  onPress={() => setRelationType(t)}
+                  key={rt}
+                  label={t(`chart.relationTypes.${rt}`)}
+                  selected={relationType === rt}
+                  onPress={() => setRelationType(rt)}
                 />
               ))}
             </View>
 
-            <Text style={styles.label}>出生日期</Text>
+            <Text style={styles.label}>{t('chart.birthDate')}</Text>
             <TextInput
               style={styles.input}
               value={birthDate}
               onChangeText={setBirthDate}
-              placeholder="YYYY-MM-DD"
+              placeholder={t('tests.datePlaceholder')}
             />
 
-            <Text style={styles.label}>出生时辰</Text>
+            <Text style={styles.label}>{t('chart.birthTime')}</Text>
             {timeUnknown ? (
               <Pressable style={styles.timeUnknownRow} onPress={() => setTimeUnknown(false)}>
-                <Text style={styles.timeUnknownText}>时辰未知（按午时排盘）</Text>
-                <Text style={styles.timeUnknownAction}>改为已知</Text>
+                <Text style={styles.timeUnknownText}>{t('chart.timeUnknownRelation')}</Text>
+                <Text style={styles.timeUnknownAction}>{t('chart.knownTime')}</Text>
               </Pressable>
             ) : (
               <>
@@ -229,24 +227,24 @@ export default function ChartRelationsScreen() {
                   style={styles.input}
                   value={birthTime}
                   onChangeText={setBirthTime}
-                  placeholder="HH:mm"
+                  placeholder={t('tests.timePlaceholder')}
                 />
                 <Pressable onPress={() => setTimeUnknown(true)}>
-                  <Text style={styles.link}>不知道出生时辰？</Text>
+                  <Text style={styles.link}>{t('chart.unknownTimeHint')}</Text>
                 </Pressable>
               </>
             )}
 
-            <Text style={styles.label}>性别</Text>
+            <Text style={styles.label}>{t('chart.gender')}</Text>
             <View style={styles.chips}>
-              <Chip label="女" selected={gender === 'female'} onPress={() => setGender('female')} />
-              <Chip label="男" selected={gender === 'male'} onPress={() => setGender('male')} />
+              <Chip label={t('common.female')} selected={gender === 'female'} onPress={() => setGender('female')} />
+              <Chip label={t('common.male')} selected={gender === 'male'} onPress={() => setGender('male')} />
             </View>
 
             <View style={styles.formActions}>
-              <Button title="保存" onPress={add} loading={saving} />
+              <Button title={t('common.save')} onPress={add} loading={saving} />
               <Button
-                title="取消"
+                title={t('common.cancel')}
                 variant="secondary"
                 onPress={() => setShowForm(false)}
                 disabled={saving}
@@ -256,7 +254,7 @@ export default function ChartRelationsScreen() {
         ) : (
           items.length < 6 && (
             <Button
-              title="添加关系人"
+              title={t('chart.addRelation')}
               onPress={() => setShowForm(true)}
               style={styles.addBtn}
               disabled={!!generatingId}
@@ -264,7 +262,7 @@ export default function ChartRelationsScreen() {
           )
         )}
 
-        <Text style={styles.footerHint}>关系报告生成较慢，请耐心等待，无需重复点击。</Text>
+        <Text style={styles.footerHint}>{t('chart.relationWait')}</Text>
       </Screen>
     </>
   );

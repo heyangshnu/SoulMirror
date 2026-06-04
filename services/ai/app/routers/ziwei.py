@@ -6,6 +6,7 @@ from typing import Any, Optional
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
+from app.services.locale_util import is_english
 from app.services.report_llm import generate_ziwei_report
 
 router = APIRouter()
@@ -23,12 +24,14 @@ class NatalReportBody(BaseModel):
     natal: dict[str, Any]
     lifeContext: Optional[dict[str, Any]] = None
     tone: str = "healing"
+    locale: str = "zh"
 
 
 class DaxianReportBody(BaseModel):
     natal: dict[str, Any]
     horoscope: dict[str, Any]
     personalContext: str | None = None
+    locale: str = "zh"
 
 
 class LiunianReportBody(BaseModel):
@@ -37,6 +40,7 @@ class LiunianReportBody(BaseModel):
     flyingStar: str | dict[str, Any] | None = None
     year: int
     personalContext: str | None = None
+    locale: str = "zh"
 
 
 class RelationReportBody(BaseModel):
@@ -46,10 +50,12 @@ class RelationReportBody(BaseModel):
     relationName: str
     flyingStar: str | dict[str, Any] | None = None
     personalContext: str | None = None
+    locale: str = "zh"
 
 
 class SummarizeChatBody(BaseModel):
     messages: list[dict[str, str]] = Field(default_factory=list)
+    locale: str = "zh"
 
 
 def _personal_context(life: dict[str, Any] | None, explicit: str | None = None) -> str | None:
@@ -110,6 +116,7 @@ async def natal_report(body: NatalReportBody):
         raw={"natal": body.natal},
         fallback=fallback,
         personal_context=_personal_context(body.lifeContext),
+        locale=body.locale,
     )
 
 
@@ -139,6 +146,7 @@ async def daxian_report(body: DaxianReportBody):
         raw={"horoscope": body.horoscope},
         fallback=fallback,
         personal_context=body.personalContext,
+        locale=body.locale,
     )
 
 
@@ -172,6 +180,7 @@ async def liunian_report(body: LiunianReportBody):
         raw={"year": body.year},
         fallback=fallback,
         personal_context=body.personalContext,
+        locale=body.locale,
     )
 
 
@@ -203,6 +212,7 @@ async def relation_report(body: RelationReportBody):
         raw={"relationType": body.relationType},
         fallback=fallback,
         personal_context=body.personalContext,
+        locale=body.locale,
     )
 
 
@@ -213,16 +223,25 @@ async def summarize_chat(body: SummarizeChatBody):
 
     from app.services.llm import chat_completion
 
-    transcript = "\n".join(f"{m.get('role', 'user')}：{m.get('content', '')}" for m in body.messages[-20:])
+    if is_english(body.locale):
+        transcript = "\n".join(
+            f"{m.get('role', 'user')}: {m.get('content', '')}" for m in body.messages[-20:]
+        )
+        system = (
+            "You summarize SoulMirror chats in under 80 words in English: "
+            "emotions, concerns, and themes for chart context. No diagnosis or fate claims."
+        )
+        default = "Recent chats explore self-understanding and relationships."
+    else:
+        transcript = "\n".join(f"{m.get('role', 'user')}：{m.get('content', '')}" for m in body.messages[-20:])
+        system = "你是心镜平台的对话摘要助手。用 80 字内中文概括用户近期聊天中的情绪、困惑与关注点，供命盘解读参考。不要诊断，不断言命运。"
+        default = "近期对话中，用户在探索自我与关系议题。"
     text = await chat_completion(
         [
-            {
-                "role": "system",
-                "content": "你是心镜平台的对话摘要助手。用 80 字内中文概括用户近期聊天中的情绪、困惑与关注点，供命盘解读参考。不要诊断，不断言命运。",
-            },
+            {"role": "system", "content": system},
             {"role": "user", "content": transcript},
         ],
         temperature=0.3,
         max_tokens=200,
     )
-    return {"summary": text or "近期对话中，用户在探索自我与关系议题。"}
+    return {"summary": text or default}

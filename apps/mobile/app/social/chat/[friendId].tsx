@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   StyleSheet,
   Text,
@@ -11,6 +12,7 @@ import { Stack, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import { ChatBubble } from '@/components/ui/ChatBubble';
 import { Button } from '@/components/ui/Button';
 import { KeyboardChatLayout } from '@/components/ui/KeyboardChatLayout';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -18,6 +20,7 @@ import { colors, spacing, typography } from '@/theme/tokens';
 type Message = { role: string; senderId: string; content: string; createdAt?: string };
 
 export default function FriendChatScreen() {
+  const { t } = useTranslation();
   const { friendId } = useLocalSearchParams<{ friendId: string }>();
   const myId = useAuthStore((s) => s.user?.id);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,7 +55,7 @@ export default function FriendChatScreen() {
     try {
       await api.post(`/social/chats/${friendId}/messages`, { content: text });
     } catch {
-      alert('发送失败');
+      Alert.alert(t('social.sendFail'));
     } finally {
       setSending(false);
       setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 100);
@@ -61,7 +64,7 @@ export default function FriendChatScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: '好友聊天', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ title: t('social.chatNav'), headerTintColor: colors.primary }} />
       <KeyboardChatLayout hasHeader>
         {loading ? (
           <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
@@ -79,19 +82,19 @@ export default function FriendChatScreen() {
               />
             )}
             onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
-            ListEmptyComponent={<Text style={styles.empty}>开始你们的第一次对话吧</Text>}
+            ListEmptyComponent={<Text style={styles.empty}>{t('social.empty')}</Text>}
           />
         )}
         <View style={styles.inputRow}>
           <TextInput
             style={styles.input}
-            placeholder="输入消息…"
+            placeholder={t('social.placeholder')}
             placeholderTextColor={colors.textMuted}
             value={input}
             onChangeText={setInput}
             multiline
           />
-          <Button title="发送" onPress={send} loading={sending} style={styles.sendBtn} />
+          <Button title={t('common.send')} onPress={send} loading={sending} style={styles.sendBtn} />
         </View>
       </KeyboardChatLayout>
     </>

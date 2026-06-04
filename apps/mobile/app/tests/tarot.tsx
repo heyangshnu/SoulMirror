@@ -3,17 +3,19 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
-const DOMAINS = [
-  { id: 'love', label: '感情' },
-  { id: 'career', label: '事业' },
-  { id: 'health', label: '身心' },
-  { id: 'general', label: '综合' },
-] as const;
+const DOMAINS = ['love', 'career', 'health', 'general'] as const;
+const CARD_KEYS = ['past', 'present', 'advice'] as const;
+
+function domainLocaleKey(id: string) {
+  return id === 'health' ? 'wellness' : id;
+}
 
 export default function TarotTestScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [domain, setDomain] = useState<string>('general');
   const [loading, setLoading] = useState(false);
@@ -27,7 +29,7 @@ export default function TarotTestScreen() {
       });
       router.replace(`/report/${report._id}`);
     } catch (e) {
-      Alert.alert('抽牌失败', e instanceof Error ? e.message : '请稍后重试');
+      Alert.alert(t('tests.drawFail'), e instanceof Error ? e.message : t('common.retryLater'));
     } finally {
       setLoading(false);
     }
@@ -35,29 +37,31 @@ export default function TarotTestScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: '塔罗占卜', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('tests.tarotNav'), headerTintColor: colors.primary }} />
       <Screen>
-        <Text style={styles.desc}>静心选择你关注的领域，抽取三张牌：过去 · 现在 · 建议</Text>
+        <Text style={styles.desc}>{t('tests.tarotDesc')}</Text>
         <View style={styles.grid}>
           {DOMAINS.map((d) => (
             <Pressable
-              key={d.id}
-              style={[styles.chip, domain === d.id && styles.chipActive]}
-              onPress={() => setDomain(d.id)}
+              key={d}
+              style={[styles.chip, domain === d && styles.chipActive]}
+              onPress={() => setDomain(d)}
             >
-              <Text style={[styles.chipText, domain === d.id && styles.chipTextActive]}>{d.label}</Text>
+              <Text style={[styles.chipText, domain === d && styles.chipTextActive]}>
+                {t(`tests.domains.${domainLocaleKey(d)}`)}
+              </Text>
             </Pressable>
           ))}
         </View>
         <View style={styles.cards}>
-          {['过去', '现在', '建议'].map((label) => (
-            <View key={label} style={styles.card}>
-              <Text style={styles.cardLabel}>{label}</Text>
+          {CARD_KEYS.map((key) => (
+            <View key={key} style={styles.card}>
+              <Text style={styles.cardLabel}>{t(`tests.${key}`)}</Text>
               <Text style={styles.cardIcon}>✦</Text>
             </View>
           ))}
         </View>
-        <Button title="洗牌并抽牌" onPress={draw} loading={loading} style={{ marginTop: 32 }} />
+        <Button title={t('tests.draw')} onPress={draw} loading={loading} style={{ marginTop: 32 }} />
       </Screen>
     </>
   );

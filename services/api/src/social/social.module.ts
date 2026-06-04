@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ChatRequest, ChatRequestSchema } from '../schemas/chat-request.schema';
 import { DirectChat, DirectChatSchema } from '../schemas/direct-chat.schema';
 import { Friendship, FriendshipSchema } from '../schemas/friendship.schema';
+import { ReportsModule } from '../reports/reports.module';
 import { UsersModule } from '../users/users.module';
 import { SocialController } from './social.controller';
 import { SocialService } from './social.service';
@@ -10,6 +11,7 @@ import { SocialService } from './social.service';
 @Module({
   imports: [
     UsersModule,
+    ReportsModule,
     MongooseModule.forFeature([
       { name: ChatRequest.name, schema: ChatRequestSchema },
       { name: Friendship.name, schema: FriendshipSchema },

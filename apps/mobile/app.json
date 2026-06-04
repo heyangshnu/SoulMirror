@@ -2,7 +2,7 @@
   "expo": {
     "name": "心镜 SoulMirror",
     "slug": "soulmirror",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "soulmirror",
@@ -54,7 +54,8 @@
           "photosPermission": "心镜需要访问相册以上传手掌照片",
           "cameraPermission": "心镜需要使用相机拍摄手掌照片"
         }
-      ]
+      ],
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true

@@ -13,6 +13,7 @@ import { Screen } from '@/components/ui/Screen';
 import { ChatBubble } from '@/components/ui/ChatBubble';
 import { Button } from '@/components/ui/Button';
 import { KeyboardChatLayout } from '@/components/ui/KeyboardChatLayout';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { streamBotChat } from '@/lib/chat-stream';
 import { useAuthStore } from '@/store/auth';
@@ -21,6 +22,7 @@ import { colors, spacing, typography } from '@/theme/tokens';
 type Message = { role: string; content: string; createdAt?: string };
 
 export default function MirrorScreen() {
+  const { t } = useTranslation();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -32,26 +34,24 @@ export default function MirrorScreen() {
 
   const ensureSession = useCallback(async (): Promise<string> => {
     if (!hydrated || !token) {
-      throw new Error('登录状态加载中，请稍后重试');
+      throw new Error(t('mirror.authLoading'));
     }
     const sessions = await api.get<{ _id: string }[]>('/bot/sessions');
     if (sessions.length > 0) {
       const s = await api.get<{ _id: string; messages: Message[] }>(`/bot/sessions/${sessions[0]._id}`);
       setSessionId(s._id);
       setMessages(
-        s.messages.length > 0
-          ? s.messages
-          : [{ role: 'assistant', content: '嗨，最近怎么样？有什么想聊的？' }],
+        s.messages.length > 0 ? s.messages : [{ role: 'assistant', content: t('mirror.greet1') }],
       );
       setOffline(false);
       return s._id;
     }
     const created = await api.post<{ _id: string }>('/bot/sessions');
     setSessionId(created._id);
-    setMessages([{ role: 'assistant', content: '嗨，我是心镜。有什么想聊的，随时说。' }]);
+    setMessages([{ role: 'assistant', content: t('mirror.greet2') }]);
     setOffline(false);
     return created._id;
-  }, [hydrated, token]);
+  }, [hydrated, token, t]);
 
   const reloadSession = useCallback(async () => {
     if (!hydrated) return;
@@ -61,16 +61,11 @@ export default function MirrorScreen() {
     } catch {
       setSessionId('local');
       setOffline(true);
-      setMessages([
-        {
-          role: 'assistant',
-          content: '暂时连不上服务器。请切换 WiFi/流量后点上方「重新连接」，或在「我的」页运行网络诊断。',
-        },
-      ]);
+      setMessages([{ role: 'assistant', content: t('mirror.offlineReply') }]);
     } finally {
       setInit(false);
     }
-  }, [ensureSession, hydrated]);
+  }, [ensureSession, hydrated, t]);
 
   useFocusEffect(
     useCallback(() => {
@@ -104,7 +99,7 @@ export default function MirrorScreen() {
         listRef.current?.scrollToEnd({ animated: false });
       });
     } catch (e) {
-      const msg = e instanceof Error ? e.message : '连接暂时中断，请稍后再试。';
+      const msg = e instanceof Error ? e.message : t('mirror.streamInterrupted');
       setMessages((m) => {
         const next = [...m];
         const last = next[next.length - 1];
@@ -113,7 +108,7 @@ export default function MirrorScreen() {
         }
         return next;
       });
-      if (msg.includes('网络') || msg.includes('超时')) {
+      if (msg.includes('网络') || msg.includes('Network') || msg.includes('超时') || msg.includes('timeout')) {
         setOffline(true);
       }
     } finally {
@@ -134,16 +129,14 @@ export default function MirrorScreen() {
     <KeyboardChatLayout>
       <View style={styles.header}>
         <View style={styles.headerRow}>
-          <Text style={styles.title}>心镜</Text>
+          <Text style={styles.title}>{t('mirror.title')}</Text>
           {offline ? (
             <Pressable onPress={reloadSession} style={styles.retryBtn}>
-              <Text style={styles.retryText}>重新连接</Text>
+              <Text style={styles.retryText}>{t('mirror.reconnect')}</Text>
             </Pressable>
           ) : null}
         </View>
-        <Text style={styles.subtitle}>
-          {offline ? '未连接服务器 · 可切换 WiFi/流量后点重新连接' : '你的专属 AI 陪伴 · 流式对话'}
-        </Text>
+        <Text style={styles.subtitle}>{offline ? t('mirror.offline') : t('mirror.subtitle')}</Text>
       </View>
       <FlatList
         ref={listRef}
@@ -162,7 +155,7 @@ export default function MirrorScreen() {
       <View style={styles.inputRow}>
         <TextInput
           style={styles.input}
-          placeholder="说说你的感受…"
+          placeholder={t('mirror.placeholder')}
           placeholderTextColor={colors.textMuted}
           value={input}
           onChangeText={setInput}
@@ -170,7 +163,7 @@ export default function MirrorScreen() {
           editable={!streaming}
           onSubmitEditing={send}
         />
-        <Button title="发送" onPress={send} loading={streaming} style={styles.sendBtn} />
+        <Button title={t('common.send')} onPress={send} loading={streaming} style={styles.sendBtn} />
       </View>
     </KeyboardChatLayout>
   );

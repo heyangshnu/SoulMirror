@@ -3,12 +3,14 @@ import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
 type Question = { id: number; text: string };
 
 export default function MbtiTestScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -19,8 +21,8 @@ export default function MbtiTestScreen() {
     api
       .get<{ questions: Question[] }>('/tests/mbti/questions')
       .then((r) => setQuestions(r.questions))
-      .catch(() => Alert.alert('加载失败', '请确认已登录且后端已启动'));
-  }, []);
+      .catch(() => Alert.alert(t('tests.loadFail'), t('tests.loadFailHint')));
+  }, [t]);
 
   const q = questions[index];
   const progress = questions.length ? ((index + 1) / questions.length) * 100 : 0;
@@ -37,7 +39,7 @@ export default function MbtiTestScreen() {
       value,
     }));
     if (payload.length < questions.length) {
-      Alert.alert('提示', '请完成全部题目');
+      Alert.alert(t('common.ok'), t('tests.completeAll'));
       return;
     }
     setLoading(true);
@@ -45,7 +47,7 @@ export default function MbtiTestScreen() {
       const report = await api.post<{ _id: string }>('/tests/mbti/submit', { answers: payload });
       router.replace(`/report/${report._id}`);
     } catch (e) {
-      Alert.alert('提交失败', e instanceof Error ? e.message : '请稍后重试');
+      Alert.alert(t('tests.submitFail'), e instanceof Error ? e.message : t('common.retryLater'));
     } finally {
       setLoading(false);
     }
@@ -54,15 +56,15 @@ export default function MbtiTestScreen() {
   if (!q) {
     return (
       <>
-        <Stack.Screen options={{ headerShown: true, title: 'MBTI', headerTintColor: colors.primary }} />
-        <Screen><Text>加载题目中…</Text></Screen>
+        <Stack.Screen options={{ headerShown: true, title: t('tests.mbtiNav'), headerTintColor: colors.primary }} />
+        <Screen><Text>{t('tests.loadingQuestions')}</Text></Screen>
       </>
     );
   }
 
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: 'MBTI', headerTintColor: colors.primary }} />
+      <Stack.Screen options={{ headerShown: true, title: t('tests.mbtiNav'), headerTintColor: colors.primary }} />
       <Screen>
         <View style={styles.progressBg}>
           <View style={[styles.progressFill, { width: `${progress}%` }]} />
@@ -71,7 +73,7 @@ export default function MbtiTestScreen() {
           {index + 1} / {questions.length}
         </Text>
         <Text style={styles.question}>{q.text}</Text>
-        <Text style={styles.scale}>非常不同意 ← → 非常同意</Text>
+        <Text style={styles.scale}>{t('tests.scaleHint')}</Text>
         <View style={styles.options}>
           {[1, 2, 3, 4, 5].map((v) => (
             <Pressable
@@ -84,10 +86,10 @@ export default function MbtiTestScreen() {
           ))}
         </View>
         {index > 0 && (
-          <Button title="上一题" variant="ghost" onPress={() => setIndex(index - 1)} />
+          <Button title={t('tests.prev')} variant="ghost" onPress={() => setIndex(index - 1)} />
         )}
         {index === questions.length - 1 && answers[q.id] && (
-          <Button title="查看报告" onPress={submit} loading={loading} style={{ marginTop: 16 }} />
+          <Button title={t('tests.viewReport')} onPress={submit} loading={loading} style={{ marginTop: 16 }} />
         )}
       </Screen>
     </>

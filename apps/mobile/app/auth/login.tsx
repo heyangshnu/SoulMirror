@@ -3,6 +3,8 @@ import { Alert, Pressable, StyleSheet, Text, TextInput, View } from 'react-nativ
 import { useRouter } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
+import { detectAccountType, normalizeAccount } from '@/lib/account';
+import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -12,78 +14,80 @@ type Mode = 'login' | 'register';
 
 type AuthResponse = {
   accessToken: string;
-  user: { id: string; phone?: string; nickname?: string };
+  user: { id: string; phone?: string; email?: string; nickname?: string };
 };
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [mode, setMode] = useState<Mode>('login');
-  const [phone, setPhone] = useState('');
+  const [account, setAccount] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const normalizePhone = (value: string) => value.replace(/\D/g, '').slice(0, 11);
 
   const finishAuth = (res: AuthResponse) => {
     setAuth(res.accessToken, res.user);
     router.replace('/onboarding');
   };
 
-  const login = async () => {
-    if (!/^1\d{10}$/.test(phone)) {
-      Alert.alert('提示', '请输入 11 位手机号');
-      return;
+  const validateAccount = (): 'email' | 'phone' | null => {
+    const kind = detectAccountType(account);
+    if (!kind) {
+      Alert.alert(t('common.ok'), t('auth.accountInvalid'));
+      return null;
     }
+    return kind;
+  };
+
+  const login = async () => {
+    const kind = validateAccount();
+    if (!kind) return;
     setLoading(true);
     try {
-      const res = await api.post<AuthResponse>(
-        '/auth/phone/login',
-        { phone, password },
-        false,
-      );
+      const normalized = normalizeAccount(account, kind);
+      const path = kind === 'email' ? '/auth/login' : '/auth/phone/login';
+      const body =
+        kind === 'email' ? { email: normalized, password } : { phone: normalized, password };
+      const res = await api.post<AuthResponse>(path, body, false);
       finishAuth(res);
     } catch (e) {
-      Alert.alert('登录失败', e instanceof Error ? e.message : '手机号或密码错误');
+      Alert.alert(t('auth.loginFail'), e instanceof Error ? e.message : t('auth.loginError'));
     } finally {
       setLoading(false);
     }
   };
 
   const register = async () => {
-    if (!/^1\d{10}$/.test(phone)) {
-      Alert.alert('提示', '请输入 11 位手机号');
-      return;
-    }
+    const kind = validateAccount();
+    if (!kind) return;
     if (password.length < 6) {
-      Alert.alert('提示', '密码至少 6 位');
+      Alert.alert(t('common.ok'), t('auth.passwordShort'));
       return;
     }
     if (password !== confirmPassword) {
-      Alert.alert('提示', '两次密码不一致');
+      Alert.alert(t('common.ok'), t('auth.passwordMismatch'));
       return;
     }
     if (!termsAccepted) {
-      Alert.alert('提示', '请先同意用户协议');
+      Alert.alert(t('common.ok'), t('auth.termsRequired'));
       return;
     }
     setLoading(true);
     try {
-      const res = await api.post<AuthResponse>(
-        '/auth/phone/register',
-        {
-          phone,
-          password,
-          terms_accepted: termsAccepted,
-          terms_version: TERMS_VERSION,
-        },
-        false,
-      );
+      const normalized = normalizeAccount(account, kind);
+      const terms = { terms_accepted: termsAccepted, terms_version: TERMS_VERSION };
+      const path = kind === 'email' ? '/auth/register' : '/auth/phone/register';
+      const body =
+        kind === 'email'
+          ? { email: normalized, password, ...terms }
+          : { phone: normalized, password, ...terms };
+      const res = await api.post<AuthResponse>(path, body, false);
       finishAuth(res);
     } catch (e) {
-      Alert.alert('注册失败', e instanceof Error ? e.message : '请重试');
+      Alert.alert(t('auth.registerFail'), e instanceof Error ? e.message : t('common.retryLater'));
     } finally {
       setLoading(false);
     }
@@ -92,34 +96,35 @@ export default function LoginScreen() {
   return (
     <Screen keyboardAvoid>
       <View style={styles.header}>
-        <Text style={styles.logo}>心镜</Text>
-        <Text style={styles.tagline}>看见自己，温柔陪伴</Text>
+        <Text style={styles.logo}>{t('auth.logo')}</Text>
+        <Text style={styles.tagline}>{t('auth.tagline')}</Text>
       </View>
 
       <View style={styles.tabs}>
         {(['login', 'register'] as Mode[]).map((m) => (
           <Pressable key={m} onPress={() => setMode(m)} style={[styles.tab, mode === m && styles.tabActive]}>
             <Text style={[styles.tabText, mode === m && styles.tabTextActive]}>
-              {m === 'login' ? '登录' : '注册'}
+              {m === 'login' ? t('auth.login') : t('auth.register')}
             </Text>
           </Pressable>
         ))}
       </View>
 
-      <Text style={styles.label}>手机号</Text>
+      <Text style={styles.label}>{t('auth.account')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="11 位手机号"
-        keyboardType="phone-pad"
-        value={phone}
-        onChangeText={(v) => setPhone(normalizePhone(v))}
-        maxLength={11}
+        placeholder={t('auth.accountPlaceholder')}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+        value={account}
+        onChangeText={setAccount}
       />
 
-      <Text style={styles.label}>密码</Text>
+      <Text style={styles.label}>{t('auth.password')}</Text>
       <TextInput
         style={styles.input}
-        placeholder="至少 6 位"
+        placeholder={t('auth.passwordPlaceholder')}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -127,29 +132,29 @@ export default function LoginScreen() {
 
       {mode === 'register' && (
         <>
-          <Text style={styles.label}>确认密码</Text>
+          <Text style={styles.label}>{t('auth.confirmPassword')}</Text>
           <TextInput
             style={styles.input}
-            placeholder="再次输入密码"
+            placeholder={t('auth.confirmPlaceholder')}
             secureTextEntry
             value={confirmPassword}
             onChangeText={setConfirmPassword}
           />
           <Pressable onPress={() => setTermsAccepted(!termsAccepted)} style={styles.termsRow}>
             <Text style={styles.termsCheck}>{termsAccepted ? '☑' : '☐'}</Text>
-            <Text style={styles.termsText}>我已阅读并同意《用户协议》与《隐私政策》</Text>
+            <Text style={styles.termsText}>{t('auth.terms')}</Text>
           </Pressable>
         </>
       )}
 
       <Button
-        title={mode === 'login' ? '进入心镜' : '注册并进入'}
+        title={mode === 'login' ? t('auth.enter') : t('auth.registerEnter')}
         onPress={mode === 'login' ? login : register}
         loading={loading}
         style={styles.submit}
       />
 
-      <Text style={styles.hint}>手机号 + 密码注册，无需短信验证码</Text>
+      <Text style={styles.hint}>{t('auth.hint')}</Text>
     </Screen>
   );
 }

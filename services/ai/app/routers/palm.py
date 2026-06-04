@@ -9,6 +9,7 @@ router = APIRouter()
 class PalmAnalyzeBody(BaseModel):
     imageBase64: str | None = None
     note: str | None = None
+    locale: str = "zh"
 
 
 def _fallback_palm() -> dict:
@@ -48,4 +49,5 @@ async def analyze(body: PalmAnalyzeBody):
         context,
         raw=raw,
         fallback=_fallback_palm(),
+        locale=body.locale,
     )
