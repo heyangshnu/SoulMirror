@@ -175,6 +175,8 @@ export class ChartService {
     await this.users.setTestSummary(userId, payload.headlineSummary ?? payload.summary);
     return this.toCreatedReport(report);
   }
+
+  async listRelations(userId: string) {
     return this.relationModel.find({ userId: new Types.ObjectId(userId) }).exec();
   }
 
