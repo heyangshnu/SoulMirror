@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { BotModule } from './bot/bot.module';
 import { ChartModule } from './chart/chart.module';
 import { ReportsModule } from './reports/reports.module';
+import { TestsModule } from './tests/tests.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -32,6 +33,7 @@ import { UsersModule } from './users/users.module';
     BotModule,
     ChartModule,
     AnalysisModule,
+    TestsModule,
   ],
 })
 export class AppModule {}

@@ -10,10 +10,9 @@ git pull origin main
 
 echo "==> 安装依赖"
 npm install
-cd packages/shared-types && npm run build && cd ../..
 
-echo "==> 构建 chart 包"
-npm run chart:build
+echo "==> 构建 workspace 包 (types + chart + bazi)"
+npm run packages:build
 
 echo "==> 构建 API"
 npm run api:build
