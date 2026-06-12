@@ -80,6 +80,39 @@ async function request<T>(
   return data as T;
 }
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+async function download(path: string): Promise<ArrayBuffer> {
+  const loc = locale();
+  const headers: Record<string, string> = {
+    'Accept-Language': loc === 'en' ? 'en' : 'zh-CN',
+    'X-App-Locale': loc,
+  };
+  const token = useAuthStore.getState().token;
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  let res: Response;
+  try {
+    res = await fetch(`${API_BASE}${path}`, { method: 'POST', headers });
+  } catch {
+    throw new Error(t('errors.network'));
+  }
+
+  if (!res.ok) {
+    const data = await parseJsonBody(res);
+    throw new Error(formatApiMessage(data) || t('errors.requestFailed', { status: res.status }));
+  }
+  return res.arrayBuffer();
+}
+
 export const api = {
   get: <T>(path: string, auth = true) => request<T>(path, { method: 'GET', auth }),
   post: <T>(path: string, body?: unknown, auth = true) =>
@@ -93,4 +126,6 @@ export const api = {
   patch: <T>(path: string, body?: unknown) =>
     request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined }),
   delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+  download,
+  arrayBufferToBase64,
 };

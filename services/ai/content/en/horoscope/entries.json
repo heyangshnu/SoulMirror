@@ -1,0 +1,266 @@
+[
+  {
+    "id": "hor_迁移_en",
+    "tags": [
+      "ZW-D",
+      "迁移"
+    ],
+    "match": {
+      "decadalPalace": "迁移"
+    },
+    "productHint": "Cycle 迁移",
+    "userFacing": "These years may repeat themes of outward moves: city, partnership, career expansion.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_子女_en",
+    "tags": [
+      "ZW-D",
+      "子女"
+    ],
+    "match": {
+      "decadalPalace": "子女"
+    },
+    "productHint": "Cycle 子女",
+    "userFacing": "Childcare, family order, and caregiving pressure move to the foreground.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_夫妻_en",
+    "tags": [
+      "ZW-D",
+      "夫妻"
+    ],
+    "match": {
+      "decadalPalace": "夫妻"
+    },
+    "productHint": "Cycle 夫妻",
+    "userFacing": "Relationship expectations and friction themes may amplify.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_事业_en",
+    "tags": [
+      "ZW-D",
+      "事业"
+    ],
+    "match": {
+      "decadalPalace": "事业"
+    },
+    "productHint": "Cycle 事业",
+    "userFacing": "Direction, opportunity, and career ordering become a main line.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_财帛_en",
+    "tags": [
+      "ZW-D",
+      "财帛"
+    ],
+    "match": {
+      "decadalPalace": "财帛"
+    },
+    "productHint": "Cycle 财帛",
+    "userFacing": "Resources, cash flow, and sense of value come up often.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_田宅_en",
+    "tags": [
+      "ZW-D",
+      "田宅"
+    ],
+    "match": {
+      "decadalPalace": "田宅"
+    },
+    "productHint": "Cycle 田宅",
+    "userFacing": "Home, space, and household rhythm grow heavier.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_福德_en",
+    "tags": [
+      "ZW-D",
+      "福德"
+    ],
+    "match": {
+      "decadalPalace": "福德"
+    },
+    "productHint": "Cycle 福德",
+    "userFacing": "Inner pace, recovery, and emotional thresholds need care.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_父母_en",
+    "tags": [
+      "ZW-D",
+      "父母"
+    ],
+    "match": {
+      "decadalPalace": "父母"
+    },
+    "productHint": "Cycle 父母",
+    "userFacing": "Elders, duty, and prior-generation themes may surface together.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_兄弟_en",
+    "tags": [
+      "ZW-D",
+      "兄弟"
+    ],
+    "match": {
+      "decadalPalace": "兄弟"
+    },
+    "productHint": "Cycle 兄弟",
+    "userFacing": "Peers, collaboration, and sharing resources matter more.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_疾厄_en",
+    "tags": [
+      "ZW-D",
+      "疾厄"
+    ],
+    "match": {
+      "decadalPalace": "疾厄"
+    },
+    "productHint": "Cycle 疾厄",
+    "userFacing": "Body-mind load and rest rhythm deserve priority.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_奴仆_en",
+    "tags": [
+      "ZW-D",
+      "奴仆"
+    ],
+    "match": {
+      "decadalPalace": "奴仆"
+    },
+    "productHint": "Cycle 奴仆",
+    "userFacing": "Work style, collaboration, and daily load need rebalancing.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_官禄_en",
+    "tags": [
+      "ZW-D",
+      "官禄"
+    ],
+    "match": {
+      "decadalPalace": "官禄"
+    },
+    "productHint": "Cycle 官禄",
+    "userFacing": "Social role, reputation, and long path step forward.",
+    "actions": [
+      "Put changes in a table before debating"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "en",
+    "source": "v4_import"
+  }
+]

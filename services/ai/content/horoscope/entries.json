@@ -1,0 +1,35 @@
+[
+  {
+    "id": "zw_d_qianyi",
+    "tags": ["ZW-D", "迁移"],
+    "match": { "decadalPalace": "迁移" },
+    "productHint": "外部场景、城市、合作",
+    "userFacing": "这几年你的主线容易落在「往外走」：城市、合作、事业扩张会变成反复出现的主题。",
+    "actions": ["重大变动做成表格再讨论", "外部机会与家庭节奏同步规划"],
+    "topic": ["recent_years", "career"],
+    "confidenceWeight": 0.83,
+    "locale": "zh"
+  },
+  {
+    "id": "zw_d_zinv",
+    "tags": ["ZW-D", "子女"],
+    "match": { "decadalPalace": "子女" },
+    "productHint": "孩子、家庭秩序",
+    "userFacing": "这一阶段家庭秩序、育儿与照顾压力会被推到前台，容易感到「事情同时变多」。",
+    "actions": ["固定家庭恢复时间", "不让孩子成为父母矛盾的翻译器"],
+    "topic": ["recent_years", "child", "family"],
+    "confidenceWeight": 0.8,
+    "locale": "zh"
+  },
+  {
+    "id": "zw_y_trigger",
+    "tags": ["ZW-Y", "流年"],
+    "match": { "yearly": true },
+    "productHint": "当年议题被触发",
+    "userFacing": "今年不是好坏的问题，而是哪类议题被放大——适合聚焦可改变之事，以温和步伐推进。",
+    "actions": ["把握 2-3 个核心目标即可", "完成比完美更重要"],
+    "topic": ["recent_years"],
+    "confidenceWeight": 0.7,
+    "locale": "zh"
+  }
+]

@@ -1,0 +1,112 @@
+[
+  {
+    "id": "zw_ming_wuqu_qisha",
+    "tags": [
+      "ZW-M",
+      "命宫",
+      "武曲",
+      "七杀"
+    ],
+    "match": {
+      "palace": "命宫",
+      "stars": [
+        "武曲",
+        "七杀"
+      ]
+    },
+    "productHint": "结构推动型",
+    "userFacing": "你擅长把复杂问题抽象成规则并推动执行，但容易把工作里的判断语言带进亲密关系。",
+    "actions": [
+      "讨论前先问「你感受如何」",
+      "避免第一句话就给优化方案"
+    ],
+    "topic": [
+      "self_profile",
+      "marriage"
+    ],
+    "confidenceWeight": 0.85,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "zw_ming_taiyin_tiantong",
+    "tags": [
+      "ZW-M",
+      "命宫",
+      "太阴",
+      "天同"
+    ],
+    "match": {
+      "palace": "命宫",
+      "stars": [
+        "太阴",
+        "天同"
+      ]
+    },
+    "productHint": "感受与生活判断型",
+    "userFacing": "你对生活细节和情境很敏感，分享可能性时，更希望对方先看见你在用心，而不是立刻被分析。",
+    "actions": [
+      "分享想法时用「我在感受」开头",
+      "给对方确认空间"
+    ],
+    "topic": [
+      "self_profile",
+      "synastry"
+    ],
+    "confidenceWeight": 0.82,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "zw_career_strong",
+    "tags": [
+      "ZW-M",
+      "事业宫"
+    ],
+    "match": {
+      "palace": "事业宫",
+      "strong": true
+    },
+    "productHint": "事业驱动、方向感",
+    "userFacing": "你天然容易把注意力放到方向、机会和外部扩张上，这不是野心，而是你的能量主场。",
+    "actions": [
+      "一次只抓 2-3 个核心目标",
+      "外部机会与家庭节奏分开规划"
+    ],
+    "topic": [
+      "self_profile",
+      "career",
+      "recent_years"
+    ],
+    "confidenceWeight": 0.8,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "zw_fude_jumen",
+    "tags": [
+      "ZW-M",
+      "福德宫",
+      "巨门"
+    ],
+    "match": {
+      "palace": "福德宫",
+      "stars": [
+        "巨门"
+      ]
+    },
+    "productHint": "解释欲、表达位置高",
+    "userFacing": "你有很强的解释与完善冲动，对方可能感到被「审稿」而不是被理解。",
+    "actions": [
+      "先接住，再把原则放到第二步",
+      "少说「这不对」，多说「我听到了」"
+    ],
+    "topic": [
+      "self_profile",
+      "partner_conflict"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]

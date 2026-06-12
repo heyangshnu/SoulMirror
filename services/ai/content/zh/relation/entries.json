@@ -1,0 +1,3542 @@
+[
+  {
+    "id": "rel_001_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "现场止损"
+    },
+    "productHint": "触发“你第一句就反驳” · 现场止损",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_001_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "现场止损"
+    },
+    "productHint": "继续 · 现场止损",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_002_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "事后修复"
+    },
+    "productHint": "触发“你第一句就反驳” · 事后修复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_002_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "事后修复"
+    },
+    "productHint": "继续 · 事后修复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_003_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "正式讨论"
+    },
+    "productHint": "触发“你第一句就反驳” · 正式讨论",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_003_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "正式讨论"
+    },
+    "productHint": "继续 · 正式讨论",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_004_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "微信回复"
+    },
+    "productHint": "触发“你第一句就反驳” · 微信回复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_004_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "微信回复"
+    },
+    "productHint": "继续 · 微信回复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_005_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "家庭会议"
+    },
+    "productHint": "触发“你第一句就反驳” · 家庭会议",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_005_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "家庭会议"
+    },
+    "productHint": "继续 · 家庭会议",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_006_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "长期约定"
+    },
+    "productHint": "触发“你第一句就反驳” · 长期约定",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_006_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "长期约定"
+    },
+    "productHint": "继续 · 长期约定",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_007_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "触发“你第一句就反驳” · 冲突升级时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_007_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "继续 · 冲突升级时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_008_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "对方哭后"
+    },
+    "productHint": "触发“你第一句就反驳” · 对方哭后",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_008_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "对方哭后"
+    },
+    "productHint": "继续 · 对方哭后",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_009_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "疲劳时"
+    },
+    "productHint": "触发“你第一句就反驳” · 疲劳时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_009_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "疲劳时"
+    },
+    "productHint": "继续 · 疲劳时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_010_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "触发“你第一句就反驳” · 孩子在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_010_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "继续 · 孩子在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_011_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "父母在场时"
+    },
+    "productHint": "触发“你第一句就反驳” · 父母在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_011_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "父母在场时"
+    },
+    "productHint": "继续 · 父母在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_012_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "项目压力时"
+    },
+    "productHint": "触发“你第一句就反驳” · 项目压力时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_012_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "项目压力时"
+    },
+    "productHint": "继续 · 项目压力时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_013_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "教育议题时"
+    },
+    "productHint": "触发“你第一句就反驳” · 教育议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_013_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "教育议题时"
+    },
+    "productHint": "继续 · 教育议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_014_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "触发“你第一句就反驳” · 金钱议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_014_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "继续 · 金钱议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_015_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "空间需求时"
+    },
+    "productHint": "触发“你第一句就反驳” · 空间需求时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_015_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "空间需求时"
+    },
+    "productHint": "继续 · 空间需求时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_016_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "触发“你第一句就反驳” · 工作内容分享时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_016_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "继续 · 工作内容分享时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_017_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "触发“你第一句就反驳” · 老人育儿时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_017_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "继续 · 老人育儿时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_018_a77253ac90",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "城市选择时"
+    },
+    "productHint": "触发“你第一句就反驳” · 城市选择时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_018_a77253ac90_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你第一句就反驳”",
+      "scene": "城市选择时"
+    },
+    "productHint": "继续 · 城市选择时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_019_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "现场止损"
+    },
+    "productHint": "触发“你像领导/老师” · 现场止损",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_019_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "现场止损"
+    },
+    "productHint": "继续 · 现场止损",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_020_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "事后修复"
+    },
+    "productHint": "触发“你像领导/老师” · 事后修复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_020_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "事后修复"
+    },
+    "productHint": "继续 · 事后修复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_021_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "正式讨论"
+    },
+    "productHint": "触发“你像领导/老师” · 正式讨论",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_021_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "正式讨论"
+    },
+    "productHint": "继续 · 正式讨论",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_022_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "微信回复"
+    },
+    "productHint": "触发“你像领导/老师” · 微信回复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_022_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "微信回复"
+    },
+    "productHint": "继续 · 微信回复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_023_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "家庭会议"
+    },
+    "productHint": "触发“你像领导/老师” · 家庭会议",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_023_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "家庭会议"
+    },
+    "productHint": "继续 · 家庭会议",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_024_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "长期约定"
+    },
+    "productHint": "触发“你像领导/老师” · 长期约定",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_024_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "长期约定"
+    },
+    "productHint": "继续 · 长期约定",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_025_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "触发“你像领导/老师” · 冲突升级时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_025_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "继续 · 冲突升级时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_026_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "对方哭后"
+    },
+    "productHint": "触发“你像领导/老师” · 对方哭后",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_026_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "对方哭后"
+    },
+    "productHint": "继续 · 对方哭后",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_027_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "疲劳时"
+    },
+    "productHint": "触发“你像领导/老师” · 疲劳时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_027_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "疲劳时"
+    },
+    "productHint": "继续 · 疲劳时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_028_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "触发“你像领导/老师” · 孩子在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_028_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "继续 · 孩子在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_029_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "父母在场时"
+    },
+    "productHint": "触发“你像领导/老师” · 父母在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_029_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "父母在场时"
+    },
+    "productHint": "继续 · 父母在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_030_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "项目压力时"
+    },
+    "productHint": "触发“你像领导/老师” · 项目压力时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_030_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "项目压力时"
+    },
+    "productHint": "继续 · 项目压力时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_031_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "教育议题时"
+    },
+    "productHint": "触发“你像领导/老师” · 教育议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_031_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "教育议题时"
+    },
+    "productHint": "继续 · 教育议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_032_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "触发“你像领导/老师” · 金钱议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_032_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "继续 · 金钱议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_033_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "空间需求时"
+    },
+    "productHint": "触发“你像领导/老师” · 空间需求时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_033_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "空间需求时"
+    },
+    "productHint": "继续 · 空间需求时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_034_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "触发“你像领导/老师” · 工作内容分享时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_034_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "继续 · 工作内容分享时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_035_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "触发“你像领导/老师” · 老人育儿时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_035_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "继续 · 老人育儿时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_036_2cdd2cf502",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "城市选择时"
+    },
+    "productHint": "触发“你像领导/老师” · 城市选择时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_036_2cdd2cf502_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你像领导/老师”",
+      "scene": "城市选择时"
+    },
+    "productHint": "继续 · 城市选择时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_037_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "现场止损"
+    },
+    "productHint": "触发“你总讲大道理” · 现场止损",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_037_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "现场止损"
+    },
+    "productHint": "继续 · 现场止损",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_038_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "事后修复"
+    },
+    "productHint": "触发“你总讲大道理” · 事后修复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_038_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "事后修复"
+    },
+    "productHint": "继续 · 事后修复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_039_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "正式讨论"
+    },
+    "productHint": "触发“你总讲大道理” · 正式讨论",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_039_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "正式讨论"
+    },
+    "productHint": "继续 · 正式讨论",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_040_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "微信回复"
+    },
+    "productHint": "触发“你总讲大道理” · 微信回复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_040_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "微信回复"
+    },
+    "productHint": "继续 · 微信回复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_041_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "家庭会议"
+    },
+    "productHint": "触发“你总讲大道理” · 家庭会议",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_041_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "家庭会议"
+    },
+    "productHint": "继续 · 家庭会议",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_042_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "长期约定"
+    },
+    "productHint": "触发“你总讲大道理” · 长期约定",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_042_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "长期约定"
+    },
+    "productHint": "继续 · 长期约定",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_043_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "触发“你总讲大道理” · 冲突升级时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_043_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "冲突升级时"
+    },
+    "productHint": "继续 · 冲突升级时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_044_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "对方哭后"
+    },
+    "productHint": "触发“你总讲大道理” · 对方哭后",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_044_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "对方哭后"
+    },
+    "productHint": "继续 · 对方哭后",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_045_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "疲劳时"
+    },
+    "productHint": "触发“你总讲大道理” · 疲劳时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_045_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "疲劳时"
+    },
+    "productHint": "继续 · 疲劳时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_046_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "触发“你总讲大道理” · 孩子在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_046_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "孩子在场时"
+    },
+    "productHint": "继续 · 孩子在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_047_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "父母在场时"
+    },
+    "productHint": "触发“你总讲大道理” · 父母在场时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_047_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "父母在场时"
+    },
+    "productHint": "继续 · 父母在场时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_048_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "项目压力时"
+    },
+    "productHint": "触发“你总讲大道理” · 项目压力时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_048_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "项目压力时"
+    },
+    "productHint": "继续 · 项目压力时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_049_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "教育议题时"
+    },
+    "productHint": "触发“你总讲大道理” · 教育议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_049_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "教育议题时"
+    },
+    "productHint": "继续 · 教育议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_050_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "触发“你总讲大道理” · 金钱议题时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_050_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "金钱议题时"
+    },
+    "productHint": "继续 · 金钱议题时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_051_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "空间需求时"
+    },
+    "productHint": "触发“你总讲大道理” · 空间需求时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_051_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "空间需求时"
+    },
+    "productHint": "继续 · 空间需求时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_052_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "触发“你总讲大道理” · 工作内容分享时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_052_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "工作内容分享时"
+    },
+    "productHint": "继续 · 工作内容分享时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_053_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "触发“你总讲大道理” · 老人育儿时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_053_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "老人育儿时"
+    },
+    "productHint": "继续 · 老人育儿时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_054_4835e67362",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "城市选择时"
+    },
+    "productHint": "触发“你总讲大道理” · 城市选择时",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_054_4835e67362_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你总讲大道理”",
+      "scene": "城市选择时"
+    },
+    "productHint": "继续 · 城市选择时",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_055_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "现场止损"
+    },
+    "productHint": "触发“你不支持我的工作” · 现场止损",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_055_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "现场止损"
+    },
+    "productHint": "继续 · 现场止损",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_056_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "事后修复"
+    },
+    "productHint": "触发“你不支持我的工作” · 事后修复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_056_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "事后修复"
+    },
+    "productHint": "继续 · 事后修复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_057_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "正式讨论"
+    },
+    "productHint": "触发“你不支持我的工作” · 正式讨论",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_057_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "正式讨论"
+    },
+    "productHint": "继续 · 正式讨论",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_058_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "微信回复"
+    },
+    "productHint": "触发“你不支持我的工作” · 微信回复",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_058_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "微信回复"
+    },
+    "productHint": "继续 · 微信回复",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_059_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "家庭会议"
+    },
+    "productHint": "触发“你不支持我的工作” · 家庭会议",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_059_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "家庭会议"
+    },
+    "productHint": "继续 · 家庭会议",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_060_4134f932e7",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "长期约定"
+    },
+    "productHint": "触发“你不支持我的工作” · 长期约定",
+    "userFacing": "关系里常见的是表达方式错位，不是谁不爱谁。先换一句话，比赢争论更重要。",
+    "actions": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "phrases": [
+      "我听到了，你不是只在说这一件事，而是在说你经常有这种感觉。这个我先不反驳，我先把你的意思接住。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.8,
+    "_avoid": "我不是这个意思，你怎么又多想了？",
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "rel_060_4134f932e7_cont",
+    "tags": [
+      "SYN",
+      "关系",
+      "CHAT"
+    ],
+    "match": {
+      "topic": "partner_conflict",
+      "trigger": "触发“你不支持我的工作”",
+      "scene": "长期约定"
+    },
+    "productHint": "继续 · 长期约定",
+    "userFacing": "深谈前先确认对方要的是倾听还是方案，能避免很多二次伤害。",
+    "actions": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "phrases": [
+      "我可以先不提意见。你如果只是想让我听，我就听；如果你想要我一起想办法，我再说我的担心。"
+    ],
+    "topic": [
+      "synastry",
+      "partner_conflict",
+      "marriage"
+    ],
+    "confidenceWeight": 0.78,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]

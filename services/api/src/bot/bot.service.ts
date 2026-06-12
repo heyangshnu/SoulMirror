@@ -41,6 +41,21 @@ export class BotService {
     return session;
   }
 
+  async appendMessages(
+    userId: string,
+    sessionId: string,
+    messages: { role: string; content: string }[],
+  ) {
+    const session = await this.getSession(userId, sessionId);
+    const now = new Date();
+    for (const m of messages) {
+      if (!m.content?.trim()) continue;
+      session.messages.push({ role: m.role, content: m.content.trim(), createdAt: now });
+    }
+    await session.save();
+    return session;
+  }
+
   async sendMessage(userId: string, sessionId: string, message: string) {
     const { aiBody, session } = await this.prepareMessage(userId, sessionId, message);
     const aiRes = await this.ai.post<{ reply: string; crisis: boolean }>('/bot/chat', aiBody);

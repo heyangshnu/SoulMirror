@@ -100,11 +100,12 @@ export default function ChartRelationsScreen() {
     }
   };
 
-  const genReport = async (id: string) => {
+  const genReport = async (id: string, relationType: string) => {
     if (generatingId) return;
     setGeneratingId(id);
     try {
-      const report = await api.post<{ _id: string }>(`/chart/relations/${id}/report`);
+      const path = relationType === 'child' ? '/analysis/child' : '/analysis/synastry';
+      const report = await api.post<{ _id: string }>(path, { relationId: id });
       router.push(`/report/${report._id}`);
     } catch (e) {
       Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : '');
@@ -163,7 +164,7 @@ export default function ChartRelationsScreen() {
                   <View style={styles.row}>
                     <Button
                       title={isGenerating ? t('common.generating') : t('chart.relationReport')}
-                      onPress={() => genReport(r._id)}
+                      onPress={() => genReport(r._id, r.relationType)}
                       loading={isGenerating}
                       disabled={busy && !isGenerating}
                       style={styles.flex}

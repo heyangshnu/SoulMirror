@@ -7,6 +7,7 @@ import {
   buildNatalChart,
   type BirthInput,
 } from '@soulmirror/chart';
+import { buildBaziSummary } from '@soulmirror/bazi';
 import { Model, Types } from 'mongoose';
 import { AiService } from '../ai/ai.service';
 import { BotSession, BotSessionDocument } from '../schemas/bot-session.schema';
@@ -358,11 +359,10 @@ export class ChartService {
   }
 
   async getLatestReportSummariesForBot(userId: string): Promise<string> {
-    const y = new Date().getFullYear();
-    const [natal, daxian, liunianYear, latestAny] = await Promise.all([
+    const [natal, planSelf, planRecent, latestAny] = await Promise.all([
       this.reports.findLatestByTypes(userId, ['ziwei_natal']).then((r) => r[0]),
-      this.reports.findLatestByTypes(userId, ['ziwei_daxian']).then((r) => r[0]),
-      this.reports.findLatestLiunian(userId, y),
+      this.reports.findLatestByTypes(userId, ['plan_self_profile']).then((r) => r[0]),
+      this.reports.findLatestByTypes(userId, ['plan_recent_years']).then((r) => r[0]),
       this.reports.findByUser(userId).then((list) => list[0]),
     ]);
 
@@ -371,6 +371,33 @@ export class ChartService {
 
     if (life?.currentState?.trim()) lines.push(`用户当前状态：${life.currentState.trim()}`);
     if (life?.focusDirection?.trim()) lines.push(`用户关注方向：${life.focusDirection.trim()}`);
+
+    const pushPlan = (
+      label: string,
+      report?: {
+        portrait?: string;
+        stage?: string;
+        plans?: { title: string; body: string }[];
+        headlineSummary?: string;
+        summary?: string;
+      } | null,
+    ) => {
+      if (!report) return;
+      const text = report.portrait?.trim() || report.headlineSummary?.trim() || report.summary?.trim();
+      if (text) lines.push(`${label}：${text}`);
+      if (report.stage) lines.push(`${label}阶段：${report.stage}`);
+      const plans = report.plans ?? [];
+      if (plans.length > 0) {
+        const snippets = plans
+          .slice(0, 2)
+          .map((p) => `${p.title}：${p.body.slice(0, 50)}`)
+          .join('；');
+        lines.push(`${label}方案：${snippets}`);
+      }
+    };
+
+    pushPlan('底色方案', planSelf);
+    pushPlan('近几年方案', planRecent);
 
     const pushReport = (
       label: string,
@@ -395,15 +422,13 @@ export class ChartService {
     };
 
     pushReport('本命解读总结', natal);
-    pushReport('大限解读总结', daxian);
-    pushReport(`${y}流年解读总结`, liunianYear);
 
     if (
       latestAny &&
-      !latestAny.testType.startsWith('ziwei_') &&
-      latestAny._id.toString() !== natal?._id.toString()
+      latestAny.testType?.startsWith('plan_') &&
+      latestAny._id.toString() !== planSelf?._id.toString()
     ) {
-      pushReport(`近期${latestAny.title}`, latestAny);
+      pushPlan(`近期${latestAny.title}`, latestAny);
     }
 
     return lines.join('\n');
@@ -426,7 +451,114 @@ export class ChartService {
     return ctx;
   }
 
-  private async syncUserChartContext(userId: string) {
+  async getAnalysisInput(userId: string) {
+    const profile = await this.requireBirthProfile(userId);
+    const input = this.toBirthInput(profile);
+    const natal = buildNatalChart(input);
+    const bazi = buildBaziSummary(natal.pillars);
+    const life = await this.getLifeContext(userId);
+    return {
+      natal: natal as unknown as Record<string, unknown>,
+      bazi: bazi as unknown as Record<string, unknown>,
+      realContext: this.formatRealContext(life),
+    };
+  }
+
+  async getSynastryContext(userId: string, relationId: string) {
+    const profile = await this.requireBirthProfile(userId);
+    const relation = await this.relationModel.findOne({
+      _id: relationId,
+      userId: new Types.ObjectId(userId),
+    });
+    if (!relation) throw new NotFoundException('关系人不存在');
+    const ownerNatal = buildNatalChart(this.toBirthInput(profile));
+    const targetNatal = buildNatalChart(this.toBirthInput(relation));
+    const horoscope = buildHoroscope(this.toBirthInput(profile));
+    const life = await this.getLifeContext(userId);
+    return {
+      natal: targetNatal as unknown as Record<string, unknown>,
+      ownerNatal: ownerNatal as unknown as Record<string, unknown>,
+      horoscope,
+      realContext: this.formatRealContext(life),
+      relationName: relation.name,
+    };
+  }
+
+  async getChildContext(userId: string, relationId: string) {
+    const relation = await this.relationModel.findOne({
+      _id: relationId,
+      userId: new Types.ObjectId(userId),
+    });
+    if (!relation) throw new NotFoundException('关系人不存在');
+    if (relation.relationType !== 'child') {
+      throw new BadRequestException('请选择子女关系人');
+    }
+    const profile = await this.requireBirthProfile(userId);
+    const childNatal = buildNatalChart(this.toBirthInput(relation));
+    const life = await this.getLifeContext(userId);
+    return {
+      natal: childNatal as unknown as Record<string, unknown>,
+      ownerNatal: buildNatalChart(this.toBirthInput(profile)),
+      realContext: this.formatRealContext(life),
+      relationName: relation.name,
+    };
+  }
+
+  async getFamilySystemContext(userId: string) {
+    const profile = await this.requireBirthProfile(userId);
+    const relations = await this.relationModel.find({ userId: new Types.ObjectId(userId) });
+    const spouse = relations.find((r) => r.relationType === 'spouse');
+    const child = relations.find((r) => r.relationType === 'child');
+    if (!spouse && !child) {
+      throw new BadRequestException('请先添加配偶或子女关系人，再生成家庭系统方案');
+    }
+    const ownerNatal = buildNatalChart(this.toBirthInput(profile));
+    const horoscope = buildHoroscope(this.toBirthInput(profile));
+    const life = await this.getLifeContext(userId);
+    const realContext = {
+      ...this.formatRealContext(life),
+      hasChildren: !!child || life?.hasChildren,
+      childAge: life?.childAge,
+    };
+    return {
+      natal: ownerNatal as unknown as Record<string, unknown>,
+      ownerNatal: ownerNatal as unknown as Record<string, unknown>,
+      partnerNatal: spouse
+        ? (buildNatalChart(this.toBirthInput(spouse)) as unknown as Record<string, unknown>)
+        : undefined,
+      childNatal: child
+        ? (buildNatalChart(this.toBirthInput(child)) as unknown as Record<string, unknown>)
+        : undefined,
+      horoscope,
+      realContext,
+      relationName: spouse?.name ?? child?.name,
+    };
+  }
+
+  formatRealContext(life: LifeContextDocument | null) {
+    if (!life) return undefined;
+    return {
+      relationshipStatus: life.relationshipStatus,
+      hasChildren: life.hasChildren,
+      childAge: life.childAge,
+      parentHealthConcern: life.parentHealthConcern,
+      cityChangeRecently: life.cityChangeRecently,
+      financialPressure: life.financialPressure,
+      careerStage: life.careerStage,
+      partnerNotes: life.partnerNotes,
+      currentConflict: life.currentConflict,
+      freeText: life.freeText,
+      currentState: life.currentState,
+      focusDirection: life.focusDirection,
+      weeklyFocus: life.weeklyFocus,
+      chatSummary: life.chatSummary,
+      voiceDiaryEntries: life.voiceDiaryEntries,
+      chatUploadText: life.chatUploadText,
+      chatPatterns: life.chatPatterns,
+    };
+  }
+
+  async syncUserChartContext(userId: string) {
     const ctx = await this.getChartContextForBot(userId);
     if (ctx) await this.users.setChartContext(userId, ctx);
   }

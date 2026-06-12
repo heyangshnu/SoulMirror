@@ -1,0 +1,266 @@
+[
+  {
+    "id": "hor_迁移_zh",
+    "tags": [
+      "ZW-D",
+      "迁移"
+    ],
+    "match": {
+      "decadalPalace": "迁移"
+    },
+    "productHint": "大限 迁移",
+    "userFacing": "这几年外部场景、城市、合作、事业扩张容易成为反复主题。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_子女_zh",
+    "tags": [
+      "ZW-D",
+      "子女"
+    ],
+    "match": {
+      "decadalPalace": "子女"
+    },
+    "productHint": "大限 子女",
+    "userFacing": "这一阶段孩子、家庭秩序和照顾压力会被推到前台。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_夫妻_zh",
+    "tags": [
+      "ZW-D",
+      "夫妻"
+    ],
+    "match": {
+      "decadalPalace": "夫妻"
+    },
+    "productHint": "大限 夫妻",
+    "userFacing": "关系议题与互相期待容易在这一阶段被放大。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_事业_zh",
+    "tags": [
+      "ZW-D",
+      "事业"
+    ],
+    "match": {
+      "decadalPalace": "事业"
+    },
+    "productHint": "大限 事业",
+    "userFacing": "方向、机会与职业排序会成为主线之一。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_财帛_zh",
+    "tags": [
+      "ZW-D",
+      "财帛"
+    ],
+    "match": {
+      "decadalPalace": "财帛"
+    },
+    "productHint": "大限 财帛",
+    "userFacing": "资源、现金流与价值感会成为高频议题。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_田宅_zh",
+    "tags": [
+      "ZW-D",
+      "田宅"
+    ],
+    "match": {
+      "decadalPalace": "田宅"
+    },
+    "productHint": "大限 田宅",
+    "userFacing": "居住、空间、家人同堂与生活秩序变重。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_福德_zh",
+    "tags": [
+      "ZW-D",
+      "福德"
+    ],
+    "match": {
+      "decadalPalace": "福德"
+    },
+    "productHint": "大限 福德",
+    "userFacing": "内在节奏、恢复方式与情绪阈值需要被看见。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_父母_zh",
+    "tags": [
+      "ZW-D",
+      "父母"
+    ],
+    "match": {
+      "decadalPalace": "父母"
+    },
+    "productHint": "大限 父母",
+    "userFacing": "长辈、责任与上一代议题可能同时出现。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_兄弟_zh",
+    "tags": [
+      "ZW-D",
+      "兄弟"
+    ],
+    "match": {
+      "decadalPalace": "兄弟"
+    },
+    "productHint": "大限 兄弟",
+    "userFacing": "同伴、合作与资源分配议题变多。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_疾厄_zh",
+    "tags": [
+      "ZW-D",
+      "疾厄"
+    ],
+    "match": {
+      "decadalPalace": "疾厄"
+    },
+    "productHint": "大限 疾厄",
+    "userFacing": "身心负荷与休息节奏值得优先处理。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_奴仆_zh",
+    "tags": [
+      "ZW-D",
+      "奴仆"
+    ],
+    "match": {
+      "decadalPalace": "奴仆"
+    },
+    "productHint": "大限 奴仆",
+    "userFacing": "工作方式、协作与日常负荷需要重新分配。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "hor_官禄_zh",
+    "tags": [
+      "ZW-D",
+      "官禄"
+    ],
+    "match": {
+      "decadalPalace": "官禄"
+    },
+    "productHint": "大限 官禄",
+    "userFacing": "社会角色、名声与长期路径被推到台前。",
+    "actions": [
+      "把变动做成表格再讨论"
+    ],
+    "topic": [
+      "recent_years",
+      "family_system"
+    ],
+    "confidenceWeight": 0.75,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]

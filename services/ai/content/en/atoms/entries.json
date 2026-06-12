@@ -1,0 +1,322 @@
+[
+  {
+    "id": "atom_001_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "It's not that you lack ability—you're using it in the wrong scene.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_002_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "This isn't a one-off event; a life theme is showing up in reality.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_003_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "The chart gives structure; your real life decides where it lands.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_004_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "What you need isn't a lucky charm—it's a life skill.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_005_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Don't read a year as good or bad—see which themes get louder.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_006_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "A major cycle is like a decade of weather; a year is the wind that year.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_007_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Foundation sets the base; cycles set the stage; years trigger; life is where it lands.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_008_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Conflict often isn't about ideas—it's about unacknowledged strengths.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_009_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Children aren't messengers between parents—they need stability.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_010_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "One reads the map, one feels the terrain—a good family needs both.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_011_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "You think you're improving things; they may feel judged.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_012_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "They share a life read; you may hear emotion.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_013_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Acknowledging first isn't giving up principles—it's ordering them.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_014_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "When exhausted, skip deep talks—they need mental bandwidth.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_015_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Without real-life context, insights become pretty but empty.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_016_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "What lands isn't jargon—it's jargon translated into their life.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_017_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "A good report makes them say: I'm not alone in this pattern.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_018_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Don't label the child—describe the environment parents can build.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_019_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "Partner insight isn't to prove who's wrong—it's to find the interface.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_020_en",
+    "tags": [
+      "atom"
+    ],
+    "userFacing": "In long relationships, one less wound beats winning one argument.",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "en",
+    "source": "v4_import"
+  }
+]

@@ -1,4 +1,6 @@
-export type TestType = 'bazi' | 'mbti' | 'tarot' | 'palm';
+export * from './plan-report';
+
+export type TestType = 'bazi' | 'mbti' | 'tarot' | 'palm' | 'plan';
 
 export type BotTone = 'gentle' | 'rational' | 'humorous';
 

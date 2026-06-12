@@ -35,17 +35,10 @@ export default function ChartSetupScreen() {
         currentState: currentState.trim() || undefined,
         focusDirection: focusDirection.trim() || undefined,
       });
+      router.replace('/(tabs)/explore');
     } catch (e) {
       const msg = e instanceof Error ? e.message : t('chart.checkNetwork');
       Alert.alert(t('chart.saveBirthFail'), msg);
-      return;
-    }
-    try {
-      const report = await api.post<{ _id: string }>('/chart/reports/natal', {});
-      router.replace(`/chart/result?natalId=${report._id}`);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : t('chart.checkNetworkBackend');
-      Alert.alert(t('chart.reportFail'), msg);
     } finally {
       setLoading(false);
     }

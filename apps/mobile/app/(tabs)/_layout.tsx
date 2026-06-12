@@ -26,16 +26,16 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: t('tabs.explore'),
+          title: t('tabs.today'),
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'sparkles', android: 'star', web: 'star' }} tintColor={color} size={24} />
+            <SymbolView name={{ ios: 'house', android: 'home', web: 'home' }} tintColor={color} size={24} />
           ),
         }}
       />
       <Tabs.Screen
         name="reports"
         options={{
-          title: t('tabs.reports'),
+          title: t('tabs.myPlans'),
           tabBarIcon: ({ color }) => (
             <SymbolView name={{ ios: 'doc.text', android: 'description', web: 'description' }} tintColor={color} size={24} />
           ),
@@ -44,23 +44,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name="mirror"
         options={{
-          title: t('tabs.mirror'),
-          tabBarIcon: ({ color }) => (
-            <SymbolView
-              name={{ ios: 'bubble.left.and.bubble.right', android: 'chat', web: 'chat' }}
-              tintColor={color}
-              size={24}
-            />
-          ),
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="family"
+        options={{
+          href: null,
         }}
       />
       <Tabs.Screen
         name="memorial"
         options={{
-          title: t('tabs.connections'),
-          tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'person.2', android: 'group', web: 'group' }} tintColor={color} size={24} />
-          ),
+          href: null,
         }}
       />
       <Tabs.Screen

@@ -84,7 +84,7 @@ def _build_messages(body: ChatBody) -> list[dict[str, str]]:
             "If the user is in crisis, guide them to professional help. "
             "When report summaries are provided, use them for short, relevant replies—everyday language, "
             "avoid astro jargon (palaces, flying stars). "
-            "You may reference the report naturally (e.g. 'your reading mentioned…')."
+            "Never repeat the same metaphor from the report; answer the user's latest message each turn."
             f"{_language_hint(body)}"
         )
     else:
@@ -95,7 +95,7 @@ def _build_messages(body: ChatBody) -> list[dict[str, str]]:
             "若用户表达极端痛苦，引导其寻求专业帮助。"
             "当用户提供了解读报告总结时，基于报告理解 ta 的处境，给简短有针对性的回应；"
             "用日常口语，避免「宫位」「四化」等命理术语。"
-            "问题与报告相关时，可自然引述一处（如「你报告里提到过…」），不要机械复读。"
+            "禁止反复使用报告里的同一比喻或原句；每轮必须回应用户最新问题，可偶尔自然提及报告一处，不可机械复读底色。"
             f"{_language_hint(body)}"
         )
 

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "child_env_01",
+    "tags": [
+      "REAL",
+      "儿童"
+    ],
+    "match": {
+      "topic": "child_environment"
+    },
+    "productHint": "环境建议，非标签",
+    "userFacing": "孩子更需要稳定的节律和父母情绪环境，而不是成为父母关系的翻译器。",
+    "actions": [
+      "固定作息与陪伴窗口",
+      "不在孩子面前深谈未解决矛盾"
+    ],
+    "topic": [
+      "child_environment",
+      "child"
+    ],
+    "confidenceWeight": 0.9,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "child_boundary_01",
+    "tags": [
+      "边界"
+    ],
+    "match": {
+      "topic": "child_environment"
+    },
+    "productHint": "不做终身定型",
+    "userFacing": "我们讨论的是你可以创造的环境与表达方式，不是给孩子贴终身标签。",
+    "actions": [
+      "关注睡眠、户外与情绪承接",
+      "避免用成绩定义孩子"
+    ],
+    "topic": [
+      "child_environment"
+    ],
+    "confidenceWeight": 0.95,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]

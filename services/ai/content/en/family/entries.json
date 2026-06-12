@@ -1,0 +1,62 @@
+[
+  {
+    "id": "fam_flow_balance",
+    "tags": [
+      "SYN",
+      "family"
+    ],
+    "productHint": "Three-person flow",
+    "userFacing": "Tension often stacks: one pushes outward, one holds the home base, a child needs stability. The fix is re-division of roles, not someone giving themselves up.",
+    "actions": [
+      "Separate strategy from daily-life talks",
+      "30-min weekly family sync",
+      "Don't use the child as messenger"
+    ],
+    "topic": [
+      "family_system",
+      "family"
+    ],
+    "confidenceWeight": 0.88,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "fam_risk_triangle",
+    "tags": [
+      "SYN",
+      "family"
+    ],
+    "productHint": "Triangle risk",
+    "userFacing": "The biggest risk isn't fighting—it's one dismissing life judgment as irrational, one hearing structure as pressure, and a child absorbing the tension as normal air.",
+    "actions": [
+      "Father: fewer top-down reviews",
+      "Mother: don't turn anxiety into micro-control",
+      "Repair lightly in front of the child after conflict"
+    ],
+    "topic": [
+      "family_system"
+    ],
+    "confidenceWeight": 0.85,
+    "locale": "en",
+    "source": "v4_import"
+  },
+  {
+    "id": "fam_strength",
+    "tags": [
+      "SYN",
+      "family"
+    ],
+    "productHint": "Family strength",
+    "userFacing": "When it works: direction plus ground-checking, and a child who learns both structure and feeling in a stable home.",
+    "actions": [
+      "Three layers: strategy / daily life / emotions",
+      "Facts first, then what each person cares about"
+    ],
+    "topic": [
+      "family_system"
+    ],
+    "confidenceWeight": 0.82,
+    "locale": "en",
+    "source": "v4_import"
+  }
+]

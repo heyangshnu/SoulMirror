@@ -1,96 +1,96 @@
 import { useCallback, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 import { type Href, useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
-import { TestCard } from '@/components/ui/TestCard';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
+import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
-type CatalogItem = {
-  type: string;
+type Report = {
+  _id: string;
+  testType: string;
   title: string;
-  subtitle: string;
-  duration: string;
-  icon: string;
+  summary?: string;
+  headlineSummary?: string;
+  portrait?: string;
+  createdAt: string;
 };
-
-function localizeItem(item: CatalogItem, t: (k: string) => string): CatalogItem {
-  if (item.type === 'ziwei') {
-    return {
-      ...item,
-      title: t('explore.ziweiTitle'),
-      subtitle: t('explore.ziweiSubtitle'),
-      duration: t('explore.ziweiDuration'),
-    };
-  }
-  return item;
-}
 
 export default function ExploreScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [items, setItems] = useState<CatalogItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [hasProfile, setHasProfile] = useState<boolean | null>(null);
+  const [latestPlan, setLatestPlan] = useState<Report | null>(null);
 
   useFocusEffect(
     useCallback(() => {
       api
-        .get<{ items: CatalogItem[] }>('/tests/catalog', false)
-        .then((res) => setItems(res.items.map((i) => localizeItem(i, t))))
-        .catch(() =>
-          setItems([
-            localizeItem(
-              { type: 'ziwei', title: '', subtitle: '', duration: '', icon: 'star.circle' },
-              t,
-            ),
-          ]),
-        )
-        .finally(() => setLoading(false));
-    }, [t]),
+        .get<{ profile?: unknown } | null>('/chart/birth-profile')
+        .then((res) => setHasProfile(!!res?.profile))
+        .catch(() => setHasProfile(false));
+
+      api
+        .get<Report[]>('/reports')
+        .then((list) => {
+          const plan = list.find((r) => r.testType?.startsWith('plan_'));
+          setLatestPlan(plan ?? null);
+        })
+        .catch(() => setLatestPlan(null));
+    }, []),
   );
+
+  const continueAsk = () => {
+    if (!latestPlan) return;
+    router.push({
+      pathname: '/report/followup/[reportId]',
+      params: { reportId: latestPlan._id },
+    } as Href);
+  };
 
   return (
     <Screen>
       <Text style={styles.brand}>{t('common.brand')}</Text>
-      <Text style={styles.title}>{t('explore.title')}</Text>
-      <Text style={styles.subtitle}>{t('explore.subtitle')}</Text>
+      <Text style={styles.title}>{t('home.title')}</Text>
+      <Text style={styles.subtitle}>{t('home.subtitle')}</Text>
 
-      {loading ? (
+      {hasProfile === null ? (
         <ActivityIndicator color={colors.primary} style={{ marginTop: 40 }} />
+      ) : !hasProfile ? (
+        <Card>
+          <Text style={styles.cardBody}>{t('home.noProfile')}</Text>
+          <Button title={t('common.goSetup')} onPress={() => router.push('/chart/setup' as Href)} style={{ marginTop: 12 }} />
+        </Card>
       ) : (
         <>
-          {items.map((item) => (
-            <TestCard
-              key={item.type}
-              title={item.title}
-              subtitle={item.subtitle}
-              duration={item.duration}
-              icon={item.icon}
-              onPress={() => router.push('/chart/setup' as Href)}
-            />
-          ))}
+          <Button title={t('home.startPlan')} onPress={() => router.push('/onboarding/intent' as Href)} />
 
-          <View style={styles.quickRow}>
-            <Button
-              title={t('explore.myReading')}
-              variant="secondary"
-              onPress={() => router.push('/chart/result' as Href)}
-              style={styles.quickBtn}
-            />
-            <Button
-              title={t('explore.relations')}
-              variant="secondary"
-              onPress={() => router.push('/chart/relations' as Href)}
-              style={styles.quickBtn}
-            />
-          </View>
-          <Button
-            title={t('explore.voiceDiary')}
-            variant="secondary"
-            onPress={() => router.push('/chart/voice-diary' as Href)}
-          />
+          {latestPlan ? (
+            <Card style={styles.latestCard}>
+              <Text style={styles.latestLabel}>{t('home.latestPlan')}</Text>
+              <Text style={styles.latestTitle}>{latestPlan.title}</Text>
+              <ReportSummaryText style={styles.latestBody}>
+                {latestPlan.headlineSummary || latestPlan.summary || latestPlan.portrait || ''}
+              </ReportSummaryText>
+              <View style={styles.latestActions}>
+                <Button
+                  title={t('home.viewPlan')}
+                  variant="secondary"
+                  onPress={() => router.push(`/report/${latestPlan._id}` as Href)}
+                  style={styles.latestBtn}
+                />
+                <Button title={t('home.continueAsk')} onPress={continueAsk} style={styles.latestBtn} />
+              </View>
+            </Card>
+          ) : (
+            <Text style={styles.emptyHint}>{t('home.noPlanYet')}</Text>
+          )}
+
+          <Pressable onPress={() => router.push('/(tabs)/reports' as Href)}>
+            <Text style={styles.link}>{t('home.allPlans')}</Text>
+          </Pressable>
         </>
       )}
     </Screen>
@@ -100,7 +100,14 @@ export default function ExploreScreen() {
 const styles = StyleSheet.create({
   brand: { ...typography.small, color: colors.primary, marginTop: spacing.md, fontWeight: '600' },
   title: { ...typography.hero, marginTop: 8 },
-  subtitle: { ...typography.caption, marginBottom: spacing.lg },
-  quickRow: { flexDirection: 'row', gap: 10, marginTop: 8, marginBottom: 8 },
-  quickBtn: { flex: 1 },
+  subtitle: { ...typography.caption, marginBottom: spacing.lg, lineHeight: 22 },
+  cardBody: { ...typography.body, color: colors.textSecondary },
+  latestCard: { marginTop: spacing.lg },
+  latestLabel: { ...typography.caption, color: colors.primary, fontWeight: '600', marginBottom: 6 },
+  latestTitle: { ...typography.title, fontSize: 17, marginBottom: 8 },
+  latestBody: { ...typography.body, color: colors.textSecondary, lineHeight: 22 },
+  latestActions: { flexDirection: 'row', gap: 10, marginTop: spacing.md },
+  latestBtn: { flex: 1 },
+  emptyHint: { ...typography.caption, marginTop: spacing.lg, textAlign: 'center', color: colors.textSecondary },
+  link: { ...typography.caption, color: colors.primary, fontWeight: '600', textAlign: 'center', marginTop: spacing.lg },
 });

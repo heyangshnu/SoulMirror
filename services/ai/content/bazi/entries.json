@@ -1,0 +1,46 @@
+[
+  {
+    "id": "bz_jiamu_01",
+    "tags": ["BZ", "木", "甲"],
+    "match": { "dayElement": "木" },
+    "productHint": "方向感、原则感、成长欲",
+    "userFacing": "你的底层不是缺能力，而是有清晰的方向感与成长欲，想把事情往前推。",
+    "actions": ["重大决定前留一晚再定", "每周留半天只做复盘"],
+    "topic": ["self_profile", "career"],
+    "confidenceWeight": 0.75,
+    "locale": "zh"
+  },
+  {
+    "id": "bz_fire_01",
+    "tags": ["BZ", "火"],
+    "match": { "trait": "火透" },
+    "productHint": "推动力强，冷却不足",
+    "userFacing": "你不是没想法，而是想法很容易被推进成行动；越累的时候，越想把分析和控制当作解决方案。",
+    "actions": ["疲惫时不做深度讨论", "先问感受，再给建议"],
+    "topic": ["self_profile", "marriage", "partner_conflict"],
+    "confidenceWeight": 0.8,
+    "locale": "zh"
+  },
+  {
+    "id": "bz_water_weak_01",
+    "tags": ["BZ", "水弱"],
+    "match": { "trait": "水弱" },
+    "productHint": "冷却、休息、延迟决策",
+    "userFacing": "你真正需要的不是某个幸运物，而是让系统冷却的能力：睡眠、延迟决策、月度复盘。",
+    "actions": ["固定睡眠窗口", "每月一次优先级梳理"],
+    "topic": ["self_profile", "recent_years"],
+    "confidenceWeight": 0.78,
+    "locale": "zh"
+  },
+  {
+    "id": "bz_earth_01",
+    "tags": ["BZ", "土"],
+    "match": { "trait": "土重" },
+    "productHint": "现实压力、结果感",
+    "userFacing": "你对结果和资源有天然敏感，这让你可靠，也可能在关系里显得「总在算利弊」。",
+    "actions": ["财务与家庭议题分开讨论", "先确认对方感受再谈方案"],
+    "topic": ["self_profile", "family"],
+    "confidenceWeight": 0.72,
+    "locale": "zh"
+  }
+]

@@ -1,112 +1,185 @@
-import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Stack, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
+import { PlanCardView } from '@/components/plan/PlanCardView';
+import { RealContextPanel } from '@/components/plan/RealContextPanel';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
+import { exportReportPdf } from '@/lib/export-pdf';
 import { colors, spacing, typography } from '@/theme/tokens';
 
-type Report = {
+type PlanReport = {
   title: string;
-  summary: string;
+  portrait?: string;
+  stage?: string;
+  plans?: { id: string; title: string; body: string; actions: string[]; phrases?: string[] }[];
+  followUpQuestions?: string[];
+  disclaimer?: string;
+  coverageLevel?: string;
+  sections?: { title: string; content: string }[];
+  summary?: string;
+  headlineSummary?: string;
   testType?: string;
   themeLabel?: string;
-  headlineSummary?: string;
-  score?: number;
-  scoreLabel?: string;
-  sections: { title: string; content: string }[];
 };
+
+const RELATION_TYPES = new Set(['plan_synastry', 'plan_child_environment', 'plan_family_system']);
 
 export default function ReportDetailScreen() {
   const { t } = useTranslation();
-  const { id, mode } = useLocalSearchParams<{ id: string; mode?: string }>();
+  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
-  const [report, setReport] = useState<Report | null>(null);
-  const isDetailOnly = mode === 'detail';
+  const [report, setReport] = useState<PlanReport | null>(null);
+  const [exporting, setExporting] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
-    if (id) api.get<Report>(`/reports/${id}`).then(setReport).catch(() => setReport(null));
+    if (id) {
+      api
+        .get<PlanReport>(`/reports/${id}`)
+        .then(setReport)
+        .catch(() => api.get<PlanReport>(`/analysis/reports/${id}`).then(setReport).catch(() => setReport(null)));
+    }
   }, [id]);
+
+  const openFollowUp = (question?: string, cardId?: string) => {
+    if (!id) return;
+    router.push({
+      pathname: '/report/followup/[reportId]',
+      params: {
+        reportId: id,
+        q: question ?? '',
+        planCardId: cardId ?? '',
+      },
+    } as Href);
+  };
 
   if (!report) {
     return (
       <>
-        <Stack.Screen options={{ title: t('reportDetail.nav') }} />
+        <Stack.Screen options={{ title: t('planReport.nav') }} />
         <ActivityIndicator color={colors.primary} style={{ marginTop: 80 }} />
       </>
     );
   }
 
-  const isZiwei = report.testType?.startsWith('ziwei');
-  const keyword = isZiwei ? report.themeLabel : report.scoreLabel;
-  const headline = report.headlineSummary ?? report.summary;
+  const isPlan = (report.plans?.length ?? 0) > 0;
+  const isRelationPlan = RELATION_TYPES.has(report.testType ?? '');
+
+  const exportPdf = async () => {
+    if (!id || exporting) return;
+    setExporting(true);
+    try {
+      await exportReportPdf(id);
+    } catch (e) {
+      Alert.alert(t('exportPdf.fail'), e instanceof Error ? e.message : t('common.retryLater'));
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  if (!isPlan) {
+    return (
+      <>
+        <Stack.Screen options={{ title: report.title }} />
+        <Screen>
+          {report.sections?.map((s, i) => (
+            <Card key={i}>
+              <Text style={styles.sectionTitle}>{s.title}</Text>
+              <Text style={styles.sectionBody}>{s.content}</Text>
+            </Card>
+          ))}
+          <Text style={styles.disclaimer}>{t('planReport.disclaimer')}</Text>
+        </Screen>
+      </>
+    );
+  }
 
   return (
     <>
-      <Stack.Screen
-        options={{
-          title: isDetailOnly ? t('reportDetail.full') : report.title,
-          headerTintColor: colors.primary,
-        }}
-      />
+      <Stack.Screen options={{ title: report.title, headerTintColor: colors.primary }} />
       <Screen>
-        {!isDetailOnly && (
-          <Card style={styles.headlineCard}>
-            {keyword ? (
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{keyword}</Text>
-              </View>
-            ) : null}
-            <Text style={styles.headlineTitle}>{t('reportDetail.headline')}</Text>
-            <ReportSummaryText variant="primary">{headline}</ReportSummaryText>
+        <ScrollView ref={scrollRef}>
+          <Card style={styles.portraitCard}>
+            <Text style={styles.sectionLabel}>{t('planReport.portrait')}</Text>
+            <Text style={styles.portrait}>{report.portrait}</Text>
           </Card>
-        )}
 
-        <Text style={styles.detailTitle}>{isDetailOnly ? t('reportDetail.sections') : t('reportDetail.expand')}</Text>
+          {report.stage ? (
+            <Card style={styles.stageCard}>
+              <Text style={styles.sectionLabel}>{t('planReport.stage')}</Text>
+              <Text style={styles.stage}>{report.stage}</Text>
+            </Card>
+          ) : null}
 
-        {report.sections.map((s, i) => (
-          <Card key={i}>
-            <Text style={styles.sectionTitle}>{s.title}</Text>
-            <Text style={styles.sectionBody}>{s.content}</Text>
-          </Card>
-        ))}
+          {report.coverageLevel === 'partial' ? (
+            <Text style={styles.partialHint}>{t('planReport.partialHint')}</Text>
+          ) : null}
 
-        {!isZiwei && report.score != null ? (
-          <Text style={styles.legacyScore}>{t('reportDetail.score', { score: report.score })}</Text>
-        ) : null}
+          <RealContextPanel />
 
-        {isZiwei && isDetailOnly ? (
-          <Pressable onPress={() => router.back()}>
-            <Text style={styles.backLink}>{t('reportDetail.backSummary')}</Text>
-          </Pressable>
-        ) : null}
+          <Text style={styles.sectionLabel}>{t('planReport.plans')}</Text>
+          {report.plans!.map((card) => (
+            <PlanCardView
+              key={card.id}
+              card={card}
+              followUpLabel={t('planReport.askMore')}
+              onFollowUp={(q, cardId) => openFollowUp(q, cardId)}
+            />
+          ))}
 
-        <Button title={t('common.chatWithMirror')} onPress={() => router.push('/(tabs)/mirror')} style={{ marginTop: 8 }} />
-        <Text style={styles.disclaimer}>{t('reportDetail.disclaimer')}</Text>
+          {isRelationPlan ? (
+            <Card style={styles.relationTools}>
+              <Text style={styles.sectionLabel}>{t('planReport.relationTools')}</Text>
+              <Text style={styles.relationHint}>{t('planReport.chatUploadHint')}</Text>
+              <Button
+                title={t('chatUpload.nav')}
+                variant="secondary"
+                onPress={() => router.push('/analysis/chat-upload' as Href)}
+              />
+            </Card>
+          ) : null}
+
+          <View style={styles.chips}>
+            {(report.followUpQuestions ?? []).map((q) => (
+              <Pressable key={q} onPress={() => openFollowUp(q)} style={styles.chip}>
+                <Text style={styles.chipText}>{q}</Text>
+              </Pressable>
+            ))}
+          </View>
+
+          <Button title={t('home.continueAsk')} onPress={() => openFollowUp()} style={{ marginTop: 8 }} />
+
+          <Button
+            title={exporting ? t('exportPdf.exporting') : t('exportPdf.export')}
+            variant="secondary"
+            onPress={exportPdf}
+            disabled={exporting}
+            style={{ marginTop: 12 }}
+          />
+          <Text style={styles.disclaimer}>{report.disclaimer ?? t('planReport.disclaimer')}</Text>
+        </ScrollView>
       </Screen>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  headlineCard: { marginBottom: spacing.lg, backgroundColor: colors.primaryMuted, alignSelf: 'stretch' },
-  badge: {
-    alignSelf: 'flex-start',
-    backgroundColor: colors.background,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginBottom: 10,
-  },
-  badgeText: { ...typography.small, color: colors.primary, fontWeight: '700' },
-  headlineTitle: { ...typography.caption, fontWeight: '700', color: colors.primary, marginBottom: 8 },
-  detailTitle: { ...typography.title, fontSize: 17, marginBottom: spacing.sm },
-  sectionTitle: { ...typography.title, fontSize: 17, marginBottom: 10 },
-  sectionBody: { ...typography.body, fontSize: 15, color: colors.textSecondary, lineHeight: 24 },
-  legacyScore: { ...typography.small, color: colors.textSecondary, textAlign: 'center', marginTop: 8, opacity: 0.7 },
-  backLink: { ...typography.caption, color: colors.primary, textAlign: 'center', marginTop: 12, fontWeight: '600' },
-  disclaimer: { ...typography.small, textAlign: 'center', marginTop: 24, marginBottom: 32 },
+  portraitCard: { backgroundColor: colors.primaryMuted, marginBottom: spacing.md },
+  stageCard: { marginBottom: spacing.md },
+  sectionLabel: { ...typography.title, fontSize: 15, color: colors.primary, marginBottom: 8, marginTop: 4 },
+  portrait: { ...typography.body, fontSize: 17, lineHeight: 26 },
+  stage: { ...typography.body, lineHeight: 24 },
+  partialHint: { ...typography.caption, color: colors.textSecondary, marginBottom: spacing.md, fontStyle: 'italic' },
+  relationTools: { marginBottom: spacing.md },
+  relationHint: { ...typography.caption, marginBottom: spacing.sm, lineHeight: 20 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginVertical: spacing.md },
+  chip: { backgroundColor: colors.primaryMuted, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20 },
+  chipText: { ...typography.caption, color: colors.primary },
+  sectionTitle: { ...typography.title, fontSize: 16, marginBottom: 8 },
+  sectionBody: { ...typography.body, lineHeight: 24 },
+  disclaimer: { ...typography.small, color: colors.textSecondary, marginTop: spacing.lg, marginBottom: spacing.xl, lineHeight: 20 },
 });

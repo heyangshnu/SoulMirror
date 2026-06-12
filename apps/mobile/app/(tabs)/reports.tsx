@@ -55,13 +55,14 @@ export default function ReportsScreen() {
         reports.map((r) => {
           const headline = r.headlineSummary ?? r.summary;
           const label = r.themeLabel ?? reportTypeLabel(t, r.testType);
+          const isPlan = r.testType.startsWith('plan_');
           const isZiwei = r.testType.startsWith('ziwei');
           return (
             <Card
               key={r._id}
               style={styles.reportCard}
               onPress={() =>
-                isZiwei ? router.push('/chart/result') : router.push(`/report/${r._id}`)
+                isPlan || !isZiwei ? router.push(`/report/${r._id}`) : router.push('/chart/result')
               }
             >
               <View style={styles.row}>
@@ -71,7 +72,7 @@ export default function ReportsScreen() {
               </View>
               <Text style={styles.cardTitle}>{r.title}</Text>
               <ReportSummaryText>{headline}</ReportSummaryText>
-              {!isZiwei && (
+              {!isZiwei && !isPlan && (
                 <Pressable onPress={() => router.push(`/report/${r._id}?mode=detail`)}>
                   <Text style={styles.link}>{t('reports.viewFull')}</Text>
                 </Pressable>

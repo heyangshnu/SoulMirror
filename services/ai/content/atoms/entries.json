@@ -1,0 +1,38 @@
+[
+  {
+    "id": "atom_01",
+    "userFacing": "你不是没有能力，而是能力进入了不适合的场景。",
+    "topic": ["self_profile"],
+    "locale": "zh"
+  },
+  {
+    "id": "atom_02",
+    "userFacing": "这不是单点事件，而是阶段主题在现实中显化。",
+    "topic": ["recent_years"],
+    "locale": "zh"
+  },
+  {
+    "id": "atom_03",
+    "userFacing": "真正需要补的不是某个五行，而是一种生活能力。",
+    "topic": ["self_profile"],
+    "locale": "zh"
+  },
+  {
+    "id": "atom_04",
+    "userFacing": "先接住，不代表放弃原则；只是把原则放到第二步。",
+    "topic": ["partner_conflict", "marriage"],
+    "locale": "zh"
+  },
+  {
+    "id": "atom_05",
+    "userFacing": "越累的时候越不要深谈，因为深谈需要心理资源。",
+    "topic": ["partner_conflict", "family"],
+    "locale": "zh"
+  },
+  {
+    "id": "atom_06",
+    "userFacing": "长期关系里，赢一次争论不如少一次二次伤害。",
+    "topic": ["synastry", "marriage"],
+    "locale": "zh"
+  }
+]

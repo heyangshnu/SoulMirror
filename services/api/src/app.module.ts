@@ -3,12 +3,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { join } from 'path';
 import { AiModule } from './ai/ai.module';
+import { AnalysisModule } from './analysis/analysis.module';
 import { AuthModule } from './auth/auth.module';
 import { BotModule } from './bot/bot.module';
 import { ChartModule } from './chart/chart.module';
 import { ReportsModule } from './reports/reports.module';
-import { SocialModule } from './social/social.module';
-import { TestsModule } from './tests/tests.module';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -29,11 +28,10 @@ import { UsersModule } from './users/users.module';
     AiModule,
     AuthModule,
     UsersModule,
-    TestsModule,
     ReportsModule,
     BotModule,
     ChartModule,
-    SocialModule,
+    AnalysisModule,
   ],
 })
 export class AppModule {}

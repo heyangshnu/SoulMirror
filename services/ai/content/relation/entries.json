@@ -1,0 +1,26 @@
+[
+  {
+    "id": "rel_map_terrain",
+    "tags": ["SYN", "合盘"],
+    "match": { "topic": "synastry" },
+    "productHint": "地图 vs 地形感",
+    "userFacing": "你们不是谁错，而是一个人更像看地图，一个人更像感受脚下路。地图能看方向，地形感知道哪里难走——两者都需要。",
+    "actions": ["一方给方向前，先确认对方当下的感受", "生活摩擦与长期规划分开谈"],
+    "phrases": ["我听见你在为孩子想，我们先看看这个可能性", "我不是否定你，我想先理解你的感受"],
+    "topic": ["synastry", "partner_conflict"],
+    "confidenceWeight": 0.85,
+    "locale": "zh"
+  },
+  {
+    "id": "rel_proud_clash",
+    "tags": ["SYN", "冲突"],
+    "match": { "topic": "partner_conflict" },
+    "productHint": "各自骄傲未被承认",
+    "userFacing": "冲突常常不是观点不同，而是各自最骄傲的能力没有被看见。",
+    "actions": ["先承认对方在为家用力", "把「优化」放到第二步"],
+    "phrases": ["我知道你在为这个家用力", "我们先对齐感受，再谈方案"],
+    "topic": ["partner_conflict", "marriage"],
+    "confidenceWeight": 0.8,
+    "locale": "zh"
+  }
+]

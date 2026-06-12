@@ -1,0 +1,12 @@
+{
+  "id": "case_a",
+  "role": "self",
+  "gender": "male",
+  "birth": {
+    "calendar": "solar",
+    "datetime": "1988-04-17 06:40",
+    "timezone": "+08:00"
+  },
+  "expectedUserKeywords": ["结构", "推动", "外部", "家庭", "节奏"],
+  "forbiddenUserTerms": ["武曲", "七杀", "迁移", "甲木", "命宫", "大限"]
+}

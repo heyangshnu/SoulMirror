@@ -55,7 +55,8 @@
           "cameraPermission": "心镜需要使用相机拍摄手掌照片"
         }
       ],
-      "expo-localization"
+      "expo-localization",
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true

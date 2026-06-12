@@ -62,6 +62,19 @@ export class AiService {
     }
   }
 
+  async postBuffer(path: string, data: unknown): Promise<Buffer> {
+    try {
+      const res = await this.client.post(path, this.withLocale(data), {
+        responseType: 'arraybuffer',
+        timeout: 120000,
+      });
+      return Buffer.from(res.data as ArrayBuffer);
+    } catch (err) {
+      this.logger.error(`AI service error POST buffer ${path}`, err);
+      throw new ServiceUnavailableException('PDF 导出失败，请稍后重试');
+    }
+  }
+
   streamPost(path: string, data: unknown): Promise<NodeJS.ReadableStream> {
     return this.client
       .post(path, this.withLocale(data), { responseType: 'stream', timeout: 0 })

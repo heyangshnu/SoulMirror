@@ -25,6 +25,47 @@ export class LifeContext {
 
   @Prop()
   lastChatSummaryAt?: Date;
+
+  @Prop({ enum: ['single', 'dating', 'married', 'separated'] })
+  relationshipStatus?: string;
+
+  @Prop()
+  hasChildren?: boolean;
+
+  @Prop()
+  childAge?: number;
+
+  @Prop()
+  parentHealthConcern?: boolean;
+
+  @Prop()
+  cityChangeRecently?: boolean;
+
+  @Prop({ enum: ['low', 'medium', 'high'] })
+  financialPressure?: string;
+
+  @Prop()
+  careerStage?: string;
+
+  @Prop()
+  partnerNotes?: string;
+
+  @Prop()
+  currentConflict?: string;
+
+  @Prop()
+  freeText?: string;
+
+  @Prop()
+  chatUploadText?: string;
+
+  @Prop({ type: Object })
+  chatPatterns?: {
+    summary?: string;
+    patterns?: string[];
+    escalationLine?: number;
+    recommendations?: string[];
+  };
 }
 
 export const LifeContextSchema = SchemaFactory.createForClass(LifeContext);

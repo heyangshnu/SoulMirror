@@ -55,6 +55,7 @@ export default function RootLayout() {
         <Stack.Screen name="chart" options={{ headerShown: false }} />
         <Stack.Screen name="profile/setup" />
         <Stack.Screen name="report/[id]" options={{ headerShown: true, title: t('reportDetail.stackTitle'), headerTintColor: colors.primary }} />
+        <Stack.Screen name="report/followup/[reportId]" options={{ headerShown: true, headerTintColor: colors.primary }} />
         <Stack.Screen name="social/chat/[friendId]" options={{ headerShown: true }} />
       </Stack>
     </SafeAreaProvider>

@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "locales": [
+    "zh",
+    "en"
+  ],
+  "categories": [
+    "atoms",
+    "bazi",
+    "ziwei",
+    "horoscope",
+    "relation",
+    "child",
+    "family"
+  ],
+  "note": "Imported from v4 content library",
+  "zh_entries": 165,
+  "en_entries": 165
+}

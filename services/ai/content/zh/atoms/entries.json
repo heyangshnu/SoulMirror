@@ -1,0 +1,322 @@
+[
+  {
+    "id": "atom_001",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "你不是没有能力，而是能力进入了不适合的场景。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_002",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "这不是单点事件，而是阶段主题在现实中显化。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_003",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "命盘给的是结构，现实补充决定它落在哪里。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_004",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "真正需要补的不是某个五行，而是一种生活能力。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_005",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "不要把流年理解成吉凶，要理解成哪类议题被放大。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_006",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "大限像十年天气，流年像当年的风向。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_007",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "本命是底盘，大限是主场，流年是触发，现实是落点。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_008",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "关系里的冲突常常不是观点不同，而是各自最骄傲的能力没有被承认。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_009",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "孩子不是父母关系的翻译器，孩子只需要稳定的环境。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_010",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "一个人看地图，一个人感受地形，好的家庭需要两者都存在。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_011",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "你以为自己在优化，对方可能感到自己被审稿。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_012",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "她以为自己在表达生活判断，你可能听成情绪反应。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_013",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "先接住，不代表放弃原则；只是把原则放到第二步。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_014",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "越累的时候越不要深谈，因为深谈需要心理资源。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_015",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "没有现实校准的命理，很容易变成漂亮但空的句子。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_016",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "让用户被打中的不是术语，而是术语如何解释他的真实生活。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_017",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "真正的报告要能让用户说：原来我不是单独卡在这件事上。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_018",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "不要把孩子的盘写成标签，要写成父母可以创造的环境。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_019",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "伴侣分析不是为了证明对方有问题，而是为了找到接口。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "atom_020",
+    "tags": [
+      "原子"
+    ],
+    "userFacing": "长期关系里，赢一次争论不如少一次二次伤害。",
+    "topic": [
+      "self_profile",
+      "recent_years",
+      "family_system",
+      "synastry"
+    ],
+    "confidenceWeight": 0.65,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]

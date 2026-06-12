@@ -1,0 +1,62 @@
+[
+  {
+    "id": "fam_flow_balance",
+    "tags": [
+      "SYN",
+      "家庭系统"
+    ],
+    "productHint": "三人能力流动",
+    "userFacing": "这个家庭的紧张往往不是单点冲突，而是阶段叠加：一方想向外，一方在向内托底，孩子需要稳定。解决不是谁放弃自己，而是重新分工。",
+    "actions": [
+      "战略与生活议题分开讨论",
+      "每周30分钟家庭对齐",
+      "不让孩子传话"
+    ],
+    "topic": [
+      "family_system",
+      "family"
+    ],
+    "confidenceWeight": 0.88,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "fam_risk_triangle",
+    "tags": [
+      "SYN",
+      "家庭系统"
+    ],
+    "productHint": "三角风险",
+    "userFacing": "最大风险不是吵架本身，而是：一方把生活判断当不理性，一方把结构语言当压迫，孩子把紧张当成要适应的空气。",
+    "actions": [
+      "父亲少用高位评价",
+      "母亲避免焦虑转成过细控制",
+      "争吵后在孩子面前低强度修复"
+    ],
+    "topic": [
+      "family_system"
+    ],
+    "confidenceWeight": 0.85,
+    "locale": "zh",
+    "source": "v4_import"
+  },
+  {
+    "id": "fam_strength",
+    "tags": [
+      "SYN",
+      "家庭系统"
+    ],
+    "productHint": "家庭优势",
+    "userFacing": "如果配合好：一方给方向，一方给现实校准，孩子在稳定环境里能同时学到结构和感受两套能力。",
+    "actions": [
+      "决策分三层：战略/生活/情绪",
+      "先列事实再表达在意点"
+    ],
+    "topic": [
+      "family_system"
+    ],
+    "confidenceWeight": 0.82,
+    "locale": "zh",
+    "source": "v4_import"
+  }
+]
