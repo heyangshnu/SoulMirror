@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -16,6 +17,7 @@ import { KeyboardChatLayout } from '@/components/ui/KeyboardChatLayout';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { streamBotChat } from '@/lib/chat-stream';
+import { getAgentMode, isClaudeAgentMode } from '@/lib/agent-mode';
 import { useAuthStore } from '@/store/auth';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -31,6 +33,7 @@ function buildChatHistory(msgs: Message[]): { role: string; content: string }[] 
 
 export default function MirrorScreen() {
   const { t } = useTranslation();
+  const router = useRouter();
   const params = useLocalSearchParams<{ q?: string; planCardId?: string; planContext?: string }>();
   const pendingQuestion = typeof params.q === 'string' && params.q ? params.q : undefined;
   const planCardId = typeof params.planCardId === 'string' && params.planCardId ? params.planCardId : undefined;
@@ -50,6 +53,14 @@ export default function MirrorScreen() {
   const { token, hydrated } = useAuthStore();
   const initialized = useRef(false);
   const pendingSent = useRef(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      getAgentMode().then((mode) => {
+        if (isClaudeAgentMode(mode)) router.replace('/(tabs)/chat');
+      });
+    }, [router]),
+  );
 
   const loadSession = useCallback(
     async (replaceMessages: boolean) => {

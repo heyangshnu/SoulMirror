@@ -1,0 +1,10 @@
+node_modules
+dist
+runtime_spool
+.env
+.DS_Store
+.git
+.claude-code/node_modules
+.claude-code/package.json
+.claude-code/package-lock.json
+npm-debug.log

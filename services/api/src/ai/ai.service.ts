@@ -52,10 +52,15 @@ export class AiService {
         if (err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND') {
           throw new ServiceUnavailableException('AI 服务未启动，请稍后重试');
         }
+        if (err.code === 'ECONNABORTED' || err.code === 'ETIMEDOUT') {
+          throw new ServiceUnavailableException('AI 服务响应超时，请稍后重试');
+        }
+        const status = err.response?.status;
         const detail =
           typeof err.response?.data === 'object' && err.response?.data !== null
             ? JSON.stringify(err.response.data).slice(0, 200)
             : err.message;
+        this.logger.error(`AI service POST ${path} failed status=${status} detail=${detail}`);
         throw new ServiceUnavailableException(`AI 服务异常：${detail}`);
       }
       throw new ServiceUnavailableException('报告生成失败，请稍后重试');

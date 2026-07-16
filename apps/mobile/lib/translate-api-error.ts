@@ -14,6 +14,7 @@ const SERVER_MESSAGE_KEYS: Record<string, string> = {
   '服务器未开启邮箱验证': 'errors.server.emailVerifyOff',
   '登录已过期，请重新登录': 'errors.sessionExpired',
   'AI 服务未启动，请稍后重试': 'errors.server.aiOffline',
+  'AI 服务响应超时，请稍后重试': 'errors.server.aiTimeout',
   '报告生成失败，请稍后重试': 'errors.server.reportFailed',
   '请先建立紫微命盘（填写生辰）': 'errors.server.chartRequired',
   '请提供文字或语音': 'errors.server.voiceRequired',

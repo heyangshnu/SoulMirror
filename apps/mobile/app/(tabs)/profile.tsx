@@ -4,7 +4,7 @@ import { useRouter, useFocusEffect, type Href } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ReportGeneratingOverlay } from '@/components/ui/ReportGeneratingOverlay';
+import { ProfileMenuDivider, ProfileMenuRow } from '@/components/ui/ProfileMenuRow';
 import { API_BASE, api } from '@/lib/api';
 import { runNetworkCheck } from '@/lib/network-check';
 import { useAuthStore } from '@/store/auth';
@@ -19,23 +19,15 @@ type UserMe = {
   anonymousMode?: boolean;
 };
 
-type Relation = { relationType: string };
-
 export default function ProfileScreen() {
   const { t, locale, setLocale } = useTranslation();
   const router = useRouter();
   const { user, logout } = useAuthStore();
   const [me, setMe] = useState<UserMe>({});
-  const [hasFamily, setHasFamily] = useState(false);
-  const [generatingFamily, setGeneratingFamily] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       api.get<UserMe>('/user/me').then(setMe).catch(() => {});
-      api
-        .get<Relation[]>('/chart/relations')
-        .then((items) => setHasFamily(items.some((r) => r.relationType === 'spouse' || r.relationType === 'child')))
-        .catch(() => setHasFamily(false));
     }, []),
   );
 
@@ -46,19 +38,6 @@ export default function ProfileScreen() {
       Alert.alert(t('profile.diagTitle'), `${lines}\n\n${t('profile.currentApi')}${API_BASE}`);
     } catch (e) {
       Alert.alert(t('profile.diagFail'), e instanceof Error ? e.message : t('profile.unknownError'));
-    }
-  };
-
-  const generateFamilySystem = async () => {
-    if (generatingFamily) return;
-    setGeneratingFamily(true);
-    try {
-      const report = await api.post<{ _id: string }>('/analysis/family-system', {});
-      router.push(`/report/${report._id}` as Href);
-    } catch (e) {
-      Alert.alert(t('chart.genFail'), e instanceof Error ? e.message : t('common.retryLater'));
-    } finally {
-      setGeneratingFamily(false);
     }
   };
 
@@ -81,87 +60,96 @@ export default function ProfileScreen() {
     ]);
   };
 
-  return (
-    <>
-      <ReportGeneratingOverlay visible={generatingFamily} />
-      <Screen>
-        <Text style={styles.title}>{t('profile.title')}</Text>
+  const displayName = me.nickname || user?.nickname || t('profile.defaultName');
+  const displayContact = me.phone || user?.phone || me.email || user?.email || t('profile.noPhone');
 
-        <Card>
-          <Text style={styles.name}>{me.nickname || user?.nickname || t('profile.defaultName')}</Text>
-          <Text style={styles.phone}>
-            {me.phone || user?.phone || me.email || user?.email || t('profile.noPhone')}
-          </Text>
+  return (
+    <Screen>
+      <Text style={styles.pageTitle}>{t('profile.title')}</Text>
+
+      <Card style={styles.userCard}>
+        <View style={styles.avatar}>
+          <Text style={styles.avatarText}>{displayName.slice(0, 1)}</Text>
+        </View>
+        <View style={styles.userInfo}>
+          <Text style={styles.name}>{displayName}</Text>
+          <Text style={styles.contact}>{displayContact}</Text>
           <Text style={styles.meta}>
             {t('profile.botTone')}
             {toneLabel(t, me.botTone)}
           </Text>
-        </Card>
+        </View>
+      </Card>
 
-        <Card>
-          <Text style={styles.sectionLabel}>{t('profile.familySection')}</Text>
-          <Text style={styles.hint}>{t('family.hint')}</Text>
-          <Button title={t('family.manage')} onPress={() => router.push('/chart/relations' as Href)} style={{ marginTop: 10 }} />
-          {hasFamily ? (
-            <Button
-              title={t('family.generateSystem')}
-              variant="secondary"
-              onPress={generateFamilySystem}
-              disabled={generatingFamily}
-              style={{ marginTop: 8 }}
-            />
-          ) : (
-            <Text style={styles.hint}>{t('family.needProfiles')}</Text>
-          )}
-        </Card>
+      <Card style={styles.menuCard}>
+        <ProfileMenuRow
+          label={t('tabs.topics')}
+          subtitle={t('topics.subtitle')}
+          onPress={() => router.push('/topics' as Href)}
+        />
+        <ProfileMenuDivider />
+        <ProfileMenuRow
+          label={t('tabs.relations')}
+          subtitle={t('relations.subtitle')}
+          onPress={() => router.push('/relations' as Href)}
+        />
+        <ProfileMenuDivider />
+        <ProfileMenuRow
+          label={t('tabs.memory')}
+          subtitle={t('memory.subtitle')}
+          onPress={() => router.push('/memory' as Href)}
+        />
+        <ProfileMenuDivider />
+        <ProfileMenuRow
+          label={t('profile.birthProfile')}
+          onPress={() => router.push('/chart/setup' as Href)}
+        />
+        <ProfileMenuDivider />
+        <ProfileMenuRow
+          label={t('profile.userPortrait')}
+          onPress={() => router.push('/profile/setup' as Href)}
+        />
+      </Card>
 
-        <Pressable onPress={() => router.push('/chart/setup' as Href)}>
-          <Card>
-            <Text style={styles.link}>{t('profile.birthProfile')}</Text>
-          </Card>
-        </Pressable>
+      <Card style={styles.sectionCard}>
+        <Text style={styles.sectionLabel}>{t('profile.language')}</Text>
+        <View style={styles.langRow}>
+          <Pressable
+            onPress={() => setLocale('zh')}
+            style={[styles.langBtn, locale === 'zh' && styles.langBtnActive]}
+          >
+            <Text style={[styles.langText, locale === 'zh' && styles.langTextActive]}>
+              {t('profile.languageZh')}
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setLocale('en')}
+            style={[styles.langBtn, locale === 'en' && styles.langBtnActive]}
+          >
+            <Text style={[styles.langText, locale === 'en' && styles.langTextActive]}>
+              {t('profile.languageEn')}
+            </Text>
+          </Pressable>
+        </View>
+      </Card>
 
-        <Card>
-          <Text style={styles.sectionLabel}>{t('profile.language')}</Text>
-          <View style={styles.langRow}>
-            <Pressable
-              onPress={() => setLocale('zh')}
-              style={[styles.langBtn, locale === 'zh' && styles.langBtnActive]}
-            >
-              <Text style={[styles.langText, locale === 'zh' && styles.langTextActive]}>
-                {t('profile.languageZh')}
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => setLocale('en')}
-              style={[styles.langBtn, locale === 'en' && styles.langBtnActive]}
-            >
-              <Text style={[styles.langText, locale === 'en' && styles.langTextActive]}>
-                {t('profile.languageEn')}
-              </Text>
-            </Pressable>
+      <Card style={styles.sectionCard}>
+        <View style={styles.row}>
+          <View style={styles.flex}>
+            <Text style={styles.rowLabel}>{t('profile.anonymous')}</Text>
+            <Text style={styles.hint}>{t('profile.anonymousHint')}</Text>
           </View>
-        </Card>
+          <Switch value={me.anonymousMode} disabled trackColor={{ true: colors.primary }} />
+        </View>
+      </Card>
 
-        <Pressable onPress={() => router.push('/profile/setup')}>
-          <Card>
-            <Text style={styles.link}>{t('profile.editPersona')}</Text>
-          </Card>
-        </Pressable>
+      <Card style={styles.menuCard}>
+        <ProfileMenuRow label={t('profile.privacy')} onPress={() => {}} showChevron={false} />
+        <ProfileMenuDivider />
+        <ProfileMenuRow label={t('profile.terms')} onPress={() => {}} showChevron={false} />
+      </Card>
 
-        <Card>
-          <View style={styles.row}>
-            <Text style={styles.link}>{t('profile.anonymous')}</Text>
-            <Switch value={me.anonymousMode} disabled trackColor={{ true: colors.primary }} />
-          </View>
-          <Text style={styles.hint}>{t('profile.anonymousHint')}</Text>
-        </Card>
-
-        <Card>
-          <Text style={styles.link}>{t('profile.privacy')}</Text>
-          <Text style={[styles.link, { marginTop: 12 }]}>{t('profile.terms')}</Text>
-        </Card>
-
+      <View style={styles.footer}>
         <Button title={t('profile.networkDiag')} variant="secondary" onPress={runDiag} />
         <Button
           title={t('profile.logout')}
@@ -173,20 +161,39 @@ export default function ProfileScreen() {
           style={{ marginTop: 12 }}
         />
         <Button title={t('profile.deleteAccount')} variant="ghost" onPress={deleteAccount} style={{ marginTop: 8 }} />
-      </Screen>
-    </>
+      </View>
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  title: { ...typography.hero, marginTop: spacing.md, marginBottom: spacing.lg },
+  pageTitle: { ...typography.hero, marginTop: spacing.md, marginBottom: spacing.lg },
+  userCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+    gap: spacing.md,
+  },
+  avatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.primaryMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: { ...typography.title, color: colors.primary, fontSize: 22 },
+  userInfo: { flex: 1 },
   name: { ...typography.title },
-  phone: { ...typography.caption, marginTop: 4 },
-  meta: { ...typography.small, marginTop: 8 },
-  link: { ...typography.body, fontWeight: '500' },
-  sectionLabel: { ...typography.body, fontWeight: '600', marginBottom: 8 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  hint: { ...typography.small, marginTop: 8, lineHeight: 20, color: colors.textSecondary },
+  contact: { ...typography.caption, marginTop: 4, color: colors.textSecondary },
+  meta: { ...typography.small, marginTop: 8, color: colors.textSecondary },
+  menuCard: { padding: 0, overflow: 'hidden', marginBottom: spacing.md },
+  sectionCard: { marginBottom: spacing.md },
+  sectionLabel: { ...typography.body, fontWeight: '600', marginBottom: spacing.sm },
+  row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: spacing.md },
+  flex: { flex: 1 },
+  rowLabel: { ...typography.body, fontWeight: '500' },
+  hint: { ...typography.small, marginTop: 6, lineHeight: 20, color: colors.textSecondary },
   langRow: { flexDirection: 'row', gap: 10 },
   langBtn: {
     flex: 1,
@@ -198,4 +205,5 @@ const styles = StyleSheet.create({
   langBtnActive: { backgroundColor: colors.primaryMuted },
   langText: { ...typography.caption, fontWeight: '600', color: colors.textSecondary },
   langTextActive: { color: colors.primary },
+  footer: { marginTop: spacing.sm, marginBottom: spacing.xxl },
 });

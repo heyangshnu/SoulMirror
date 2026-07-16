@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CommonModule } from '../common/common.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AiModule } from '../ai/ai.module';
 import { ChartModule } from '../chart/chart.module';
@@ -10,6 +11,7 @@ import { AnalysisService } from './analysis.service';
 
 @Module({
   imports: [
+    CommonModule,
     MongooseModule.forFeature([{ name: LifeContext.name, schema: LifeContextSchema }]),
     AiModule,
     ChartModule,

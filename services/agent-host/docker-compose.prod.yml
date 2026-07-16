@@ -1,0 +1,60 @@
+# SoulMirror 生产环境 agent-host
+# 部署：cd services/agent-host && docker compose -f docker-compose.prod.yml up -d --build
+services:
+  soulmirror-agent:
+    container_name: soulmirror-agent
+    image: soulmirror-agent:latest
+    build:
+      context: .
+      args:
+        FATE_CONTAINER_BASE_IMAGE: ${FATE_CONTAINER_BASE_IMAGE:-docker.m.daocloud.io/library/node:22-trixie}
+        PIP_INDEX_URL: ${PIP_INDEX_URL:-https://mirrors.aliyun.com/pypi/simple/}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PORT:-8787}:8787"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      PORT: "8787"
+      HOST: 0.0.0.0
+      RUNTIME_ROOT: /app/runtime
+      MEMORY_ROOT: /app/memory-projects
+      HOME: /app/runtime/home
+      TMPDIR: /app/runtime/tmp
+      XDG_CACHE_HOME: /app/runtime/cache
+      BUN_INSTALL_CACHE_DIR: /app/runtime/cache/bun-install
+      NPM_CONFIG_CACHE: /app/runtime/cache/npm
+      CLAUDE_CODE_BIN: claude
+      BASIC_MEMORY_BIN: /opt/basic-memory/bin/basic-memory
+      FUXI_INIT_CONCURRENCY: ${FUXI_INIT_CONCURRENCY:-5}
+      FUXI_INIT_GATE: ${FUXI_INIT_GATE:-core}
+      CLAUDE_CODE_FUXI_TIMEOUT_MS: ${CLAUDE_CODE_FUXI_TIMEOUT_MS:-1800000}
+      CLAUDE_MODEL_BODHISATTVA: ${CLAUDE_MODEL_BODHISATTVA:-MiniMax-M3}
+      CLAUDE_MODEL_GONGCAO: ${CLAUDE_MODEL_GONGCAO:-MiniMax-M3}
+      CLAUDE_MODEL_LUOHAN: ${CLAUDE_MODEL_LUOHAN:-MiniMax-M3}
+      CLAUDE_MODEL_FUXI: ${CLAUDE_MODEL_FUXI:-deepseek-v4-pro}
+      CLAUDE_FALLBACK_MODEL: ${CLAUDE_FALLBACK_MODEL:-ark-code-latest}
+      MINIMAX_ENABLED: ${MINIMAX_ENABLED:-1}
+      MINIMAX_ANTHROPIC_BASE_URL: ${MINIMAX_ANTHROPIC_BASE_URL:-https://api.minimaxi.com/anthropic}
+      ARK_ANTHROPIC_BASE_URL: ${ARK_ANTHROPIC_BASE_URL:-https://ark.cn-beijing.volces.com/api/plan}
+      ARK_BASE_URL: ${FATE_ARK_BASE_URL:-https://ark.cn-beijing.volces.com/api/plan/v3}
+      BASIC_MEMORY_LOG_LEVEL: ${BASIC_MEMORY_LOG_LEVEL:-WARNING}
+    volumes:
+      - ${AGENT_RUNTIME_VOLUME:-/data/agent-runtime}:/app/runtime
+      - ${MEMORY_PROJECTS_VOLUME:-/data/memory-projects}:/app/memory-projects
+    deploy:
+      resources:
+        limits:
+          memory: 12G
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: "50m"
+        max-file: "5"

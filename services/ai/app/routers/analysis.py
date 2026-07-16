@@ -9,7 +9,6 @@ from pydantic import BaseModel
 from app.pipeline.generate_plan_report import generate_plan_report
 from app.services.bazi_util import extract_bazi_tags_from_pillars
 from app.services.chat_analyzer import analyze_chat_upload
-from app.services.pdf_export import render_plan_pdf
 
 router = APIRouter()
 
@@ -134,6 +133,8 @@ async def chat_upload_analyze(body: ChatUploadBody):
 
 @router.post("/export-pdf")
 async def export_pdf(body: PdfExportBody):
+    from app.services.pdf_export import render_plan_pdf
+
     pdf_bytes = render_plan_pdf(body.report, locale=body.locale)
     return Response(
         content=pdf_bytes,

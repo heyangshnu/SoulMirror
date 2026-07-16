@@ -5,6 +5,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { ReportSummaryText } from '@/components/ui/ReportSummaryText';
 import { useTranslation, reportTypeLabel } from '@/hooks/useTranslation';
+import { useLegacyTabRedirect } from '@/hooks/useLegacyTabRedirect';
 import { useLocaleStore } from '@/store/locale';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -21,6 +22,7 @@ type Report = {
 };
 
 export default function ReportsScreen() {
+  useLegacyTabRedirect('/topics');
   const { t } = useTranslation();
   const locale = useLocaleStore((s) => s.locale);
   const router = useRouter();

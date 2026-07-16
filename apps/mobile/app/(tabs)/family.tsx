@@ -5,6 +5,7 @@ import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { ReportGeneratingOverlay } from '@/components/ui/ReportGeneratingOverlay';
+import { useLegacyTabRedirect } from '@/hooks/useLegacyTabRedirect';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
@@ -12,6 +13,7 @@ import { colors, spacing, typography } from '@/theme/tokens';
 type Relation = { relationType: string };
 
 export default function FamilyTabScreen() {
+  useLegacyTabRedirect('/relations');
   const { t } = useTranslation();
   const router = useRouter();
   const [hasFamily, setHasFamily] = useState<boolean | null>(null);

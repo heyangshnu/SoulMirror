@@ -1,0 +1,642 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>fate-and-fortune runtime</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f7f5f0;
+        --ink: #1f2933;
+        --muted: #667085;
+        --line: #ded8cc;
+        --panel: #fffdf9;
+        --accent: #5d6f57;
+        --accent-2: #6d5f8f;
+        --warn: #9a5b22;
+        --bad: #a73535;
+        --good: #2e6b4f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        background: rgba(255, 253, 249, 0.94);
+        position: sticky;
+        top: 0;
+        z-index: 4;
+      }
+      .topbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 16px;
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 14px 18px;
+      }
+      .title {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        min-width: 0;
+      }
+      h1 {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.2;
+        font-weight: 680;
+      }
+      .slug {
+        color: var(--muted);
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 30px;
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 999px;
+        background: #9aa3af;
+      }
+      .dot.ok {
+        background: var(--good);
+      }
+      .dot.bad {
+        background: var(--bad);
+      }
+      main {
+        max-width: 1480px;
+        margin: 0 auto;
+        padding: 18px;
+      }
+      .root-entry {
+        max-width: 620px;
+        margin: 72px auto;
+      }
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(420px, 0.9fr) minmax(420px, 1.1fr);
+        gap: 16px;
+        align-items: start;
+      }
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: #fbfaf6;
+      }
+      .panel-head h2 {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.3;
+      }
+      .panel-body {
+        padding: 14px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 5px;
+      }
+      input,
+      select,
+      textarea,
+      button {
+        font: inherit;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        border: 1px solid #ccc5b8;
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--ink);
+        padding: 9px 10px;
+        outline: none;
+      }
+      textarea {
+        resize: vertical;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--accent-2);
+        box-shadow: 0 0 0 3px rgba(109, 95, 143, 0.14);
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      button {
+        border: 0;
+        border-radius: 6px;
+        background: var(--accent);
+        color: #ffffff;
+        padding: 9px 13px;
+        cursor: pointer;
+        min-height: 38px;
+      }
+      button.secondary {
+        background: #ebe7df;
+        color: var(--ink);
+        border: 1px solid #d6cec1;
+      }
+      button:disabled {
+        opacity: 0.52;
+        cursor: default;
+      }
+      .messages {
+        height: 420px;
+        overflow: auto;
+        padding: 0;
+      }
+      .msg {
+        border-bottom: 1px solid #ece6dc;
+        padding: 13px 14px;
+        line-height: 1.65;
+        white-space: pre-wrap;
+      }
+      .msg .role {
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      .msg.user {
+        background: #ffffff;
+      }
+      .msg.assistant {
+        background: #fbfaf6;
+      }
+      .msg.system {
+        color: var(--warn);
+      }
+      .composer {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+      }
+      .event-list {
+        height: 520px;
+        overflow: auto;
+        font-size: 12px;
+        background: #ffffff;
+      }
+      .event {
+        display: grid;
+        grid-template-columns: 88px 150px minmax(0, 1fr);
+        gap: 8px;
+        border-bottom: 1px solid #ece6dc;
+        padding: 8px 10px;
+        align-items: start;
+      }
+      .event strong {
+        font-weight: 650;
+      }
+      .event .meta {
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+      .event.error,
+      .event.config_error,
+      .event.fuxi_node_error,
+      .event.gongcao_route_error,
+      .event.gongcao_error {
+        background: #fff5f3;
+      }
+      .event.tool_call {
+        background: #f8fbf7;
+      }
+      .event.fuxi_node_started,
+      .event.fuxi_node_done,
+      .event.gongcao_dispatch,
+      .event.luohan_receipt,
+      .event.background_idle {
+        background: #f8f6fc;
+      }
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .metric {
+        border: 1px solid #e4ded4;
+        border-radius: 6px;
+        padding: 10px;
+        background: #fff;
+      }
+      .metric .num {
+        font-size: 22px;
+        font-weight: 720;
+        line-height: 1;
+      }
+      .metric .label {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+      }
+      .file-tree {
+        max-height: 260px;
+        overflow: auto;
+        font-size: 12px;
+        line-height: 1.6;
+      }
+      .file-tree details {
+        border-bottom: 1px solid #eee9df;
+        padding: 7px 0;
+      }
+      .file-tree summary {
+        cursor: pointer;
+        color: var(--ink);
+        font-weight: 620;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      @media (max-width: 980px) {
+        .workspace,
+        .grid,
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        .event {
+          grid-template-columns: 74px 118px minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="topbar">
+        <div class="title">
+          <h1>fate-and-fortune</h1>
+          <div class="slug" id="slugLabel"></div>
+        </div>
+        <div class="status"><span class="dot" id="statusDot"></span><span id="statusText">initializing</span></div>
+      </div>
+    </header>
+
+    <main id="rootEntry" class="root-entry" hidden>
+      <section class="panel">
+        <div class="panel-head"><h2>选择测试用户</h2></div>
+        <div class="panel-body">
+          <div class="row">
+            <input id="slugInput" placeholder="例如 tesla-demo 或 张三" />
+            <button id="openSlugBtn">打开</button>
+          </div>
+          <p class="small">每个 <code>/{slug}</code> 对应一个独立 Basic Memory project。</p>
+        </div>
+      </section>
+    </main>
+
+    <main id="workspace" class="workspace" hidden>
+      <section>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>出生资料</h2>
+            <span class="small" id="runIdLabel"></span>
+          </div>
+          <div class="panel-body">
+            <div class="grid">
+              <div>
+                <label>性别</label>
+                <select id="gender">
+                  <option value="male">男</option>
+                  <option value="female">女</option>
+                  <option value="other">其他/不便透露</option>
+                </select>
+              </div>
+              <div>
+                <label>出生年月日 时分秒</label>
+                <input id="birthDateTime" type="datetime-local" step="1" />
+              </div>
+              <div>
+                <label>时区</label>
+                <input id="timezone" value="Asia/Shanghai" />
+              </div>
+              <div>
+                <label>出生地</label>
+                <input id="birthPlace" placeholder="可留空" />
+              </div>
+            </div>
+            <div class="row" style="margin-top: 12px;">
+              <button id="startBtn">开始建档并触发 16 个伏羲节点</button>
+              <button class="secondary" id="refreshStatusBtn">刷新记忆状态</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+          <div class="panel-head"><h2>对话</h2></div>
+          <div class="messages" id="messages"></div>
+          <div class="panel-body">
+            <div class="composer">
+              <textarea id="input" rows="3" placeholder="写下这一轮真实想问的问题"></textarea>
+              <button id="sendBtn">发送</button>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <section>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>实时事件流</h2>
+            <span class="small" id="eventCount">0 events</span>
+          </div>
+          <div class="event-list" id="events"></div>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+          <div class="panel-head"><h2>链路状态</h2></div>
+          <div class="panel-body">
+            <div class="cards">
+              <div class="metric"><div class="num" id="fuxiProgress">0/16</div><div class="label">伏羲初始化节点</div></div>
+              <div class="metric"><div class="num" id="toolCount">0</div><div class="label">工具调用事件</div></div>
+              <div class="metric"><div class="num" id="routeCount">0</div><div class="label">功曹路由</div></div>
+              <div class="metric"><div class="num" id="memoryWrites">0</div><div class="label">Markdown 创建/更新</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" style="margin-top: 16px;">
+          <div class="panel-head"><h2>Basic Memory Project</h2></div>
+          <div class="panel-body">
+            <div class="small" id="memoryPath"></div>
+            <div class="file-tree" id="fileTree"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script>
+      const slug = decodeURIComponent(location.pathname.replace(/^\/+|\/+$/g, ""));
+      const state = {
+        ws: null,
+        eventCount: 0,
+        toolCount: 0,
+        routeCount: 0,
+        fuxiDone: 0,
+        fuxiTotal: 16,
+        memoryWrites: 0,
+        connected: false
+      };
+
+      const rootEntry = document.getElementById("rootEntry");
+      const workspace = document.getElementById("workspace");
+      const statusDot = document.getElementById("statusDot");
+      const statusText = document.getElementById("statusText");
+      const eventsEl = document.getElementById("events");
+      const messagesEl = document.getElementById("messages");
+
+      if (!slug) {
+        rootEntry.hidden = false;
+        workspace.hidden = true;
+        statusText.textContent = "choose slug";
+        document.getElementById("slugLabel").textContent = "/";
+      } else {
+        rootEntry.hidden = true;
+        workspace.hidden = false;
+        document.getElementById("slugLabel").textContent = `/${slug}`;
+        prefillDemo(slug);
+        connect();
+        refreshStatus();
+      }
+
+      document.getElementById("openSlugBtn").onclick = () => {
+        const value = document.getElementById("slugInput").value.trim();
+        if (value) location.href = `/${encodeURIComponent(value)}`;
+      };
+
+      document.getElementById("refreshStatusBtn").onclick = refreshStatus;
+
+      document.getElementById("startBtn").onclick = () => {
+        const birthDateTime = document.getElementById("birthDateTime").value;
+        if (!birthDateTime) {
+          addMessage("系统", "请先填写出生时间。", "system");
+          return;
+        }
+        const payload = {
+          type: "start",
+          gender: document.getElementById("gender").value,
+          birthDateTime,
+          timezone: document.getElementById("timezone").value || "Asia/Shanghai",
+          birthPlace: document.getElementById("birthPlace").value || null,
+          accuracy: {
+            time: "exact",
+            place: document.getElementById("birthPlace").value ? "provided" : "missing"
+          }
+        };
+        send(payload);
+        addMessage("你", `开始建档：${payload.gender} / ${payload.birthDateTime} / ${payload.timezone}`, "user");
+      };
+
+      document.getElementById("sendBtn").onclick = sendMessage;
+      document.getElementById("input").addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) sendMessage();
+      });
+
+      function connect() {
+        const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+        state.ws = new WebSocket(`${protocol}//${location.host}/ws?slug=${encodeURIComponent(slug)}`);
+        state.ws.onopen = () => {
+          state.connected = true;
+          statusDot.className = "dot ok";
+          statusText.textContent = "connected";
+        };
+        state.ws.onclose = () => {
+          state.connected = false;
+          statusDot.className = "dot bad";
+          statusText.textContent = "disconnected";
+        };
+        state.ws.onerror = () => {
+          statusDot.className = "dot bad";
+          statusText.textContent = "socket error";
+        };
+        state.ws.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          handleEvent(data);
+        };
+      }
+
+      function send(payload) {
+        if (!state.ws || state.ws.readyState !== WebSocket.OPEN) {
+          addMessage("系统", "WebSocket 尚未连接。", "system");
+          return;
+        }
+        state.ws.send(JSON.stringify(payload));
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("input");
+        const text = input.value.trim();
+        if (!text) return;
+        input.value = "";
+        addMessage("你", text, "user");
+        send({ type: "message", text });
+      }
+
+      function handleEvent(data) {
+        state.eventCount += 1;
+        document.getElementById("eventCount").textContent = `${state.eventCount} events`;
+        addEvent(data);
+
+        if (data.type === "connected") {
+          document.getElementById("runIdLabel").textContent = data.runId || "";
+          document.getElementById("memoryPath").textContent = data.memoryProjectPath || "";
+        }
+        if (data.type === "assistant_message") addMessage("菩萨", data.text || "", "assistant");
+        if (data.type === "error" || data.type === "agent_error" || data.type === "config_error") {
+          addMessage("系统", data.message || JSON.stringify(data), "system");
+        }
+        if (data.type === "tool_call") {
+          state.toolCount += 1;
+          document.getElementById("toolCount").textContent = String(state.toolCount);
+        }
+        if (data.type === "gongcao_dispatch") {
+          state.routeCount += 1;
+          document.getElementById("routeCount").textContent = String(state.routeCount);
+        }
+        if (data.type === "fuxi_init_started") {
+          state.fuxiDone = 0;
+          state.fuxiTotal = data.total || 16;
+          updateFuxiProgress();
+        }
+        if (data.type === "fuxi_node_done" || data.type === "fuxi_node_error") {
+          state.fuxiDone += 1;
+          updateFuxiProgress();
+        }
+        if (data.memoryDiff) {
+          const created = data.memoryDiff.created || [];
+          const updated = data.memoryDiff.updated || [];
+          state.memoryWrites += created.length + updated.length;
+          document.getElementById("memoryWrites").textContent = String(state.memoryWrites);
+          refreshStatus();
+        }
+      }
+
+      function addMessage(role, text, kind) {
+        const item = document.createElement("div");
+        item.className = `msg ${kind || ""}`;
+        item.innerHTML = `<div class="role">${escapeHtml(role)}</div><div>${escapeHtml(text)}</div>`;
+        messagesEl.appendChild(item);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function addEvent(data) {
+        const item = document.createElement("div");
+        item.className = `event ${data.type || ""}`;
+        const time = data.at ? new Date(data.at).toLocaleTimeString() : new Date().toLocaleTimeString();
+        const label = data.agent || data.type || "event";
+        const summary = summarize(data);
+        item.innerHTML = `<div class="meta">${escapeHtml(time)}</div><strong>${escapeHtml(label)}</strong><div>${escapeHtml(summary)}</div>`;
+        eventsEl.prepend(item);
+      }
+
+      function summarize(data) {
+        if (data.message) return data.message;
+        if (data.nodeCode) return `${data.nodeCode} ${data.nodeName || ""} ${data.ok === false ? "failed" : ""}`.trim();
+        if (data.route) return JSON.stringify(data.route);
+        if (data.tool) return `${data.tool}${data.status ? " / " + data.status : ""}`;
+        if (data.summary) return JSON.stringify(data.summary);
+        return JSON.stringify(data);
+      }
+
+      async function refreshStatus() {
+        if (!slug) return;
+        try {
+          const res = await fetch(`/api/${encodeURIComponent(slug)}/status`);
+          const data = await res.json();
+          if (!data.ok) return;
+          document.getElementById("memoryPath").textContent = data.memoryProjectPath || "";
+          renderFileTree(data.directories || []);
+        } catch (error) {
+          addEvent({ type: "status_error", message: String(error) });
+        }
+      }
+
+      function renderFileTree(directories) {
+        const tree = document.getElementById("fileTree");
+        tree.innerHTML = "";
+        for (const dir of directories) {
+          const details = document.createElement("details");
+          details.open = ["00_soul", "01_命", "06_功曹"].includes(dir.dir);
+          const summary = document.createElement("summary");
+          summary.textContent = `${dir.dir} (${(dir.files || []).length})`;
+          details.appendChild(summary);
+          const list = document.createElement("div");
+          list.style.paddingLeft = "14px";
+          list.innerHTML = (dir.files || []).map((file) => `<div><code>${escapeHtml(file)}</code></div>`).join("") || `<div class="small">empty</div>`;
+          details.appendChild(list);
+          tree.appendChild(details);
+        }
+      }
+
+      function updateFuxiProgress() {
+        document.getElementById("fuxiProgress").textContent = `${state.fuxiDone}/${state.fuxiTotal}`;
+      }
+
+      function prefillDemo(value) {
+        if (value.toLowerCase().includes("tesla")) {
+          document.getElementById("gender").value = "male";
+          document.getElementById("birthDateTime").value = "1856-07-10T00:00:00";
+          document.getElementById("timezone").value = "Europe/Belgrade";
+          document.getElementById("birthPlace").value = "Smiljan";
+          document.getElementById("input").value = "我感觉脑子里有很多发明和图像，但现实里资源、商业关系和身体状态都在拉扯我。我该怎么安排自己的路？";
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;");
+      }
+    </script>
+  </body>
+</html>

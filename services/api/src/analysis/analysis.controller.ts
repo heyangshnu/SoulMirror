@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
+import { LegacyChainGuard } from '../common/legacy-chain.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AnalysisService } from './analysis.service';
 import { ChatUploadDto, FollowUpDto, RealContextDto, RecentYearsDto, SynastryDto } from './dto/analysis.dto';
@@ -68,6 +69,7 @@ export class FollowUpController {
   }
 
   @Post('followup/ask')
+  @UseGuards(LegacyChainGuard)
   ask(@Req() req: { user: { userId: string } }, @Body() dto: FollowUpDto) {
     return this.analysisService.followUp(req.user.userId, dto);
   }

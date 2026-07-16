@@ -1,0 +1,38 @@
+# Nginx 片段 — SoulMirror API + WSS 代理
+# 放置于 /etc/nginx/sites-available/soulmirror 后 nginx -t && systemctl reload nginx
+
+upstream soulmirror_api {
+    server 127.0.0.1:3010;
+    keepalive 32;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name api.soulzenai.com;
+
+    # ssl_certificate /path/to/fullchain.pem;
+    # ssl_certificate_key /path/to/privkey.pem;
+
+    client_max_body_size 20m;
+
+    location /v1/agent/stream {
+        proxy_pass http://soulmirror_api;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+    }
+
+    location /v1/ {
+        proxy_pass http://soulmirror_api;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_read_timeout 120s;
+    }
+}
+
+# agent-host 不对外暴露 8787；仅 NestJS 内网 AGENT_HOST_URL=http://127.0.0.1:8787

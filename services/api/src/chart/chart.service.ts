@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   buildChartContextText,
@@ -10,11 +10,13 @@ import {
 import { buildBaziSummary } from '@soulmirror/bazi';
 import { Model, Types } from 'mongoose';
 import { AiService } from '../ai/ai.service';
+import { AgentService } from '../agent/agent.service';
 import { BotSession, BotSessionDocument } from '../schemas/bot-session.schema';
 import { BirthProfile, BirthProfileDocument } from '../schemas/birth-profile.schema';
 import { LifeContext, LifeContextDocument } from '../schemas/life-context.schema';
 import { RelationProfile, RelationProfileDocument } from '../schemas/relation-profile.schema';
-import { ReportsService } from '../reports/reports.service';
+import { ReportsService, type PlanReportInput } from '../reports/reports.service';
+import { planInputToBootstrapPayload } from '../agent/bootstrap-plan';
 import { UsersService } from '../users/users.service';
 import type { UpsertBirthProfileDto, CreateRelationDto } from './dto/chart.dto';
 
@@ -22,6 +24,7 @@ const MAX_RELATIONS = 6;
 
 @Injectable()
 export class ChartService {
+  private readonly logger = new Logger(ChartService.name);
   /** 同一关系人并发生成报告时复用同一 Promise，避免重复创建 */
   private relationReportTasks = new Map<string, Promise<unknown>>();
 
@@ -33,6 +36,7 @@ export class ChartService {
     private ai: AiService,
     private reports: ReportsService,
     private users: UsersService,
+    private agentService: AgentService,
   ) {}
 
   private toBirthInput(p: BirthProfile | RelationProfile): BirthInput {
@@ -96,6 +100,19 @@ export class ChartService {
       );
     }
     await this.syncUserChartContext(userId);
+    void this.agentService.scheduleInit(userId, {
+      gender: dto.gender,
+      birthDate: dto.birthDate,
+      birthTime: dto.birthTime,
+      birthPlace: dto.birthPlace,
+      timeUnknown: dto.timeUnknown,
+      calendar: dto.calendar,
+      isLeapMonth: dto.isLeapMonth,
+      longitude: dto.longitude,
+    });
+    void this.generateBootstrapPlans(userId).catch((err) => {
+      this.logger.warn(`bootstrap plans failed for ${userId}: ${String(err)}`);
+    });
     return {
       ok: true,
       warning: natal.timeUnknown ? '时辰未知，结果可能不够准确' : undefined,
@@ -182,6 +199,15 @@ export class ChartService {
 
   async listRelations(userId: string) {
     return this.relationModel.find({ userId: new Types.ObjectId(userId) }).exec();
+  }
+
+  async getRelation(userId: string, relationId: string) {
+    const doc = await this.relationModel.findOne({
+      _id: new Types.ObjectId(relationId),
+      userId: new Types.ObjectId(userId),
+    });
+    if (!doc) throw new NotFoundException('relation not found');
+    return doc;
   }
 
   async addRelation(userId: string, dto: CreateRelationDto) {
@@ -462,6 +488,36 @@ export class ChartService {
       bazi: bazi as unknown as Record<string, unknown>,
       realContext: this.formatRealContext(life),
     };
+  }
+
+  /** v4 快轨：建档后并行生成「底色 + 近几年」方案，不阻塞 Archive 慢轨 init */
+  private async generateBootstrapPlans(userId: string) {
+    if (!this.agentService.isAgentEnabled()) return;
+    const existing = await this.reports.findByUser(userId);
+    const hasBootstrap = existing.some(
+      (r) => r.topic === 'self_profile' || r.topic === 'recent_years',
+    );
+    if (hasBootstrap) {
+      await this.agentService.markBootstrapReady(userId);
+      return;
+    }
+    const { natal, bazi, realContext } = await this.getAnalysisInput(userId);
+    const profile = await this.requireBirthProfile(userId);
+    const horoscope = buildHoroscope(this.toBirthInput(profile));
+    const [natalPayload, recentPayload] = await Promise.all([
+      this.ai.post<PlanReportInput>('/analysis/natal', { natal, bazi, realContext, topic: 'self_profile' }),
+      this.ai.post<PlanReportInput>('/analysis/recent-years', { natal, bazi, realContext, horoscope }),
+    ]);
+    await Promise.all([
+      this.reports.createPlan(userId, natalPayload, 'self_profile'),
+      this.reports.createPlan(userId, recentPayload, 'recent_years'),
+    ]);
+    if (natalPayload.portrait || natalPayload.summary) {
+      await this.users.setTestSummary(userId, natalPayload.portrait ?? natalPayload.summary);
+    }
+    const bootstrapPayload = planInputToBootstrapPayload(natalPayload, recentPayload);
+    await this.agentService.markBootstrapReady(userId);
+    await this.agentService.writeBootstrapPlanToMemory(userId, bootstrapPayload);
   }
 
   async getSynastryContext(userId: string, relationId: string) {

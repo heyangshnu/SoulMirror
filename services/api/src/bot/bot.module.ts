@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { CommonModule } from '../common/common.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChartModule } from '../chart/chart.module';
 import { BotSession, BotSessionSchema } from '../schemas/bot-session.schema';
@@ -8,6 +9,7 @@ import { BotService } from './bot.service';
 
 @Module({
   imports: [
+    CommonModule,
     UsersModule,
     ChartModule,
     MongooseModule.forFeature([{ name: BotSession.name, schema: BotSessionSchema }]),

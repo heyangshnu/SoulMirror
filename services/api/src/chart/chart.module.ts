@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AgentModule } from '../agent/agent.module';
 import { BotSession, BotSessionSchema } from '../schemas/bot-session.schema';
 import { BirthProfile, BirthProfileSchema } from '../schemas/birth-profile.schema';
 import { LifeContext, LifeContextSchema } from '../schemas/life-context.schema';
@@ -19,6 +20,7 @@ import { ChartService } from './chart.service';
     ]),
     ReportsModule,
     UsersModule,
+    AgentModule,
   ],
   controllers: [ChartController],
   providers: [ChartService],

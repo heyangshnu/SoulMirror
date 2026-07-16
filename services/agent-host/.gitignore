@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.venv/
+.DS_Store
+.opencode/node_modules/
+.opencode/package.json
+.opencode/package-lock.json
+.opencode/bun.lock
+memory-projects/
+tests/output/
+runtime_spool/*
+!runtime_spool/.gitkeep

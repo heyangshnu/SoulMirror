@@ -45,15 +45,10 @@ export default function ReportDetailScreen() {
     }
   }, [id]);
 
-  const openFollowUp = (question?: string, cardId?: string) => {
-    if (!id) return;
+  const openFollowUp = (question?: string) => {
     router.push({
-      pathname: '/report/followup/[reportId]',
-      params: {
-        reportId: id,
-        q: question ?? '',
-        planCardId: cardId ?? '',
-      },
+      pathname: '/(tabs)/chat',
+      params: { prefill: question?.trim() || '我想继续聊聊这个方案' },
     } as Href);
   };
 

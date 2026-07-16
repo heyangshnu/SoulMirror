@@ -70,6 +70,11 @@ export class ChartController {
     return this.chartService.listRelations(req.user.userId);
   }
 
+  @Get('relations/:id')
+  getRelation(@Req() req: { user: { userId: string } }, @Param('id') id: string) {
+    return this.chartService.getRelation(req.user.userId, id);
+  }
+
   @Post('relations')
   addRelation(@Req() req: { user: { userId: string } }, @Body() dto: CreateRelationDto) {
     return this.chartService.addRelation(req.user.userId, dto);

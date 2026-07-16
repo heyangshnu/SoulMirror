@@ -1,0 +1,37 @@
+{
+  "name": "@soulmirror/agent-host",
+  "version": "0.1.0",
+  "private": true,
+  "description": "SoulMirror Archive multi-agent runtime (Bodhisattva/Gongcao/Luohan/Fuxi)",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/host/src/server.js",
+    "host": "tsx host/src/server.ts",
+    "mcp:memory": "node dist/mcp/src/memory-server.js",
+    "mcp:chart": "node dist/mcp/src/chart-server.js",
+    "mcp:methodology": "node dist/mcp/src/methodology-server.js",
+    "mcp:memory:dev": "tsx mcp/src/memory-server.ts",
+    "mcp:chart:dev": "tsx mcp/src/chart-server.ts",
+    "mcp:methodology:dev": "tsx mcp/src/methodology-server.ts",
+    "validate:static": "node tests/workflow/validate-static.mjs",
+    "validate:chart": "tsx tests/workflow/validate-chart-asset.ts",
+    "validate:biography100": "node tests/workflow/biography-100-sim.mjs",
+    "test:live:tesla100": "node tests/workflow/live-tesla-100.mjs"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.50",
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "dotenv": "^16.4.7",
+    "iztro": "^2.5.8",
+    "lunar-javascript": "^1.7.7",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/ws": "^8.5.13",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3"
+  }
+}

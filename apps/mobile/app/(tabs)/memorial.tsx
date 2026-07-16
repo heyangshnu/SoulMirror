@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useLegacyTabRedirect } from '@/hooks/useLegacyTabRedirect';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -38,6 +38,7 @@ type ChatRequest = {
 };
 
 export default function ConnectionsScreen() {
+  useLegacyTabRedirect('/relations');
   const { t } = useTranslation();
   const router = useRouter();
   const [tab, setTab] = useState<'discover' | 'friends' | 'requests'>('discover');

@@ -1,12 +1,13 @@
 import { Body, Controller, Get, Param, Post, Req, Res, UseGuards } from '@nestjs/common';
 import type { Response } from 'express';
+import { LegacyChainGuard } from '../common/legacy-chain.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { BotService } from './bot.service';
 import { AppendMessagesDto } from './dto/append-messages.dto';
 import { SendMessageDto } from './dto/send-message.dto';
 
 @Controller('bot')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, LegacyChainGuard)
 export class BotController {
   constructor(private botService: BotService) {}
 

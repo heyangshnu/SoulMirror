@@ -24,7 +24,7 @@ export default function TabLayout() {
       }}
     >
       <Tabs.Screen
-        name="explore"
+        name="today"
         options={{
           title: t('tabs.today'),
           tabBarIcon: ({ color }) => (
@@ -33,30 +33,12 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="reports"
+        name="chat"
         options={{
-          title: t('tabs.myPlans'),
+          title: t('tabs.chat'),
           tabBarIcon: ({ color }) => (
-            <SymbolView name={{ ios: 'doc.text', android: 'description', web: 'description' }} tintColor={color} size={24} />
+            <SymbolView name={{ ios: 'bubble.left.and.bubble.right', android: 'chat', web: 'chat' }} tintColor={color} size={24} />
           ),
-        }}
-      />
-      <Tabs.Screen
-        name="mirror"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="family"
-        options={{
-          href: null,
-        }}
-      />
-      <Tabs.Screen
-        name="memorial"
-        options={{
-          href: null,
         }}
       />
       <Tabs.Screen
@@ -68,6 +50,12 @@ export default function TabLayout() {
           ),
         }}
       />
+      {/* Legacy v4 tabs */}
+      <Tabs.Screen name="explore" options={{ href: null }} />
+      <Tabs.Screen name="reports" options={{ href: null }} />
+      <Tabs.Screen name="mirror" options={{ href: null }} />
+      <Tabs.Screen name="family" options={{ href: null }} />
+      <Tabs.Screen name="memorial" options={{ href: null }} />
     </Tabs>
   );
 }

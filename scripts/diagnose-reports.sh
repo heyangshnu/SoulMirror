@@ -37,6 +37,23 @@ else
 fi
 
 echo ""
+echo "[2b] AI 报告路由（v4 analysis）"
+ANALYSIS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+  "http://127.0.0.1:${AI_PORT}/analysis/recent-years" \
+  -H "Content-Type: application/json" \
+  -d '{}' 2>/dev/null || echo "000")
+if [ "$ANALYSIS_CODE" = "404" ] || [ "$ANALYSIS_CODE" = "000" ]; then
+  echo "  ❌ POST /analysis/recent-years → ${ANALYSIS_CODE}（AI 代码过旧或未重启）"
+  echo "     修复：fuser -k ${AI_PORT}/tcp 2>/dev/null; pm2 restart soulmirror-ai"
+  echo "     或：pm2 delete soulmirror-ai && pm2 start ecosystem.config.cjs --only soulmirror-ai"
+  fail=1
+elif [ "$ANALYSIS_CODE" = "422" ] || [ "$ANALYSIS_CODE" = "200" ]; then
+  echo "  ✅ POST /analysis/recent-years → ${ANALYSIS_CODE}（路由存在）"
+else
+  echo "  ⚠️  POST /analysis/recent-years → ${ANALYSIS_CODE}"
+fi
+
+echo ""
 echo "[3] API 健康检查"
 if curl -sf "$API/tests/catalog" >/dev/null; then
   echo "  ✅ $API/tests/catalog"
@@ -46,13 +63,15 @@ else
 fi
 
 echo ""
-echo "[4] chart 包是否已编译"
-if [ -f packages/chart/dist/index.js ]; then
-  echo "  ✅ packages/chart/dist/index.js"
-else
-  echo "  ❌ 缺少 chart 编译产物 → npm run chart:build"
-  fail=1
-fi
+echo "[4] workspace 包是否已编译"
+for pkg in shared-types chart bazi; do
+  if [ -f "packages/${pkg}/dist/index.js" ]; then
+    echo "  ✅ packages/${pkg}/dist/index.js"
+  else
+    echo "  ❌ 缺少 packages/${pkg} → npm run packages:build"
+    fail=1
+  fi
+done
 
 echo ""
 echo "[5] DeepSeek 密钥"
@@ -63,20 +82,42 @@ else
 fi
 
 echo ""
-echo "[6] AI_SERVICE_URL"
+echo "[6] AI_SERVICE_URL 与 AI 端口"
 if [ -f services/api/.env ]; then
-  grep '^AI_SERVICE_URL=' services/api/.env || echo "  ⚠️  未设置，默认 localhost:8001"
+  AI_URL=$(grep '^AI_SERVICE_URL=' services/api/.env | cut -d= -f2- | tr -d ' ')
+  echo "  AI_SERVICE_URL=$AI_URL"
+  if echo "$AI_URL" | grep -q ":8010"; then
+    echo "  ✅ 端口 8010（生产默认）"
+  elif echo "$AI_URL" | grep -q ":8001"; then
+    echo "  ⚠️  仍是 8001，生产应改为 http://127.0.0.1:8010"
+    fail=1
+  else
+    echo "  ⚠️  请确认与 services/ai/.env 中 PORT 一致"
+  fi
 else
   echo "  ❌ 缺少 services/api/.env"
   fail=1
 fi
 
 echo ""
-echo "[7] 最近 API 错误（非 SMTP 535 可忽略邮件问题）"
+echo "[7] v4 内容库"
+if [ -f services/ai/content/manifest.json ]; then
+  python3 - <<'PY' 2>/dev/null || true
+import json
+from pathlib import Path
+m = json.loads(Path("services/ai/content/manifest.json").read_text())
+print(f"  ✅ manifest: zh={m.get('zh_entries','?')} en={m.get('en_entries','?')}")
+PY
+else
+  echo "  ⚠️  缺少 manifest → python3 scripts/import_v4_content.py"
+fi
+
+echo ""
+echo "[8] 最近 API 错误（非 SMTP 535 可忽略邮件问题）"
 pm2 logs soulmirror-api --err --lines 15 --nostream 2>/dev/null | tail -15 || true
 
 echo ""
-echo "[8] 最近 AI 日志"
+echo "[9] 最近 AI 日志"
 pm2 logs soulmirror-ai --lines 15 --nostream 2>/dev/null | tail -15 || true
 
 echo ""

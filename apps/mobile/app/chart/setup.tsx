@@ -1,41 +1,94 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { ReportGeneratingOverlay } from '@/components/ui/ReportGeneratingOverlay';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
+type BirthProfile = {
+  birthDate: string;
+  birthTime: string;
+  gender: 'male' | 'female';
+  calendar: 'solar' | 'lunar';
+  birthPlace?: string;
+  timeUnknown?: boolean;
+  currentState?: string;
+  focusDirection?: string;
+};
+
 export default function ChartSetupScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const [birthDate, setBirthDate] = useState('1995-06-15');
-  const [birthTime, setBirthTime] = useState('12:00');
+  const params = useLocalSearchParams<{ first?: string }>();
+  const [isFirstTime, setIsFirstTime] = useState(params.first === '1');
+  const [loaded, setLoaded] = useState(false);
+  const [birthDate, setBirthDate] = useState('');
+  const [birthTime, setBirthTime] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('female');
   const [calendar, setCalendar] = useState<'solar' | 'lunar'>('solar');
-  const [birthPlace, setBirthPlace] = useState('上海');
+  const [birthPlace, setBirthPlace] = useState('');
   const [timeUnknown, setTimeUnknown] = useState(false);
   const [currentState, setCurrentState] = useState('');
   const [focusDirection, setFocusDirection] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const saveAndReport = async () => {
+  useFocusEffect(
+    useCallback(() => {
+      let cancelled = false;
+      api
+        .get<{ profile?: BirthProfile } | null>('/chart/birth-profile')
+        .then((res) => {
+          if (cancelled) return;
+          const profile = res?.profile;
+          if (profile) {
+            setIsFirstTime(false);
+            setBirthDate(profile.birthDate ?? '');
+            setBirthTime(profile.birthTime ?? '');
+            setGender(profile.gender ?? 'female');
+            setCalendar(profile.calendar ?? 'solar');
+            setBirthPlace(profile.birthPlace ?? '');
+            setTimeUnknown(!!profile.timeUnknown);
+            setCurrentState(profile.currentState ?? '');
+            setFocusDirection(profile.focusDirection ?? '');
+          } else {
+            setIsFirstTime(true);
+          }
+          setLoaded(true);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setIsFirstTime(params.first === '1');
+            setLoaded(true);
+          }
+        });
+      return () => {
+        cancelled = true;
+      };
+    }, [params.first]),
+  );
+
+  const saveProfile = async () => {
+    if (!birthDate.trim()) {
+      Alert.alert(t('common.ok'), t('chart.birthDateRequired'));
+      return;
+    }
+
     setLoading(true);
     try {
       await api.put('/chart/birth-profile', {
-        birthDate,
-        birthTime: timeUnknown ? '12:00' : birthTime,
+        birthDate: birthDate.trim(),
+        birthTime: timeUnknown ? '12:00' : birthTime.trim() || '12:00',
         gender,
         calendar,
-        birthPlace: birthPlace || undefined,
+        birthPlace: birthPlace.trim() || undefined,
         timeUnknown,
-        currentState: currentState.trim() || undefined,
-        focusDirection: focusDirection.trim() || undefined,
+        currentState: isFirstTime ? undefined : currentState.trim() || undefined,
+        focusDirection: isFirstTime ? undefined : focusDirection.trim() || undefined,
       });
-      router.replace('/(tabs)/explore');
+      router.replace('/(tabs)/today' as Href);
     } catch (e) {
       const msg = e instanceof Error ? e.message : t('chart.checkNetwork');
       Alert.alert(t('chart.saveBirthFail'), msg);
@@ -44,12 +97,15 @@ export default function ChartSetupScreen() {
     }
   };
 
+  const navTitle = isFirstTime ? t('chart.firstSetupNav') : t('chart.setupNav');
+  const subtitle = isFirstTime ? t('chart.firstSetupSubtitle') : t('chart.setupSubtitle');
+  const actionLabel = isFirstTime ? t('chart.saveAndContinue') : t('chart.saveBirth');
+
   return (
     <>
-      <Stack.Screen options={{ headerShown: true, title: t('chart.setupNav'), headerTintColor: colors.primary }} />
-      <ReportGeneratingOverlay visible={loading} />
+      <Stack.Screen options={{ headerShown: true, title: navTitle, headerTintColor: colors.primary }} />
       <Screen keyboardAvoid>
-        <Text style={styles.desc}>{t('chart.setupSubtitle')}</Text>
+        <Text style={styles.desc}>{subtitle}</Text>
 
         <Text style={styles.sectionTitle}>{t('chart.birthInfo')}</Text>
 
@@ -60,7 +116,13 @@ export default function ChartSetupScreen() {
         </View>
 
         <Text style={styles.label}>{t('chart.birthDate')}</Text>
-        <TextInput style={styles.input} value={birthDate} onChangeText={setBirthDate} />
+        <TextInput
+          style={styles.input}
+          value={birthDate}
+          onChangeText={setBirthDate}
+          placeholder="1990-01-01"
+          placeholderTextColor={colors.textSecondary}
+        />
 
         <View style={styles.switchRow}>
           <Text style={styles.label}>{t('chart.timeUnknown')}</Text>
@@ -71,7 +133,13 @@ export default function ChartSetupScreen() {
         ) : (
           <>
             <Text style={styles.label}>{t('chart.birthTime')}</Text>
-            <TextInput style={styles.input} value={birthTime} onChangeText={setBirthTime} />
+            <TextInput
+              style={styles.input}
+              value={birthTime}
+              onChangeText={setBirthTime}
+              placeholder="14:30"
+              placeholderTextColor={colors.textSecondary}
+            />
           </>
         )}
 
@@ -82,43 +150,62 @@ export default function ChartSetupScreen() {
         </View>
 
         <Text style={styles.label}>{t('chart.birthPlace')}</Text>
-        <TextInput style={styles.input} placeholder={t('chart.birthPlacePh')} value={birthPlace} onChangeText={setBirthPlace} />
+        <TextInput
+          style={styles.input}
+          placeholder={t('chart.birthPlacePh')}
+          placeholderTextColor={colors.textSecondary}
+          value={birthPlace}
+          onChangeText={setBirthPlace}
+        />
 
-        <Text style={styles.sectionTitle}>{t('chart.personalBg')}</Text>
-        <Text style={styles.hint}>{t('chart.personalBgHint')}</Text>
+        {!isFirstTime ? (
+          <>
+            <Text style={styles.sectionTitle}>{t('chart.personalBg')}</Text>
+            <Text style={styles.hint}>{t('chart.personalBgHint')}</Text>
 
-        <Card style={styles.personalCard}>
-          <Text style={styles.label}>{t('chart.currentState')}</Text>
-          <TextInput
-            style={styles.area}
-            multiline
-            placeholder={t('chart.currentStatePh')}
-            value={currentState}
-            onChangeText={setCurrentState}
-            blurOnSubmit={false}
-          />
-          <Text style={styles.label}>{t('chart.focus')}</Text>
-          <TextInput
-            style={styles.area}
-            multiline
-            placeholder={t('chart.focusPh')}
-            value={focusDirection}
-            onChangeText={setFocusDirection}
-            blurOnSubmit={false}
-          />
-        </Card>
+            <Card style={styles.personalCard}>
+              <Text style={styles.label}>{t('chart.currentState')}</Text>
+              <TextInput
+                style={styles.area}
+                multiline
+                placeholder={t('chart.currentStatePh')}
+                value={currentState}
+                onChangeText={setCurrentState}
+                blurOnSubmit={false}
+              />
+              <Text style={styles.label}>{t('chart.focus')}</Text>
+              <TextInput
+                style={styles.area}
+                multiline
+                placeholder={t('chart.focusPh')}
+                value={focusDirection}
+                onChangeText={setFocusDirection}
+                blurOnSubmit={false}
+              />
+            </Card>
+          </>
+        ) : (
+          <Text style={styles.firstHint}>{t('chart.firstSetupHint')}</Text>
+        )}
 
-        <Button title={t('chart.generate')} onPress={saveAndReport} loading={loading} style={{ marginTop: 16 }} />
-        <Text style={styles.disclaimer}>{t('chart.setupDisclaimer')}</Text>
+        <Button
+          title={actionLabel}
+          onPress={saveProfile}
+          loading={loading}
+          disabled={!loaded || loading}
+          style={{ marginTop: 16 }}
+        />
+        {!isFirstTime ? <Text style={styles.disclaimer}>{t('chart.setupDisclaimer')}</Text> : null}
       </Screen>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  desc: { ...typography.caption, marginBottom: spacing.md },
+  desc: { ...typography.caption, marginBottom: spacing.md, lineHeight: 22 },
   sectionTitle: { ...typography.title, fontSize: 17, marginTop: spacing.md, marginBottom: 8 },
   hint: { ...typography.small, color: colors.textSecondary, marginBottom: 8 },
+  firstHint: { ...typography.small, color: colors.textSecondary, marginTop: spacing.md, lineHeight: 20 },
   label: { ...typography.caption, fontWeight: '600', marginBottom: 8, marginTop: 8 },
   input: {
     borderWidth: 1,

@@ -75,9 +75,9 @@ function AuthGate() {
     if (!token && !inAuth) {
       router.replace('/auth/login');
     } else if (token && inAuth) {
-      router.replace('/(tabs)/explore');
+      router.replace('/(tabs)/today');
     } else if (token && segments[0] === 'index') {
-      router.replace('/(tabs)/explore');
+      router.replace('/(tabs)/today');
     } else if (!token && inOnboarding) {
       router.replace('/auth/login');
     }
