@@ -7,7 +7,8 @@
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1",
+        "EXPO_PUBLIC_AGENT_WS_URL": "wss://api.soulzenai.com/v1/agent/stream"
       },
       "android": {
         "buildType": "apk"
@@ -15,7 +16,8 @@
     },
     "production": {
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1"
+        "EXPO_PUBLIC_API_URL": "https://api.soulzenai.com/v1",
+        "EXPO_PUBLIC_AGENT_WS_URL": "wss://api.soulzenai.com/v1/agent/stream"
       },
       "android": {
         "buildType": "app-bundle"
