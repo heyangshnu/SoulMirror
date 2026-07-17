@@ -55,7 +55,11 @@ export class UsersService {
   }
 
   async deleteAccount(userId: string) {
-    await this.userModel.findByIdAndDelete(userId).exec();
+    const result = await this.userModel.findByIdAndDelete(userId).exec();
+    if (!result) {
+      // Idempotent: account already gone — still treat as success for the client.
+      return { success: true, alreadyDeleted: true };
+    }
     return { success: true };
   }
 

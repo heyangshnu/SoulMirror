@@ -42,6 +42,7 @@ type InitStatus = {
   fuxiCoreTotal?: number;
   fuxiExtendedTotal?: number;
   lazyPending?: string[];
+  nodes?: Array<{ code: string; title?: string; done?: boolean; lazy?: boolean }>;
   agentMode?: string;
   canChat?: boolean;
   bootstrapReady?: boolean;
@@ -51,6 +52,13 @@ type InitStatus = {
 type MingReportIndex = { code: string; title: string; rel: string };
 
 const CORE_MING_CODES = ['A01', 'A02', 'A03', 'A04', 'A05'];
+const CORE_MING_TITLES: Record<string, string> = {
+  A01: '命主格局',
+  A02: '性格底色',
+  A03: '优势与课题',
+  A04: '关系模式',
+  A05: '当下焦点',
+};
 
 const AXES: Array<{
   key: keyof Dashboard;
@@ -121,12 +129,6 @@ export default function TodayScreen() {
     initStatus?.agentMode === 'claude' &&
     !initStatus?.bootstrapReady;
 
-  useEffect(() => {
-    if (!waitingBootstrap) return undefined;
-    const timer = setInterval(loadTodayData, 5000);
-    return () => clearInterval(timer);
-  }, [waitingBootstrap, loadTodayData]);
-
   const openChat = (prefill?: string, topicId?: string) => {
     router.push({
       pathname: '/(tabs)/chat',
@@ -145,9 +147,26 @@ export default function TodayScreen() {
     initStatus.phase !== 'skipped' &&
     initStatus.phase !== 'failed';
 
-  const coreMingCount = mingReports.filter((r) => CORE_MING_CODES.includes(r.code)).length;
-  const preferMingDeep = coreMingCount >= 3 || (initStatus?.fuxiNodesDone ?? 0) >= 5;
-  const showBootstrapCards = !preferMingDeep;
+  const coreFromApi = mingReports.filter((r) => CORE_MING_CODES.includes(r.code));
+  const coreMingByCode = new Map(coreFromApi.map((r) => [r.code, r]));
+  // Prefer filesystem reports; fall back to init-status nodes so A01–A05 never "vanish".
+  const coreMingRows: MingReportIndex[] = CORE_MING_CODES.map((code) => {
+    const hit = coreMingByCode.get(code);
+    if (hit) return hit;
+    const node = initStatus?.nodes?.find((n) => n.code === code && n.done);
+    if (node) {
+      return {
+        code,
+        title: node.title || CORE_MING_TITLES[code] || code,
+        rel: '',
+      };
+    }
+    return null;
+  }).filter((r): r is MingReportIndex => !!r);
+
+  const coreMingCount = coreMingRows.length;
+  // Keep bootstrap cards as a readable fallback when deep list is incomplete.
+  const showBootstrapCards = coreMingCount < 5;
 
   const portraitReport = bootstrapReports.find((r) => r.topic === 'self_profile');
   const stageReport = bootstrapReports.find((r) => r.topic === 'recent_years');
@@ -161,6 +180,26 @@ export default function TodayScreen() {
     dashboard?.jing?.summary ||
     dashboard?.yuan?.summary ||
     t('today.guidanceDefault');
+
+  useEffect(() => {
+    const shouldPoll =
+      waitingBootstrap ||
+      (hasProfile === true &&
+        initStatus?.agentMode === 'claude' &&
+        coreMingCount < 5 &&
+        (initRunning || (initStatus?.fuxiNodesDone ?? 0) < 5));
+    if (!shouldPoll) return undefined;
+    const timer = setInterval(loadTodayData, 5000);
+    return () => clearInterval(timer);
+  }, [
+    waitingBootstrap,
+    hasProfile,
+    initStatus?.agentMode,
+    initStatus?.fuxiNodesDone,
+    coreMingCount,
+    initRunning,
+    loadTodayData,
+  ]);
 
   return (
     <Screen scroll>
@@ -237,35 +276,46 @@ export default function TodayScreen() {
             </Card>
           ) : null}
 
-          {preferMingDeep && mingReports.length > 0 ? (
+          {coreMingRows.length > 0 ? (
             <>
-              <Text style={styles.sectionTitle}>{t('today.mingReportsTitle')}</Text>
+              <Text style={[styles.sectionTitle, { marginTop: spacing.md, marginBottom: spacing.sm }]}>
+                {t('today.mingReportsTitle')}
+              </Text>
+              <Text style={styles.coreMeta}>
+                {t('today.deepInitProgress', {
+                  done: Math.max(coreMingCount, initStatus?.fuxiNodesDone ?? 0),
+                  total: 5,
+                })}
+              </Text>
               <Card style={styles.axesCard}>
-                {mingReports
-                  .filter((r) => CORE_MING_CODES.includes(r.code))
-                  .slice(0, 5)
-                  .map((r, index) => (
-                    <View key={r.rel || r.code}>
-                      {index > 0 ? <View style={styles.axesDivider} /> : null}
-                      <Pressable
-                        style={styles.mingRow}
-                        onPress={() =>
-                          router.push({
-                            pathname: '/ming/report/[code]',
-                            params: { code: r.code, rel: r.rel },
-                          } as Href)
+                {coreMingRows.map((r, index) => (
+                  <View key={r.rel || r.code}>
+                    {index > 0 ? <View style={styles.axesDivider} /> : null}
+                    <Pressable
+                      style={styles.mingRow}
+                      onPress={() => {
+                        if (!r.rel) {
+                          router.push('/onboarding/init-progress' as Href);
+                          return;
                         }
-                      >
-                        <View style={styles.mingCodeBadge}>
-                          <Text style={styles.mingCode}>{r.code}</Text>
-                        </View>
-                        <Text style={styles.mingTitle} numberOfLines={2}>
-                          {r.title}
-                        </Text>
-                        <Text style={styles.mingLink}>{t('today.readReport')}</Text>
-                      </Pressable>
-                    </View>
-                  ))}
+                        router.push({
+                          pathname: '/ming/report/[code]',
+                          params: { code: r.code, rel: r.rel },
+                        } as Href);
+                      }}
+                    >
+                      <View style={styles.mingCodeBadge}>
+                        <Text style={styles.mingCode}>{r.code}</Text>
+                      </View>
+                      <Text style={styles.mingTitle} numberOfLines={2}>
+                        {r.title}
+                      </Text>
+                      <Text style={styles.mingLink}>
+                        {r.rel ? t('today.readReport') : t('today.viewInitProgress')}
+                      </Text>
+                    </Pressable>
+                  </View>
+                ))}
               </Card>
             </>
           ) : null}
@@ -289,15 +339,17 @@ export default function TodayScreen() {
               text={firstPlan.body}
               title={firstPlan.title || t('today.guidanceTitle')}
             />
-          ) : !preferMingDeep ? (
+          ) : showBootstrapCards ? (
             <GuidanceCard text={guidance} title={t('today.guidanceTitle')} />
           ) : null}
 
-          {(showBootstrapCards && firstPlan?.actions?.[0]) || preferMingDeep ? (
+          {coreMingRows.length > 0 || (showBootstrapCards && firstPlan?.actions?.[0]) ? (
             <Button
-              title={preferMingDeep ? t('today.askAboutMing') : t('today.askAboutPlan')}
+              title={coreMingRows.length > 0 ? t('today.askAboutMing') : t('today.askAboutPlan')}
               variant="secondary"
-              onPress={() => openChat(preferMingDeep ? t('today.mingPrefill') : t('today.planPrefill'))}
+              onPress={() =>
+                openChat(coreMingRows.length > 0 ? t('today.mingPrefill') : t('today.planPrefill'))
+              }
               style={{ marginBottom: spacing.md }}
             />
           ) : null}
@@ -455,4 +507,5 @@ const styles = StyleSheet.create({
   mingCode: { ...typography.small, fontWeight: '700', color: colors.primary },
   mingTitle: { flex: 1, ...typography.body, fontSize: 15, color: colors.text },
   mingLink: { ...typography.small, color: colors.primary, fontWeight: '600' },
+  coreMeta: { ...typography.caption, color: colors.textSecondary, marginBottom: spacing.sm },
 });

@@ -55,6 +55,7 @@ export function BodhisattvaChatView() {
     isStreaming,
     historyLoading,
     connect,
+    reconnect,
     sendMessage,
   } = useBodhisattvaChat();
 
@@ -99,13 +100,15 @@ export function BodhisattvaChatView() {
     return () => clearInterval(timer);
   }, [showAnalysisHint, refreshInitGate]);
 
-  const readyToSend = connected && agentReady;
+  const showConnectingBanner = connecting && !connected;
+  const showErrorBanner = !connected && !connecting && !!error;
 
   useEffect(() => {
-    if (!prefill || prefillSentRef.current || !readyToSend || typeof prefill !== 'string') return;
+    if (!prefill || prefillSentRef.current || !connected || !agentReady || typeof prefill !== 'string')
+      return;
     prefillSentRef.current = true;
     sendMessage(prefill);
-  }, [prefill, readyToSend, sendMessage]);
+  }, [prefill, connected, agentReady, sendMessage]);
 
   useEffect(() => {
     if (messages.length) {
@@ -114,7 +117,7 @@ export function BodhisattvaChatView() {
   }, [messages.length, isStreaming]);
 
   const onSend = () => {
-    if (!input.trim() || !readyToSend) return;
+    if (!input.trim()) return;
     if (sendMessage(input)) setInput('');
   };
 
@@ -136,14 +139,16 @@ export function BodhisattvaChatView() {
         keyboardVerticalOffset={isTabChat ? 0 : insets.top + 44}
       >
         <View style={[styles.flex, androidLift > 0 ? { paddingBottom: androidLift } : null]}>
-          {!readyToSend ? (
+          {showConnectingBanner ? (
             <View style={styles.banner}>
-              {connecting || (connected && !agentReady) ? (
-                <ActivityIndicator color={guanxinColors.primary} />
-              ) : (
-                <Text style={styles.bannerText}>{error ?? t('chat.connecting')}</Text>
-              )}
+              <ActivityIndicator color={guanxinColors.primary} />
+              <Text style={styles.bannerText}>{t('chat.connecting')}</Text>
             </View>
+          ) : showErrorBanner ? (
+            <Pressable style={styles.banner} onPress={reconnect}>
+              <Text style={styles.bannerText}>{error}</Text>
+              <Text style={styles.retryText}>{t('chat.tapRetry')}</Text>
+            </Pressable>
           ) : showAnalysisHint ? (
             <View style={styles.banner}>
               <Text style={styles.bannerText}>{t('chat.analysisPendingHint')}</Text>
@@ -209,15 +214,15 @@ export function BodhisattvaChatView() {
               placeholder={t('chat.inputPlaceholder')}
               placeholderTextColor={guanxinColors.textMuted}
               multiline
-              editable={readyToSend}
+              editable={true}
               onFocus={() => {
                 setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 120);
               }}
             />
             <Pressable
-              style={[styles.sendBtn, (!readyToSend || !input.trim()) && styles.sendDisabled]}
+              style={[styles.sendBtn, !input.trim() && styles.sendDisabled]}
               onPress={onSend}
-              disabled={!readyToSend || !input.trim()}
+              disabled={!input.trim()}
             >
               <Text style={styles.sendLabel}>{t('chat.send')}</Text>
             </Pressable>
@@ -250,6 +255,12 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   bannerText: { ...guanxinTypography.caption, color: guanxinColors.primary, textAlign: 'center' },
+  retryText: {
+    ...guanxinTypography.caption,
+    color: guanxinColors.primary,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
   streamingBar: {
     flexDirection: 'row',
     alignItems: 'center',

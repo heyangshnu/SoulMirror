@@ -64,7 +64,10 @@ async function request<T>(
   let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error(locale() === 'en' ? 'Request timed out' : '请求超时，请稍后重试');
+    }
     throw new Error(t('errors.network'));
   }
 
@@ -114,18 +117,29 @@ async function download(path: string): Promise<ArrayBuffer> {
 }
 
 export const api = {
-  get: <T>(path: string, auth = true) => request<T>(path, { method: 'GET', auth }),
+  get: <T>(path: string, auth = true) =>
+    request<T>(path, { method: 'GET', auth, signal: AbortSignal.timeout(20_000) }),
   post: <T>(path: string, body?: unknown, auth = true) =>
     request<T>(path, {
       method: 'POST',
       body: JSON.stringify(body ?? {}),
       auth,
+      signal: AbortSignal.timeout(60_000),
     }),
   put: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'PUT', body: body ? JSON.stringify(body) : undefined }),
+    request<T>(path, {
+      method: 'PUT',
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(30_000),
+    }),
   patch: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: 'PATCH', body: body ? JSON.stringify(body) : undefined }),
-  delete: <T>(path: string) => request<T>(path, { method: 'DELETE' }),
+    request<T>(path, {
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+      signal: AbortSignal.timeout(30_000),
+    }),
+  delete: <T>(path: string) =>
+    request<T>(path, { method: 'DELETE', signal: AbortSignal.timeout(20_000) }),
   download,
   arrayBufferToBase64,
 };

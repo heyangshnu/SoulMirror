@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 import { useRouter, useFocusEffect, type Href } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +8,7 @@ import { ProfileMenuDivider, ProfileMenuRow } from '@/components/ui/ProfileMenuR
 import { API_BASE, api } from '@/lib/api';
 import { runNetworkCheck } from '@/lib/network-check';
 import { useAuthStore } from '@/store/auth';
+import { useBodhisattvaChatStore } from '@/store/bodhisattva-chat';
 import { useTranslation, toneLabel } from '@/hooks/useTranslation';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -23,7 +24,9 @@ export default function ProfileScreen() {
   const { t, locale, setLocale } = useTranslation();
   const router = useRouter();
   const { user, logout } = useAuthStore();
+  const clearChat = useBodhisattvaChatStore((s) => s.clearChat);
   const [me, setMe] = useState<UserMe>({});
+  const [deleting, setDeleting] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,20 +44,43 @@ export default function ProfileScreen() {
     }
   };
 
+  const goLogin = () => {
+    clearChat();
+    logout();
+    router.replace('/auth/login' as Href);
+  };
+
+  const performDelete = async () => {
+    if (deleting) return;
+    setDeleting(true);
+    try {
+      await api.delete('/user');
+      goLogin();
+    } catch (e) {
+      Alert.alert(
+        t('common.fail'),
+        e instanceof Error ? e.message : t('common.retryLater'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('profile.logout'), onPress: goLogin },
+        ],
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const deleteAccount = () => {
     Alert.alert(t('profile.deleteTitle'), t('profile.deleteMsg'), [
       { text: t('common.cancel'), style: 'cancel' },
       {
         text: t('common.delete'),
         style: 'destructive',
-        onPress: async () => {
-          try {
-            await api.delete('/user');
-            logout();
-            router.replace('/auth/login');
-          } catch (e) {
-            Alert.alert(t('common.fail'), e instanceof Error ? e.message : t('common.retryLater'));
-          }
+        onPress: () => {
+          // Avoid async onPress pitfalls on some Android Alert implementations.
+          setTimeout(() => {
+            void performDelete();
+          }, 0);
         },
       },
     ]);
@@ -150,17 +176,28 @@ export default function ProfileScreen() {
       </Card>
 
       <View style={styles.footer}>
-        <Button title={t('profile.networkDiag')} variant="secondary" onPress={runDiag} />
+        {deleting ? (
+          <View style={styles.deletingRow}>
+            <ActivityIndicator color={colors.primary} />
+            <Text style={styles.deletingText}>{t('profile.deleting')}</Text>
+          </View>
+        ) : null}
+        <Button title={t('profile.networkDiag')} variant="secondary" onPress={runDiag} disabled={deleting} />
         <Button
           title={t('profile.logout')}
           variant="secondary"
-          onPress={() => {
-            logout();
-            router.replace('/auth/login');
-          }}
+          onPress={goLogin}
+          disabled={deleting}
           style={{ marginTop: 12 }}
         />
-        <Button title={t('profile.deleteAccount')} variant="ghost" onPress={deleteAccount} style={{ marginTop: 8 }} />
+        <Button
+          title={t('profile.deleteAccount')}
+          variant="ghost"
+          onPress={deleteAccount}
+          loading={deleting}
+          disabled={deleting}
+          style={{ marginTop: 8 }}
+        />
       </View>
     </Screen>
   );
@@ -206,4 +243,12 @@ const styles = StyleSheet.create({
   langText: { ...typography.caption, fontWeight: '600', color: colors.textSecondary },
   langTextActive: { color: colors.primary },
   footer: { marginTop: spacing.sm, marginBottom: spacing.xxl },
+  deletingRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+    justifyContent: 'center',
+  },
+  deletingText: { ...typography.caption, color: colors.textSecondary },
 });

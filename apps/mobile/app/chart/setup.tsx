@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Alert, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, Keyboard, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { Stack, useFocusEffect, useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Button } from '@/components/ui/Button';
@@ -19,12 +19,42 @@ type BirthProfile = {
   focusDirection?: string;
 };
 
+function normalizeDateInput(raw: string): string {
+  let s = raw.trim();
+  s = s
+    .replace(/[／/.．]/g, '-')
+    .replace(/[年]/g, '-')
+    .replace(/[月]/g, '-')
+    .replace(/[日号]/g, '')
+    .replace(/[－—–]/g, '-')
+    .replace(/\s+/g, '');
+  const m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (!m) return s;
+  return `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`;
+}
+
+function normalizeTimeInput(raw: string): string {
+  let s = raw.trim();
+  s = s
+    .replace(/[：﹕]/g, ':')
+    .replace(/[．。.]/g, ':')
+    .replace(/[-－—–]/g, ':')
+    .replace(/\s+/g, '');
+  const m = s.match(/^(\d{1,2}):(\d{1,2})(?::\d{1,2})?$/);
+  if (!m) return '';
+  const h = Number(m[1]);
+  const min = Number(m[2]);
+  if (!Number.isFinite(h) || !Number.isFinite(min) || h < 0 || h > 23 || min < 0 || min > 59) {
+    return '';
+  }
+  return `${String(h).padStart(2, '0')}:${String(min).padStart(2, '0')}`;
+}
+
 export default function ChartSetupScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const params = useLocalSearchParams<{ first?: string }>();
   const [isFirstTime, setIsFirstTime] = useState(params.first === '1');
-  const [loaded, setLoaded] = useState(false);
   const [birthDate, setBirthDate] = useState('');
   const [birthTime, setBirthTime] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('female');
@@ -56,13 +86,9 @@ export default function ChartSetupScreen() {
           } else {
             setIsFirstTime(true);
           }
-          setLoaded(true);
         })
         .catch(() => {
-          if (!cancelled) {
-            setIsFirstTime(params.first === '1');
-            setLoaded(true);
-          }
+          if (!cancelled) setIsFirstTime(params.first === '1');
         });
       return () => {
         cancelled = true;
@@ -71,25 +97,24 @@ export default function ChartSetupScreen() {
   );
 
   const saveProfile = async () => {
-    if (!birthDate.trim()) {
+    Keyboard.dismiss();
+    const normalizedDate = normalizeDateInput(birthDate);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(normalizedDate)) {
       Alert.alert(t('common.ok'), t('chart.birthDateRequired'));
+      return;
+    }
+
+    const rawTime = timeUnknown ? '12:00' : birthTime.trim() || '12:00';
+    const normalizedTime = normalizeTimeInput(rawTime);
+    if (!normalizedTime) {
+      Alert.alert(t('common.ok'), t('chart.birthTimeInvalid'));
       return;
     }
 
     setLoading(true);
     try {
-      const rawTime = timeUnknown ? '12:00' : birthTime.trim() || '12:00';
-      const normalizedTime = rawTime
-        .replace(/[：﹕]/g, ':')
-        .replace(/[．。.]/g, ':')
-        .replace(/\s+/g, '');
       await api.put('/chart/birth-profile', {
-        birthDate: birthDate
-          .trim()
-          .replace(/[／/.．]/g, '-')
-          .replace(/[年]/g, '-')
-          .replace(/[月]/g, '-')
-          .replace(/[日号]/g, ''),
+        birthDate: normalizedDate,
         birthTime: normalizedTime,
         gender,
         calendar,
@@ -114,7 +139,7 @@ export default function ChartSetupScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: true, title: navTitle, headerTintColor: colors.primary }} />
-      <Screen keyboardAvoid>
+      <Screen keyboardAvoid safeTop={false}>
         <Text style={styles.desc}>{subtitle}</Text>
 
         <Text style={styles.sectionTitle}>{t('chart.birthInfo')}</Text>
@@ -202,7 +227,7 @@ export default function ChartSetupScreen() {
           title={actionLabel}
           onPress={saveProfile}
           loading={loading}
-          disabled={!loaded || loading}
+          disabled={loading}
           style={{ marginTop: 16 }}
         />
         {!isFirstTime ? <Text style={styles.disclaimer}>{t('chart.setupDisclaimer')}</Text> : null}

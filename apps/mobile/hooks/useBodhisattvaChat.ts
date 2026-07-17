@@ -61,7 +61,15 @@ function ensureSharedConnection(onError: (msg: string) => void) {
 
   sharedConn = connectAgentStream({
     onOpen: () => {
-      sharedLifecycle = { ...sharedLifecycle, connected: true, connecting: false, error: null };
+      // Treat TCP open as ready so the user can type immediately.
+      // Proxy queues messages until agent-host is up.
+      sharedLifecycle = {
+        ...sharedLifecycle,
+        connected: true,
+        agentReady: true,
+        connecting: false,
+        error: null,
+      };
       sharedReconnectAttempt = 0;
       emitLifecycle();
     },
@@ -77,7 +85,7 @@ function ensureSharedConnection(onError: (msg: string) => void) {
       // Unstick in-flight turns so later sends are not trapped in the pending queue.
       emitSharedEvent({ type: 'connection_reset' });
       if (!sharedIntentionalClose && sharedReconnectAttempt < 5) {
-        const delay = Math.min(1000 * 2 ** sharedReconnectAttempt, 15000);
+        const delay = Math.min(1000 * 2 ** sharedReconnectAttempt, 8000);
         sharedReconnectAttempt += 1;
         sharedReconnectTimer = setTimeout(() => ensureSharedConnection(onError), delay);
       }
@@ -89,7 +97,7 @@ function ensureSharedConnection(onError: (msg: string) => void) {
     },
     onEvent: (event) => {
       if (isAgentConnected(event)) {
-        sharedLifecycle = { ...sharedLifecycle, agentReady: true };
+        sharedLifecycle = { ...sharedLifecycle, agentReady: true, connected: true, connecting: false };
         emitLifecycle();
       }
       emitSharedEvent(event);
@@ -201,9 +209,12 @@ export function useBodhisattvaChat() {
     (texts: string[]) => {
       const conn = sharedConn ?? ensureSharedConnection(setError);
       if (!conn || conn.readyState() !== WebSocket.OPEN) {
-        setError('连接未就绪，请稍候再试');
+        // Queue while connecting — do not block the user with a hard error.
         pendingOutboundRef.current.unshift(...texts);
-        return false;
+        if (!sharedLifecycle.connecting && !sharedLifecycle.connected) {
+          ensureSharedConnection(setError);
+        }
+        return true;
       }
 
       const payload = formatBatchMessage(texts);
@@ -314,6 +325,13 @@ export function useBodhisattvaChat() {
     ensureSharedConnection(setError);
   }, []);
 
+  const reconnect = useCallback(() => {
+    closeSharedConnection();
+    setError(null);
+    sharedReconnectAttempt = 0;
+    ensureSharedConnection(setError);
+  }, []);
+
   const sendMessage = useCallback(
     (text: string) => {
       const trimmed = text.trim();
@@ -373,7 +391,7 @@ export function useBodhisattvaChat() {
       if (cancelled) return;
       markTranscriptLoaded();
       setHistoryLoading(false);
-    }, 12_000);
+    }, 4_000);
 
     api
       .get<{ content?: string }>('/agent/transcript?limit=100')
@@ -405,12 +423,25 @@ export function useBodhisattvaChat() {
     };
   }, [token, transcriptLoaded, updateMessages, markTranscriptLoaded, clearChat]);
 
-  // After reconnect, drain any messages queued while the previous turn was stuck.
+  // After reconnect, drain any messages queued while connecting / previous turn stuck.
   useEffect(() => {
     if (connected && agentReady) {
       flushPendingOutbound();
     }
   }, [connected, agentReady, flushPendingOutbound]);
+
+  // Connection watchdog: if still connecting after 8s, surface a retryable error.
+  useEffect(() => {
+    if (!token || connected || !connecting) return undefined;
+    const timer = setTimeout(() => {
+      if (!sharedLifecycle.connected) {
+        setError('连接超时，请点击重试');
+        sharedLifecycle = { ...sharedLifecycle, connecting: false, error: '连接超时，请点击重试' };
+        emitLifecycle();
+      }
+    }, 8_000);
+    return () => clearTimeout(timer);
+  }, [token, connected, connecting]);
 
   return {
     connected,
@@ -422,6 +453,7 @@ export function useBodhisattvaChat() {
     historyLoading,
     backgroundStatus,
     connect,
+    reconnect,
     sendMessage,
   };
 }

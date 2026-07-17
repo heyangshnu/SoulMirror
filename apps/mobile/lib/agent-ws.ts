@@ -52,7 +52,7 @@ export function connectAgentStream(handlers: AgentWsHandlers = {}): AgentWsConne
     }
   };
 
-  ws.onerror = () => handlers.onError?.('WSS 连接失败');
+  ws.onerror = () => handlers.onError?.('对话连接失败，请检查网络后重试');
   ws.onclose = (evt) => handlers.onClose?.(evt.code, evt.reason || '');
 
   return {

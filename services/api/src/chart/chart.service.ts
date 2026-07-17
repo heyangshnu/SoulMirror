@@ -5,6 +5,8 @@ import {
   buildFlyingStarAppendix,
   buildHoroscope,
   buildNatalChart,
+  normalizeBirthDate,
+  normalizeBirthTime,
   type BirthInput,
 } from '@soulmirror/chart';
 import { buildBaziSummary } from '@soulmirror/bazi';
@@ -53,9 +55,17 @@ export class ChartService {
   }
 
   async upsertBirthProfile(userId: string, dto: UpsertBirthProfileDto) {
+    const birthDate = normalizeBirthDate(dto.birthDate);
+    const birthTime = normalizeBirthTime(dto.birthTime) || (dto.timeUnknown ? '12:00' : '');
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+      throw new BadRequestException(`排盘失败：出生日期格式无效：${dto.birthDate}（请用 YYYY-MM-DD）`);
+    }
+    if (!birthTime) {
+      throw new BadRequestException(`排盘失败：出生时间格式无效：${dto.birthTime}（请用 HH:mm，例如 19:30）`);
+    }
     const input: BirthInput = {
-      birthDate: dto.birthDate,
-      birthTime: dto.birthTime,
+      birthDate,
+      birthTime,
       gender: dto.gender,
       calendar: dto.calendar,
       isLeapMonth: dto.isLeapMonth,
@@ -74,8 +84,8 @@ export class ChartService {
       { userId: new Types.ObjectId(userId) },
       {
         userId: new Types.ObjectId(userId),
-        birthDate: dto.birthDate,
-        birthTime: dto.birthTime,
+        birthDate,
+        birthTime,
         gender: dto.gender,
         calendar: dto.calendar,
         isLeapMonth: dto.isLeapMonth,
@@ -102,8 +112,8 @@ export class ChartService {
     await this.syncUserChartContext(userId);
     void this.agentService.scheduleInit(userId, {
       gender: dto.gender,
-      birthDate: dto.birthDate,
-      birthTime: dto.birthTime,
+      birthDate,
+      birthTime,
       birthPlace: dto.birthPlace,
       timeUnknown: dto.timeUnknown,
       calendar: dto.calendar,
@@ -122,8 +132,13 @@ export class ChartService {
   async getBirthProfile(userId: string) {
     const profile = await this.birthModel.findOne({ userId: new Types.ObjectId(userId) });
     if (!profile) return null;
-    const natal = buildNatalChart(this.toBirthInput(profile));
-    return { profile, natal };
+    try {
+      const natal = buildNatalChart(this.toBirthInput(profile));
+      return { profile, natal };
+    } catch (err) {
+      this.logger.warn(`getBirthProfile natal rebuild failed for ${userId}: ${String(err)}`);
+      return { profile, natal: null };
+    }
   }
 
   async getHoroscope(userId: string, year?: number) {

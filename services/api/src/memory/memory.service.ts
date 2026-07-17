@@ -28,10 +28,10 @@ export class MemoryService {
     return noteId.replace(/__/g, '/');
   }
 
-  private async fetchAgent<T>(path: string, init?: RequestInit): Promise<T> {
+  private async fetchAgent<T>(path: string, init?: RequestInit, timeoutMs = 12_000): Promise<T> {
     const res = await fetch(`${this.baseUrl}${path}`, {
       ...init,
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(timeoutMs),
       headers: {
         'content-type': 'application/json',
         ...(init?.headers ?? {}),
@@ -43,25 +43,43 @@ export class MemoryService {
     return (await res.json()) as T;
   }
 
-  private async cached<T>(userId: string, key: string, loader: () => Promise<T>): Promise<T> {
+  private async cached<T>(
+    userId: string,
+    key: string,
+    loader: () => Promise<T>,
+    opts?: { ttlMs?: number; allowStaleOnError?: boolean },
+  ): Promise<T> {
+    const ttl = opts?.ttlMs ?? CACHE_TTL_MS;
     const hit = await this.cacheModel.findOne({
       userId: new Types.ObjectId(userId),
       cacheKey: key,
       expiresAt: { $gt: new Date() },
     });
     if (hit?.payload) return hit.payload as T;
-    const payload = await loader();
-    await this.cacheModel.findOneAndUpdate(
-      { userId: new Types.ObjectId(userId), cacheKey: key },
-      {
-        userId: new Types.ObjectId(userId),
-        cacheKey: key,
-        payload: payload as Record<string, unknown>,
-        expiresAt: new Date(Date.now() + CACHE_TTL_MS),
-      },
-      { upsert: true },
-    );
-    return payload;
+
+    try {
+      const payload = await loader();
+      await this.cacheModel.findOneAndUpdate(
+        { userId: new Types.ObjectId(userId), cacheKey: key },
+        {
+          userId: new Types.ObjectId(userId),
+          cacheKey: key,
+          payload: payload as Record<string, unknown>,
+          expiresAt: new Date(Date.now() + ttl),
+        },
+        { upsert: true },
+      );
+      return payload;
+    } catch (err) {
+      if (opts?.allowStaleOnError) {
+        const stale = await this.cacheModel.findOne({
+          userId: new Types.ObjectId(userId),
+          cacheKey: key,
+        });
+        if (stale?.payload) return stale.payload as T;
+      }
+      throw err;
+    }
   }
 
   async invalidateCache(userId: string, prefix?: string) {
@@ -218,13 +236,28 @@ export class MemoryService {
   }
 
   async getMingReports(userId: string) {
-    const slug = this.slug(userId);
-    const data = await this.fetchAgent<{ reports: Array<{ code: string; title: string; rel: string }> }>(
-      `/api/${encodeURIComponent(slug)}/ming-reports`,
-    );
-    return terminologyStripDeep(
-      data.reports.map((r) => ({ ...r, title: terminologyStrip(r.title) })),
-    );
+    try {
+      const wrapped = await this.cached<{ items: Array<{ code: string; title: string; rel: string }> }>(
+        userId,
+        'ming-reports',
+        async () => {
+          const slug = this.slug(userId);
+          const data = await this.fetchAgent<{
+            reports: Array<{ code: string; title: string; rel: string }>;
+          }>(`/api/${encodeURIComponent(slug)}/ming-reports`, undefined, 10_000);
+          return {
+            items: terminologyStripDeep(
+              (data.reports ?? []).map((r) => ({ ...r, title: terminologyStrip(r.title) })),
+            ),
+          };
+        },
+        { ttlMs: 120_000, allowStaleOnError: true },
+      );
+      return wrapped.items ?? [];
+    } catch {
+      // Never blank the Today page because agent-host is slow — return empty list.
+      return [];
+    }
   }
 
   async getMingReport(userId: string, code: string, rel?: string) {

@@ -126,6 +126,15 @@ export class AgentWsProxy {
           const upstreamUrl = agentHostWsUrl(agentHostUrl, slug);
           const upstream = new WebSocket(upstreamUrl);
           const pendingClientMessages: Buffer[] = [];
+          let upstreamReady = false;
+          let upstreamTimer: ReturnType<typeof setTimeout> | undefined;
+
+          // Unblock the app immediately — do not wait for agent-host runtime setup.
+          if (clientWs.readyState === WebSocket.OPEN) {
+            clientWs.send(
+              JSON.stringify({ type: 'connected', at: new Date().toISOString(), slug }),
+            );
+          }
 
           const forwardToUpstream = (data: WebSocket.RawData) => {
             if (upstream.readyState !== WebSocket.OPEN) return;
@@ -146,12 +155,29 @@ export class AgentWsProxy {
           });
 
           const closeBoth = (reason?: string) => {
+            if (upstreamTimer) clearTimeout(upstreamTimer);
             if (reason) this.logger.debug(`ws proxy close ${slug}: ${reason}`);
             if (clientWs.readyState === WebSocket.OPEN) clientWs.close();
             if (upstream.readyState === WebSocket.OPEN) upstream.close();
           };
 
+          upstreamTimer = setTimeout(() => {
+            if (upstreamReady) return;
+            this.logger.warn(`upstream ws timeout ${slug}`);
+            if (clientWs.readyState === WebSocket.OPEN) {
+              clientWs.send(
+                JSON.stringify({
+                  type: 'error',
+                  message: '对话服务连接超时，请稍后重试',
+                }),
+              );
+            }
+            closeBoth('upstream timeout');
+          }, 12_000);
+
           upstream.on('open', () => {
+            upstreamReady = true;
+            if (upstreamTimer) clearTimeout(upstreamTimer);
             for (const data of pendingClientMessages) forwardToUpstream(data);
             pendingClientMessages.length = 0;
 
@@ -159,6 +185,8 @@ export class AgentWsProxy {
               if (clientWs.readyState !== WebSocket.OPEN) return;
               try {
                 const parsed = JSON.parse(String(data)) as Record<string, unknown>;
+                // Skip duplicate connected events — we already emitted one on upgrade.
+                if (parsed.type === 'connected') return;
                 clientWs.send(JSON.stringify(normalizeUpstreamEvent(parsed)));
               } catch {
                 clientWs.send(data);
@@ -169,7 +197,12 @@ export class AgentWsProxy {
           upstream.on('error', (err) => {
             this.logger.warn(`upstream ws error ${slug}: ${err.message}`);
             if (clientWs.readyState === WebSocket.OPEN) {
-              clientWs.send(JSON.stringify({ type: 'error', message: 'agent-host connection failed' }));
+              clientWs.send(
+                JSON.stringify({
+                  type: 'error',
+                  message: '对话服务暂时不可用，请稍后重试',
+                }),
+              );
             }
             closeBoth('upstream error');
           });

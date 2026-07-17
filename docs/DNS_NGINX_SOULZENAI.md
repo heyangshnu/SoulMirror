@@ -160,15 +160,19 @@ server {
         proxy_pass http://127.0.0.1:3010/v1/;
         proxy_http_version 1.1;
 
+        # WebSocket（对话 /v1/agent/stream 必需）
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
 
-        # 超时（AI 生成报告可能较慢）
+        # 超时（AI 生成报告 / 长连接对话可能较慢）
         proxy_connect_timeout 120s;
-        proxy_send_timeout 120s;
-        proxy_read_timeout 120s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
     }
 }
 ```

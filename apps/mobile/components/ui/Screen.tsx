@@ -15,6 +15,8 @@ type Props = {
   scroll?: boolean;
   padded?: boolean;
   keyboardAvoid?: boolean;
+  /** When false, skip top safe-area inset (use under Stack headers). Default true. */
+  safeTop?: boolean;
   style?: ViewStyle;
 };
 
@@ -23,6 +25,7 @@ export function Screen({
   scroll = true,
   padded = true,
   keyboardAvoid = false,
+  safeTop = true,
   style,
 }: Props) {
   const insets = useSafeAreaInsets();
@@ -46,7 +49,7 @@ export function Screen({
   );
 
   const container = (
-    <View style={[styles.flex, { paddingTop: insets.top }]}>
+    <View style={[styles.flex, safeTop && { paddingTop: insets.top }]}>
       {scrollContent}
     </View>
   );

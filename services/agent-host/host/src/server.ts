@@ -246,7 +246,8 @@ server.on('upgrade', async (req, socket, head) => {
       return;
     }
     const slug = normalizeSlug(url.searchParams.get('slug') || '');
-    const context = await createRuntimeContext(slug);
+    // Defer Basic Memory CLI registration so WS handshake is fast (chat can start immediately).
+    const context = await createRuntimeContext(slug, { deferBasicMemory: true });
     wss.handleUpgrade(req, socket, head, (ws) => {
       wss.emit('connection', ws, req, context);
     });
@@ -2241,14 +2242,21 @@ function findToolFields(value: unknown, seen = new Set<unknown>()): { tool?: str
   return out;
 }
 
-async function createRuntimeContext(slug: string): Promise<RuntimeContext> {
+async function createRuntimeContext(
+  slug: string,
+  opts?: { deferBasicMemory?: boolean },
+): Promise<RuntimeContext> {
   const runId = `${new Date().toISOString().replace(/[:.]/g, '-')}-${randomUUID().slice(0, 8)}`;
-  const context = await createProjectContext(slug, runId);
+  const context = await createProjectContext(slug, runId, opts);
   await writeReport(context, 'Run created.');
   return context;
 }
 
-async function createProjectContext(slug: string, runId: string): Promise<RuntimeContext> {
+async function createProjectContext(
+  slug: string,
+  runId: string,
+  opts?: { deferBasicMemory?: boolean },
+): Promise<RuntimeContext> {
   const projectPath = resolveInside(memoryRoot, slug);
   const basicMemory = {
     configDir: path.join(runtimeRoot, 'basic-memory', slug, 'config'),
@@ -2256,18 +2264,34 @@ async function createProjectContext(slug: string, runId: string): Promise<Runtim
     fastembedCachePath: path.join(runtimeRoot, 'basic-memory', 'fastembed-cache'),
   };
   const runRoot = path.join(runtimeRoot, 'runs', slug, runId);
-  await ensurePersonProject(slug, projectPath, basicMemory);
+  // Default: defer Basic Memory CLI — read APIs (ming-reports/dashboard/status) must stay fast.
+  await ensurePersonProject(slug, projectPath, basicMemory, {
+    deferBasicMemory: opts?.deferBasicMemory !== false,
+  });
   if (runId !== 'status') await mkdir(runRoot, { recursive: true });
   return { slug, runId, runRoot, projectPath, basicMemory };
 }
 
-async function ensurePersonProject(slug: string, projectPath: string, basicMemory: BasicMemoryRuntimeEnv) {
+async function ensurePersonProject(
+  slug: string,
+  projectPath: string,
+  basicMemory: BasicMemoryRuntimeEnv,
+  opts?: { deferBasicMemory?: boolean },
+) {
   await mkdir(projectPath, { recursive: true });
   await mkdir(basicMemory.configDir, { recursive: true });
   await mkdir(basicMemory.fastembedCachePath, { recursive: true });
   for (const dir of memoryDirs) await mkdir(path.join(projectPath, dir), { recursive: true });
   await mkdir(path.join(projectPath, '01_命', '_chart_assets'), { recursive: true });
   await copyAgentSouls(projectPath);
+  if (opts?.deferBasicMemory) {
+    void ensureBasicMemoryProject(slug, projectPath, basicMemory).catch((err) => {
+      process.stderr.write(
+        `[agent-host] deferred Basic Memory setup failed for ${slug}: ${err instanceof Error ? err.message : String(err)}\n`,
+      );
+    });
+    return;
+  }
   await ensureBasicMemoryProject(slug, projectPath, basicMemory);
 }
 
