@@ -16,6 +16,7 @@ export const CITY_LONGITUDE: Record<string, number> = {
   长沙: 112.9,
   青岛: 120.4,
   济南: 117.0,
+  泰安: 117.1,
   山东: 117.0,
   沈阳: 123.4,
   大连: 121.6,

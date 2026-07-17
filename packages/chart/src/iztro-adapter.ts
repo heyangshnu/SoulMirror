@@ -1,5 +1,6 @@
 import { astro } from 'iztro';
 import type { BirthInput, HoroscopeSummary, NatalChartSummary } from './types';
+import { normalizeBirthDate, normalizeBirthTime } from './normalize';
 import { applyTrueSolarTime, timeStringToIndex } from './solar-time';
 
 const ALGORITHM_VERSION = 'iztro-sanhe-1.0';
@@ -11,21 +12,32 @@ function genderLabel(g: string) {
 function createAstrolabe(input: BirthInput) {
   const calendar = input.calendar ?? 'solar';
   const timeUnknown = !!input.timeUnknown;
-  const gender = genderLabel(input.gender);
+  const gender = genderLabel(input.gender === 'male' ? 'male' : 'female');
+  const birthDate = normalizeBirthDate(input.birthDate);
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    throw new Error(`出生日期格式无效：${input.birthDate}（请用 YYYY-MM-DD）`);
+  }
 
-  let timeForIndex = input.birthTime;
+  let timeForIndex = normalizeBirthTime(input.birthTime) || '12:00';
   if (!timeUnknown) {
-    timeForIndex = applyTrueSolarTime(input.birthDate, input.birthTime, {
+    const normalized = normalizeBirthTime(input.birthTime);
+    if (!normalized) {
+      throw new Error(`出生时间格式无效：${input.birthTime}（请用 HH:mm，例如 19:30）`);
+    }
+    timeForIndex = applyTrueSolarTime(birthDate, normalized, {
       birthPlace: input.birthPlace,
       longitude: input.longitude,
     }).adjustedTime;
   }
   const timeIndex = timeStringToIndex(timeForIndex, timeUnknown);
+  if (!Number.isInteger(timeIndex) || timeIndex < 0 || timeIndex > 11) {
+    throw new Error(`时辰索引无效：${timeForIndex}`);
+  }
 
   if (calendar === 'lunar') {
-    return astro.byLunar(input.birthDate, timeIndex, gender, !!input.isLeapMonth, true, 'zh-CN');
+    return astro.byLunar(birthDate, timeIndex, gender, !!input.isLeapMonth, true, 'zh-CN');
   }
-  return astro.bySolar(`${input.birthDate} ${timeForIndex}`, timeIndex, gender, true, 'zh-CN');
+  return astro.bySolar(`${birthDate} ${timeForIndex}`, timeIndex, gender, true, 'zh-CN');
 }
 
 function mapPalaces(astrolabe: ReturnType<typeof astro.bySolar>) {
@@ -41,11 +53,17 @@ function mapPalaces(astrolabe: ReturnType<typeof astro.bySolar>) {
 
 export function buildNatalChart(input: BirthInput): NatalChartSummary {
   const timeUnknown = !!input.timeUnknown;
-  const astrolabe = createAstrolabe(input);
+  const birthDate = normalizeBirthDate(input.birthDate);
+  const normalizedTime = normalizeBirthTime(input.birthTime);
+  if (!timeUnknown && input.birthTime?.trim() && !normalizedTime) {
+    throw new Error(`出生时间格式无效：${input.birthTime}（请用 HH:mm，例如 19:30）`);
+  }
+  const birthTime = normalizedTime || '12:00';
+  const astrolabe = createAstrolabe({ ...input, birthDate, birthTime, timeUnknown });
 
   let solarMeta = { trueSolarTimeApplied: false, solarTimeOffsetMinutes: 0, longitude: 120 };
   if (!timeUnknown) {
-    const solar = applyTrueSolarTime(input.birthDate, input.birthTime, input);
+    const solar = applyTrueSolarTime(birthDate, birthTime, input);
     solarMeta = {
       trueSolarTimeApplied: true,
       solarTimeOffsetMinutes: solar.offsetMinutes,

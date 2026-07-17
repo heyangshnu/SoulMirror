@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { MarkdownBody } from '@/components/ui/MarkdownBody';
 import { useTranslation } from '@/hooks/useTranslation';
+import { prepareReportMarkdown } from '@/lib/format-display-text';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -27,9 +28,13 @@ export default function MingReportScreen() {
       .finally(() => setLoading(false));
   }, [code, rel]);
 
+  const displayTitle = title || t('ming.reportTitle');
+  const prepared = prepareReportMarkdown(body, displayTitle);
+
   if (loading) {
     return (
       <Screen>
+        <Stack.Screen options={{ title: t('ming.reportTitle'), headerTintColor: colors.primary }} />
         <ActivityIndicator color={colors.primary} />
       </Screen>
     );
@@ -37,18 +42,19 @@ export default function MingReportScreen() {
 
   return (
     <Screen scroll>
+      <Stack.Screen options={{ title: displayTitle, headerTintColor: colors.primary }} />
       <View style={styles.header}>
         {code ? (
           <View style={styles.codeBadge}>
             <Text style={styles.code}>{code}</Text>
           </View>
         ) : null}
-        <Text style={styles.title}>{title || t('ming.reportTitle')}</Text>
+        <Text style={styles.title}>{displayTitle}</Text>
       </View>
 
       <Card style={styles.bodyCard}>
-        {body?.trim() ? (
-          <MarkdownBody content={body} />
+        {prepared ? (
+          <MarkdownBody content={prepared} />
         ) : (
           <Text style={styles.empty}>{t('dashboard.noSummary')}</Text>
         )}
@@ -67,8 +73,18 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     marginBottom: spacing.sm,
   },
-  code: { ...typography.small, color: colors.primary, fontWeight: '700' },
-  title: { ...typography.hero, lineHeight: 34 },
-  bodyCard: { paddingVertical: spacing.lg },
-  empty: { ...typography.body, color: colors.textMuted, fontStyle: 'italic' },
+  code: { ...typography.small, color: colors.primary, fontWeight: '500' },
+  title: {
+    fontSize: 24,
+    fontWeight: '500',
+    color: colors.text,
+    lineHeight: 34,
+  },
+  bodyCard: { paddingVertical: spacing.lg, paddingHorizontal: spacing.md },
+  empty: {
+    ...typography.body,
+    fontWeight: '400',
+    color: colors.textMuted,
+    fontStyle: 'italic',
+  },
 });

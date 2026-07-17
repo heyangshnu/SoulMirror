@@ -23,7 +23,7 @@ export function AxisChip({
   onPress,
   accent = 'primary',
 }: Props) {
-  const cleaned = formatDisplaySummary(summary);
+  const cleaned = formatDisplaySummary(summary, 96);
   const tone = ACCENT[accent];
 
   return (
@@ -69,14 +69,15 @@ const styles = StyleSheet.create({
   body: { flex: 1, minWidth: 0 },
   label: {
     ...typography.body,
-    fontWeight: '600',
+    fontWeight: '500',
     color: colors.text,
     marginBottom: 4,
   },
   summary: {
     ...typography.caption,
+    fontWeight: '400',
     color: colors.textSecondary,
-    lineHeight: 20,
+    lineHeight: 21,
   },
   summaryEmpty: {
     color: colors.textMuted,

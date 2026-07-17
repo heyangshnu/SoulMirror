@@ -14,6 +14,17 @@ const REPLACEMENTS: Array<[RegExp, string]> = [
   [/大限/g, '这几年'],
 ];
 
+/** Collapse spaces/tabs within a line; keep paragraph newlines. */
+function normalizeWhitespace(text: string): string {
+  return text
+    .replace(/\r\n?/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/[ \t\u00a0]+/g, ' ').trimEnd())
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 export function terminologyStrip(text: string): string {
   if (!text) return text;
   let out = text;
@@ -24,7 +35,7 @@ export function terminologyStrip(text: string): string {
     if (term.length <= 1) continue;
     out = out.split(term).join('');
   }
-  return out.replace(/\s{2,}/g, ' ').trim();
+  return normalizeWhitespace(out);
 }
 
 export function terminologyStripDeep<T>(value: T): T {

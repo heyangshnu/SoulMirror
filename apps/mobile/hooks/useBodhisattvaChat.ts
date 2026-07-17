@@ -74,6 +74,8 @@ function ensureSharedConnection(onError: (msg: string) => void) {
         connecting: false,
       };
       emitLifecycle();
+      // Unstick in-flight turns so later sends are not trapped in the pending queue.
+      emitSharedEvent({ type: 'connection_reset' });
       if (!sharedIntentionalClose && sharedReconnectAttempt < 5) {
         const delay = Math.min(1000 * 2 ** sharedReconnectAttempt, 15000);
         sharedReconnectAttempt += 1;
@@ -232,6 +234,23 @@ export function useBodhisattvaChat() {
 
   const handleEvent = useCallback(
     (event: AgentWsEvent) => {
+      if (event.type === 'connection_reset') {
+        clearStreamTimer();
+        assistantBufRef.current = '';
+        isStreamingRef.current = false;
+        setIsStreaming(false);
+        updateMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last?.role === 'assistant' && last.streaming) {
+            const text = last.text?.trim()
+              ? last.text
+              : '连接中断，请重新发送';
+            return [...prev.slice(0, -1), { ...last, text, streaming: false }];
+          }
+          return prev;
+        });
+        return;
+      }
       if (isAgentTextDelta(event)) {
         isStreamingRef.current = true;
         setIsStreaming(true);
@@ -281,7 +300,14 @@ export function useBodhisattvaChat() {
         flushPendingOutbound();
       }
     },
-    [appendAssistantDelta, finalizeAssistant, flushPendingOutbound, setAssistantFull, updateMessages],
+    [
+      appendAssistantDelta,
+      clearStreamTimer,
+      finalizeAssistant,
+      flushPendingOutbound,
+      setAssistantFull,
+      updateMessages,
+    ],
   );
 
   const connect = useCallback(() => {
@@ -331,31 +357,60 @@ export function useBodhisattvaChat() {
     if (!token) {
       closeSharedConnection();
       clearChat();
+      setHistoryLoading(false);
       return;
     }
-    if (transcriptLoaded || messages.length > 0) return;
+    if (transcriptLoaded) {
+      setHistoryLoading(false);
+      return;
+    }
 
     let cancelled = false;
     setHistoryLoading(true);
+
+    // Hard timeout: never leave the UI stuck on "加载历史对话…"
+    const timeoutId = setTimeout(() => {
+      if (cancelled) return;
+      markTranscriptLoaded();
+      setHistoryLoading(false);
+    }, 12_000);
+
     api
       .get<{ content?: string }>('/agent/transcript?limit=100')
       .then((data) => {
         if (cancelled) return;
         const parsed = parseTranscriptContent(data.content ?? '');
-        if (parsed.length) setMessages(parsed);
+        if (parsed.length) {
+          updateMessages((prev) => {
+            if (!prev.length) return parsed;
+            const seen = new Set(parsed.map((m) => `${m.role}:${m.text}`));
+            const extras = prev.filter((m) => !seen.has(`${m.role}:${m.text}`));
+            return [...parsed, ...extras];
+          });
+        }
         markTranscriptLoaded();
       })
       .catch(() => {
         if (!cancelled) markTranscriptLoaded();
       })
       .finally(() => {
+        clearTimeout(timeoutId);
         if (!cancelled) setHistoryLoading(false);
       });
 
     return () => {
       cancelled = true;
+      clearTimeout(timeoutId);
+      setHistoryLoading(false);
     };
-  }, [token, transcriptLoaded, messages.length, setMessages, markTranscriptLoaded, clearChat]);
+  }, [token, transcriptLoaded, updateMessages, markTranscriptLoaded, clearChat]);
+
+  // After reconnect, drain any messages queued while the previous turn was stuck.
+  useEffect(() => {
+    if (connected && agentReady) {
+      flushPendingOutbound();
+    }
+  }, [connected, agentReady, flushPendingOutbound]);
 
   return {
     connected,

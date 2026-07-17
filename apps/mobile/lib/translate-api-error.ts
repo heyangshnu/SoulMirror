@@ -51,8 +51,12 @@ export function localizeApiError(message: string, locale: Locale): string {
 
   for (const { prefix, key } of SERVER_PREFIX_KEYS) {
     if (trimmed.startsWith(prefix)) {
-      if (key === 'errors.server.chartBuildFailed' && locale === 'en') {
-        const detail = trimmed.slice(prefix.length).replace(/（请确认.*$/, '').trim();
+      if (key === 'errors.server.chartBuildFailed') {
+        const detail = trimmed.slice(prefix.length).replace(/（请确认.*$/, '').trim() || 'unknown';
+        return t(locale, key, { detail });
+      }
+      if (key === 'errors.server.aiError') {
+        const detail = trimmed.slice(prefix.length).trim() || 'unknown';
         return t(locale, key, { detail });
       }
       if (key === 'errors.server.maxRelations') {

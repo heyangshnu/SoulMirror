@@ -9,14 +9,35 @@ type Block =
   | { type: 'li'; text: string }
   | { type: 'quote'; text: string };
 
+const SKIP_HEADINGS =
+  /^(Summary|Observations|Insights|Next Steps|History|摘要|概述)$/i;
+
+function cleanInline(s: string) {
+  return s
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/[_~]/g, '')
+    .trim();
+}
+
+function normalizeSource(raw: string): string {
+  let text = raw.replace(/\r\n?/g, '\n').replace(/^---[\s\S]*?---\s*/m, '').trim();
+  // Ensure markdown headings start on their own line
+  text = text.replace(/([^\n])\s*(#{1,3})\s+/g, '$1\n\n$2 ');
+  return text;
+}
+
 function parseBlocks(raw: string): Block[] {
-  const text = raw.replace(/^---[\s\S]*?---\s*/m, '').trim();
+  const text = normalizeSource(raw);
   const lines = text.split('\n');
   const blocks: Block[] = [];
   let para: string[] = [];
 
   const flushPara = () => {
-    const joined = para.join(' ').replace(/\s+/g, ' ').trim();
+    const joined = cleanInline(para.join(' ').replace(/\s+/g, ' ').trim());
     if (joined) blocks.push({ type: 'p', text: joined });
     para = [];
   };
@@ -34,8 +55,10 @@ function parseBlocks(raw: string): Block[] {
     const h = trimmed.match(/^(#{1,3})\s+(.+)$/);
     if (h) {
       flushPara();
+      const heading = cleanInline(h[2]);
+      if (!heading || SKIP_HEADINGS.test(heading)) continue;
       const level = h[1].length === 1 ? 'h1' : h[1].length === 2 ? 'h2' : 'h3';
-      blocks.push({ type: level, text: cleanInline(h[2]) });
+      blocks.push({ type: level, text: heading });
       continue;
     }
     if (/^[-*•]\s+/.test(trimmed)) {
@@ -51,20 +74,33 @@ function parseBlocks(raw: string): Block[] {
     para.push(trimmed);
   }
   flushPara();
-  return blocks;
-}
 
-function cleanInline(s: string) {
-  return s
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    .replace(/\*\*([^*]+)\*\*/g, '$1')
-    .replace(/\*([^*]+)\*/g, '$1')
-    .replace(/`([^`]+)`/g, '$1')
-    .trim();
+  // Fallback: break a single huge paragraph into readable chunks
+  if (blocks.length === 1 && blocks[0].type === 'p' && blocks[0].text.length > 140) {
+    const sentences = blocks[0].text.split(/(?<=[。！？；])\s*/).filter(Boolean);
+    const out: Block[] = [];
+    let buf = '';
+    for (const s of sentences) {
+      if ((buf + s).length > 96 && buf) {
+        out.push({ type: 'p', text: buf.trim() });
+        buf = s;
+      } else {
+        buf += s;
+      }
+    }
+    if (buf.trim()) out.push({ type: 'p', text: buf.trim() });
+    return out.length ? out : blocks;
+  }
+
+  return blocks;
 }
 
 export function MarkdownBody({ content }: Props) {
   const blocks = parseBlocks(content || '');
+
+  if (!blocks.length) {
+    return null;
+  }
 
   return (
     <View style={styles.wrap}>
@@ -116,47 +152,60 @@ export function MarkdownBody({ content }: Props) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { gap: spacing.sm },
+  wrap: { gap: spacing.md },
   h1: {
-    ...typography.title,
-    fontSize: 22,
+    fontSize: 18,
+    fontWeight: '500',
     color: colors.text,
-    marginTop: spacing.md,
-    marginBottom: 4,
+    lineHeight: 28,
+    marginTop: spacing.sm,
   },
   h2: {
-    ...typography.title,
-    fontSize: 17,
+    fontSize: 16,
+    fontWeight: '500',
     color: colors.primary,
-    marginTop: spacing.md,
-    marginBottom: 2,
+    lineHeight: 26,
+    marginTop: spacing.xs,
   },
   h3: {
-    ...typography.body,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '500',
     color: colors.text,
-    marginTop: spacing.sm,
+    lineHeight: 24,
+    marginTop: spacing.xs,
   },
   p: {
     ...typography.body,
-    lineHeight: 26,
+    fontWeight: '400',
+    fontSize: 15,
+    lineHeight: 28,
     color: colors.textSecondary,
-    marginBottom: 2,
   },
   liRow: { flexDirection: 'row', gap: 8, paddingRight: spacing.sm },
-  bullet: { ...typography.body, color: colors.primary, lineHeight: 26, width: 14 },
-  li: { ...typography.body, flex: 1, lineHeight: 26, color: colors.textSecondary },
+  bullet: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: colors.primary,
+    lineHeight: 28,
+    width: 14,
+  },
+  li: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '400',
+    lineHeight: 28,
+    color: colors.textSecondary,
+  },
   quote: {
     borderLeftWidth: 3,
     borderLeftColor: colors.primaryMuted,
     paddingLeft: spacing.md,
     paddingVertical: 4,
-    marginVertical: 4,
   },
   quoteText: {
-    ...typography.body,
-    lineHeight: 24,
+    fontSize: 15,
+    fontWeight: '400',
+    lineHeight: 26,
     color: colors.textMuted,
-    fontStyle: 'italic',
   },
 });

@@ -17,7 +17,12 @@ export function parseTranscriptContent(content: string): ChatMessage[] {
     if (headerEnd < 0) continue;
 
     const header = block.slice(0, headerEnd);
-    const text = block.slice(headerEnd + 2).trim();
+    const text = block
+      .slice(headerEnd + 2)
+      .replace(/<writeback_candidate>[\s\S]*?<\/writeback_candidate>/gi, '')
+      .replace(/<\/?user_visible>/gi, '')
+      .replace(/<\/?writeback_candidate>/gi, '')
+      .trim();
     if (!text) continue;
 
     if (/^## 用户/u.test(header)) {

@@ -19,7 +19,7 @@ export function KeyboardChatLayout({ children, style, hasHeader = false }: Props
     <KeyboardAvoidingView
       style={[styles.flex, style]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={offset}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? offset : 0}
     >
       {children}
     </KeyboardAvoidingView>

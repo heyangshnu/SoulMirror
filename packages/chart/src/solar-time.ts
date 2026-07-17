@@ -1,4 +1,5 @@
 import { resolveLongitude } from './cities';
+import { normalizeBirthTime } from './normalize';
 
 const TZ_MERIDIAN = 120; // 中国标准时间基准经度
 
@@ -11,7 +12,8 @@ export function applyTrueSolarTime(
   const longitude = resolveLongitude(options.birthPlace, options.longitude);
   const offsetMinutes = Math.round((longitude - TZ_MERIDIAN) * 4);
 
-  const [h, m] = timeStr.split(':').map(Number);
+  const normalized = normalizeBirthTime(timeStr) || '12:00';
+  const [h, m] = normalized.split(':').map(Number);
   let total = h * 60 + m + offsetMinutes;
   total = ((total % 1440) + 1440) % 1440;
   const nh = Math.floor(total / 60);
@@ -29,6 +31,7 @@ export function hourToTimeIndex(hour: number): number {
 
 export function timeStringToIndex(time: string, timeUnknown = false): number {
   if (timeUnknown) return 6;
-  const [h] = time.split(':').map(Number);
+  const normalized = normalizeBirthTime(time) || '12:00';
+  const [h] = normalized.split(':').map(Number);
   return hourToTimeIndex(h);
 }

@@ -20,8 +20,10 @@ npm run packages:build
 echo "==> 构建 API"
 npm run api:build
 
-echo "==> 构建 agent-host"
-npm run agent:build
+echo "==> 构建 agent-host（宿主机；失败不阻断，生产以 Docker 镜像为准）"
+if ! npm run agent:build; then
+  echo "  ⚠️  宿主机 agent-host tsc 失败，继续用 Docker 构建镜像"
+fi
 
 echo "==> Agent Host Docker（需已配置 services/agent-host/.env）"
 if command -v docker >/dev/null 2>&1; then

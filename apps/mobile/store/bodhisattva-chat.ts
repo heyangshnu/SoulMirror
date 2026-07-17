@@ -33,7 +33,10 @@ export const useBodhisattvaChatStore = create<BodhisattvaChatState>()(
     {
       name: 'bodhisattva-chat-v1',
       storage: createJSONStorage(() => AsyncStorage),
-      partialize: (s) => ({ messages: s.messages.filter((m) => !m.streaming) }),
+      partialize: (s) => ({
+        messages: s.messages.filter((m) => !m.streaming),
+        transcriptLoaded: s.transcriptLoaded,
+      }),
     },
   ),
 );

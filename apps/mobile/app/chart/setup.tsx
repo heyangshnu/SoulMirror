@@ -78,9 +78,19 @@ export default function ChartSetupScreen() {
 
     setLoading(true);
     try {
+      const rawTime = timeUnknown ? '12:00' : birthTime.trim() || '12:00';
+      const normalizedTime = rawTime
+        .replace(/[：﹕]/g, ':')
+        .replace(/[．。.]/g, ':')
+        .replace(/\s+/g, '');
       await api.put('/chart/birth-profile', {
-        birthDate: birthDate.trim(),
-        birthTime: timeUnknown ? '12:00' : birthTime.trim() || '12:00',
+        birthDate: birthDate
+          .trim()
+          .replace(/[／/.．]/g, '-')
+          .replace(/[年]/g, '-')
+          .replace(/[月]/g, '-')
+          .replace(/[日号]/g, ''),
+        birthTime: normalizedTime,
         gender,
         calendar,
         birthPlace: birthPlace.trim() || undefined,

@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -26,6 +27,15 @@ type InitGate = {
   fuxiNodesDone?: number;
 };
 
+/** Strip internal agent protocol tags from user-visible bubbles. */
+function visibleChatText(text: string) {
+  return text
+    .replace(/<writeback_candidate>[\s\S]*?<\/writeback_candidate>/gi, '')
+    .replace(/<\/?user_visible>/gi, '')
+    .replace(/<\/?writeback_candidate>/gi, '')
+    .trim();
+}
+
 export function BodhisattvaChatView() {
   const insets = useSafeAreaInsets();
   const segments = useSegments();
@@ -34,6 +44,7 @@ export function BodhisattvaChatView() {
   const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [initGate, setInitGate] = useState<InitGate | null>(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const listRef = useRef<FlatList>(null);
   const prefillSentRef = useRef(false);
   const { prefill } = useLocalSearchParams<{ prefill?: string }>();
@@ -66,12 +77,25 @@ export function BodhisattvaChatView() {
     connect();
   }, [connect]);
 
+  useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSub = Keyboard.addListener(showEvent, (e) => {
+      setKeyboardHeight(e.endCoordinates.height);
+      requestAnimationFrame(() => listRef.current?.scrollToEnd({ animated: true }));
+    });
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardHeight(0));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
+
   const gateBlocks =
     initGate?.agentMode === 'claude' &&
     initGate.canChat === false &&
     !initGate.bootstrapReady;
 
-  // Keep existing conversation visible; only hard-block brand-new empty chats
   const hardBlocked = gateBlocks && messages.length === 0 && !historyLoading;
 
   useEffect(() => {
@@ -104,6 +128,10 @@ export function BodhisattvaChatView() {
     if (sendMessage(input)) setInput('');
   };
 
+  // Android: pan mode + explicit lift (resize is unreliable with tabs / edge-to-edge).
+  // iOS: KeyboardAvoidingView handles most of it; still keep a small bottom pad when needed.
+  const androidLift = Platform.OS === 'android' ? keyboardHeight : 0;
+
   if (hardBlocked) {
     return (
       <View style={[styles.root, styles.blocked]}>
@@ -118,7 +146,7 @@ export function BodhisattvaChatView() {
   }
 
   return (
-    <SafeAreaView style={styles.root} edges={isTabChat ? ['top'] : []}>
+    <SafeAreaView style={styles.root} edges={['top']}>
       {isTabChat ? (
         <View style={styles.tabHeader}>
           <Text style={styles.tabHeaderTitle}>{t('chat.bodhisattvaTitle')}</Text>
@@ -130,76 +158,97 @@ export function BodhisattvaChatView() {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={isTabChat ? 0 : insets.top + 44}
       >
-      {gateBlocks ? (
-        <View style={styles.banner}>
-          <Text style={styles.bannerText}>{t('chat.initBlockedBody')}</Text>
-          <Pressable onPress={refreshInitGate}>
-            <Text style={styles.retryText}>{t('chat.retryGate')}</Text>
-          </Pressable>
-        </View>
-      ) : !readyToSend ? (
-        <View style={styles.banner}>
-          {connecting || (connected && !agentReady) ? (
-            <ActivityIndicator color={guanxinColors.primary} />
-          ) : (
-            <Text style={styles.bannerText}>{error ?? t('chat.connecting')}</Text>
-          )}
-        </View>
-      ) : null}
+        <View style={[styles.flex, androidLift > 0 ? { paddingBottom: androidLift } : null]}>
+          {gateBlocks ? (
+            <View style={styles.banner}>
+              <Text style={styles.bannerText}>{t('chat.initBlockedBody')}</Text>
+              <Pressable onPress={refreshInitGate}>
+                <Text style={styles.retryText}>{t('chat.retryGate')}</Text>
+              </Pressable>
+            </View>
+          ) : !readyToSend ? (
+            <View style={styles.banner}>
+              {connecting || (connected && !agentReady) ? (
+                <ActivityIndicator color={guanxinColors.primary} />
+              ) : (
+                <Text style={styles.bannerText}>{error ?? t('chat.connecting')}</Text>
+              )}
+            </View>
+          ) : null}
 
-      {historyLoading ? (
-        <View style={styles.streamingBar}>
-          <ActivityIndicator size="small" color={guanxinColors.primary} />
-          <Text style={styles.streamingText}>{t('chat.loadingHistory')}</Text>
-        </View>
-      ) : null}
+          {historyLoading ? (
+            <View style={styles.streamingBar}>
+              <ActivityIndicator size="small" color={guanxinColors.primary} />
+              <Text style={styles.streamingText}>{t('chat.loadingHistory')}</Text>
+            </View>
+          ) : null}
 
-      {isStreaming ? (
-        <View style={styles.streamingBar}>
-          <ActivityIndicator size="small" color={guanxinColors.primary} />
-          <Text style={styles.streamingText}>{t('chat.replying')}</Text>
-        </View>
-      ) : null}
+          {isStreaming && !historyLoading ? (
+            <View style={styles.streamingBar}>
+              <ActivityIndicator size="small" color={guanxinColors.primary} />
+              <Text style={styles.streamingText}>{t('chat.replying')}</Text>
+            </View>
+          ) : null}
 
-      <FlatList
-        ref={listRef}
-        data={messages}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.list}
-        renderItem={({ item }) => (
+          <FlatList
+            ref={listRef}
+            style={styles.flex}
+            data={messages}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.list}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
+            onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+            renderItem={({ item }) => {
+              const text = visibleChatText(item.text);
+              if (!text && !item.streaming) return <View />;
+              return (
+                <View
+                  style={[
+                    styles.bubble,
+                    item.role === 'user' ? styles.userBubble : styles.assistantBubble,
+                  ]}
+                >
+                  <Text style={item.role === 'user' ? styles.userText : styles.assistantText}>
+                    {text}
+                    {item.streaming ? '…' : ''}
+                  </Text>
+                </View>
+              );
+            }}
+            ListEmptyComponent={<Text style={styles.empty}>{t('chat.emptyHint')}</Text>}
+          />
+
           <View
             style={[
-              styles.bubble,
-              item.role === 'user' ? styles.userBubble : styles.assistantBubble,
+              styles.inputRow,
+              {
+                paddingBottom:
+                  androidLift > 0 ? guanxinSpacing.sm : Math.max(insets.bottom, guanxinSpacing.sm),
+              },
             ]}
           >
-            <Text style={item.role === 'user' ? styles.userText : styles.assistantText}>
-              {item.text}
-              {item.streaming ? '…' : ''}
-            </Text>
+            <TextInput
+              style={styles.input}
+              value={input}
+              onChangeText={setInput}
+              placeholder={t('chat.inputPlaceholder')}
+              placeholderTextColor={guanxinColors.textMuted}
+              multiline
+              editable={readyToSend}
+              onFocus={() => {
+                setTimeout(() => listRef.current?.scrollToEnd({ animated: true }), 120);
+              }}
+            />
+            <Pressable
+              style={[styles.sendBtn, (!readyToSend || !input.trim()) && styles.sendDisabled]}
+              onPress={onSend}
+              disabled={!readyToSend || !input.trim()}
+            >
+              <Text style={styles.sendLabel}>{t('chat.send')}</Text>
+            </Pressable>
           </View>
-        )}
-        ListEmptyComponent={<Text style={styles.empty}>{t('chat.emptyHint')}</Text>}
-      />
-
-      <View style={[styles.inputRow, { paddingBottom: Math.max(insets.bottom, guanxinSpacing.sm) }]}>
-        <TextInput
-          style={styles.input}
-          value={input}
-          onChangeText={setInput}
-          placeholder={t('chat.inputPlaceholder')}
-          placeholderTextColor={guanxinColors.textMuted}
-          multiline
-          editable={readyToSend}
-        />
-        <Pressable
-          style={[styles.sendBtn, (!readyToSend || !input.trim()) && styles.sendDisabled]}
-          onPress={onSend}
-          disabled={!readyToSend || !input.trim()}
-        >
-          <Text style={styles.sendLabel}>{t('chat.send')}</Text>
-        </Pressable>
-      </View>
+        </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -236,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: guanxinColors.backgroundSecondary,
   },
   streamingText: { ...guanxinTypography.caption, color: guanxinColors.textSecondary },
-  list: { padding: guanxinSpacing.md, flexGrow: 1 },
+  list: { padding: guanxinSpacing.md, flexGrow: 1, paddingBottom: guanxinSpacing.sm },
   empty: { ...guanxinTypography.body, textAlign: 'center', marginTop: guanxinSpacing.xxl },
   bubble: {
     maxWidth: '85%',

@@ -3,7 +3,6 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-nati
 import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
-import { MarkdownBody } from '@/components/ui/MarkdownBody';
 import { useTranslation } from '@/hooks/useTranslation';
 import { formatDisplaySummary, formatNoteTitle } from '@/lib/format-display-text';
 import { api } from '@/lib/api';
@@ -52,7 +51,7 @@ export default function AxisDetailScreen() {
   }
 
   const labelKey = DOMAIN_LABELS[domain ?? ''] ?? 'dashboard.axesTitle';
-  const summary = formatDisplaySummary(detail?.summary, 240);
+  const summary = formatDisplaySummary(detail?.summary, 320);
 
   return (
     <Screen scroll>
@@ -61,7 +60,7 @@ export default function AxisDetailScreen() {
 
       <Card style={styles.summaryCard}>
         {summary ? (
-          <MarkdownBody content={summary} />
+          <Text style={styles.summaryText}>{summary}</Text>
         ) : (
           <Text style={styles.empty}>{t('dashboard.noSummary')}</Text>
         )}
@@ -105,9 +104,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginTop: spacing.md,
   },
-  title: { ...typography.hero, marginTop: 6, marginBottom: spacing.md },
+  title: {
+    fontSize: 24,
+    fontWeight: '500',
+    color: colors.text,
+    marginTop: 6,
+    marginBottom: spacing.md,
+  },
   summaryCard: { marginBottom: spacing.lg },
-  empty: { ...typography.body, color: colors.textMuted, fontStyle: 'italic', lineHeight: 24 },
+  summaryText: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: colors.textSecondary,
+    lineHeight: 26,
+  },
+  empty: {
+    ...typography.body,
+    fontWeight: '400',
+    color: colors.textMuted,
+    fontStyle: 'italic',
+    lineHeight: 24,
+  },
   meta: { ...typography.small, color: colors.textMuted, marginTop: spacing.md },
   section: {
     ...typography.caption,

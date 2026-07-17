@@ -5,7 +5,6 @@ import { Screen } from '@/components/ui/Screen';
 import { Card } from '@/components/ui/Card';
 import { AxisChip } from '@/components/guanxin/AxisChip';
 import { useTranslation } from '@/hooks/useTranslation';
-import { formatDisplaySummary } from '@/lib/format-display-text';
 import { api } from '@/lib/api';
 import { colors, spacing, typography } from '@/theme/tokens';
 
@@ -46,13 +45,12 @@ export default function AxesDashboardScreen() {
       <Card style={styles.listCard}>
         {AXES.map(({ key, labelKey, route, accent }, index) => {
           const entry = dash[key];
-          const summary = formatDisplaySummary(entry?.summary, 96);
           return (
             <View key={key}>
               {index > 0 ? <View style={styles.divider} /> : null}
               <AxisChip
                 label={entry?.label ?? t(labelKey)}
-                summary={summary}
+                summary={entry?.summary}
                 emptyHint={t('dashboard.noSummary')}
                 accent={accent}
                 onPress={() => router.push(`/dashboard/axis/${route}`)}
@@ -71,8 +69,18 @@ export default function AxesDashboardScreen() {
 }
 
 const styles = StyleSheet.create({
-  title: { ...typography.hero, marginTop: spacing.md },
-  subtitle: { ...typography.caption, marginBottom: spacing.lg, lineHeight: 22 },
+  title: {
+    fontSize: 24,
+    fontWeight: '500',
+    color: colors.text,
+    marginTop: spacing.md,
+  },
+  subtitle: {
+    ...typography.caption,
+    fontWeight: '400',
+    marginBottom: spacing.lg,
+    lineHeight: 22,
+  },
   listCard: { paddingVertical: spacing.xs, paddingHorizontal: 0 },
   divider: {
     height: StyleSheet.hairlineWidth,

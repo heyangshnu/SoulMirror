@@ -55,7 +55,7 @@ function isNoiseNoteRel(rel: string) {
 function firstParagraph(text: string, maxLen = 200) {
   let body = text.replace(/^---[\s\S]*?---\n/m, '').trim();
   const section = body.match(
-    /##\s*(Summary|摘要|概述|一句话|当前状态)\s*\n([\s\S]*?)(?=\n##\s|$)/iu,
+    /##\s*(Summary|摘要|概述|一句话|当前状态)\s*\n?([\s\S]*?)(?=\n##\s|##\s|$)/iu,
   )?.[2];
   if (section?.trim()) body = section.trim();
   const candidates = body
@@ -63,14 +63,20 @@ function firstParagraph(text: string, maxLen = 200) {
     .map((chunk) =>
       chunk
         .replace(/^#+\s*/gm, '')
+        .replace(/##\s*(Summary|摘要|概述|Observations|Insights|Next Steps|History)\b:?/giu, ' ')
+        .replace(/\b(Summary|Observations|Insights|Next Steps|History)\b:?/giu, ' ')
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
         .replace(/[*_`>#\[\]]/g, '')
+        .replace(/[\\/][\w.\u4e00-\u9fff_-]+\.(md|json|txt)\b/giu, ' ')
+        .replace(/\b\d{2}_[\u4e00-\u9fffA-Za-z]+\//gu, ' ')
+        .replace(/^(本命总解|八字气候|紫微格局|一生命势)[：:\s]*/u, '')
         .replace(/\n/g, ' ')
         .replace(/\s+/g, ' ')
         .trim(),
     )
     .filter((chunk) => chunk.length > 8);
   const para =
-    candidates.find((chunk) => !/(执行回执|receipt|chart_asset|mcp__)/i.test(chunk)) ??
+    candidates.find((chunk) => !/(执行回执|receipt|chart_asset|mcp__|_prompt)/i.test(chunk)) ??
     candidates[0] ??
     '';
   if (!para) return '';
