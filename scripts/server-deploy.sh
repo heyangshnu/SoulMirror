@@ -37,6 +37,16 @@ if [ -f services/api/.env ] && ! grep -q '^AGENT_MODE=' services/api/.env 2>/dev
   echo "AGENT_MODE=${AGENT_MODE}" >> services/api/.env
 fi
 
+# 生产 Nginx 反代 3010；避免默认/误配 PORT=3000 导致 EADDRINUSE 或探活端口不一致
+if [ -f services/api/.env ]; then
+  if grep -q '^PORT=' services/api/.env; then
+    sed -i 's/^PORT=.*/PORT=3010/' services/api/.env
+  else
+    echo 'PORT=3010' >> services/api/.env
+  fi
+  echo "==> API PORT=$(grep -E '^PORT=' services/api/.env | cut -d= -f2 | tr -d ' ')"
+fi
+
 if [ "${DEPLOY_LEGACY_AI:-1}" = "1" ]; then
   echo "==> 安装 AI 依赖 (legacy)"
   cd services/ai
@@ -60,24 +70,42 @@ pm2 save
 API_PORT=3010
 AI_PORT=8010
 AGENT_PORT=8787
-[ -f services/api/.env ] && API_PORT=$(grep -E '^PORT=' services/api/.env | cut -d= -f2 | tr -d ' ')
-[ -f services/ai/.env ] && AI_PORT=$(grep -E '^PORT=' services/ai/.env | cut -d= -f2 | tr -d ' ')
+[ -f services/api/.env ] && API_PORT=$(grep -E '^PORT=' services/api/.env | cut -d= -f2 | tr -d ' ' | tail -1)
+[ -f services/ai/.env ] && AI_PORT=$(grep -E '^PORT=' services/ai/.env | cut -d= -f2 | tr -d ' ' | tail -1)
+
+wait_http() {
+  local url="$1"
+  local name="$2"
+  local attempts="${3:-20}"
+  local i=1
+  while [ "$i" -le "$attempts" ]; do
+    if curl -sf "$url" >/dev/null; then
+      echo "  ✅ ${name}"
+      return 0
+    fi
+    sleep 1
+    i=$((i + 1))
+  done
+  return 1
+}
 
 echo ""
-echo "==> 部署后自检"
-if curl -sf "http://127.0.0.1:${AGENT_PORT}/health" >/dev/null; then
-  echo "  ✅ Agent Host health (${AGENT_PORT})"
+echo "==> 部署后自检（等待服务就绪）"
+if wait_http "http://127.0.0.1:${AGENT_PORT}/health" "Agent Host health (${AGENT_PORT})" 15; then
+  :
 else
   echo "  ❌ Agent Host 未响应 → docker logs soulmirror-agent"
 fi
-if curl -sf "http://127.0.0.1:${API_PORT}/v1/agent/health" >/dev/null; then
-  echo "  ✅ API agent gateway (${API_PORT})"
+if wait_http "http://127.0.0.1:${API_PORT}/v1/agent/health" "API agent gateway (${API_PORT})" 30; then
+  :
 else
-  echo "  ❌ API agent 未响应 → pm2 logs soulmirror-api"
+  echo "  ❌ API agent 未响应 → pm2 logs soulmirror-api --lines 80 --nostream"
+  echo "     当前探测: http://127.0.0.1:${API_PORT}/v1/agent/health"
+  ss -lntp 2>/dev/null | grep -E ":${API_PORT}|:3000" || true
 fi
 if [ "${DEPLOY_LEGACY_AI:-1}" = "1" ]; then
-  if curl -sf "http://127.0.0.1:${AI_PORT}/health" >/dev/null; then
-    echo "  ✅ AI health (${AI_PORT})"
+  if wait_http "http://127.0.0.1:${AI_PORT}/health" "AI health (${AI_PORT})" 10; then
+    :
   else
     echo "  ⚠️  AI 未响应 (legacy 可选)"
   fi

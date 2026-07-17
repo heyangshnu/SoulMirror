@@ -134,7 +134,7 @@ ARK_ANTHROPIC_BASE_URL
 
 `FUXI_INIT_CONCURRENCY` defaults to `5`. It does not reduce the 16-node initialization set; it only limits how many heavy Fuxi/Claude Code processes run at the same time inside the container.
 
-`FUXI_INIT_GATE` defaults to `core`. With `core`, A01–A05 must succeed, then the host emits `fuxi_init_chat_ready` and runs Bodhisattva opening while B/C/D nodes continue in the background. Use `full` for strict 16/16 blocking init (Live 100 QA).
+`FUXI_INIT_GATE` defaults to `core`. With `core`, only A01–A05 run on birth intake; the host emits `fuxi_init_chat_ready` / `fuxi_init_done` and leaves B/C/D nodes for lazy load via `POST /api/:slug/fuxi-run` or Gongcao `TRIGGER_FUXI`. Use `full` for strict 16/16 blocking init (Live 100 QA).
 
 Bodhisattva/Gongcao/Luohan use MiniMax M3 first and may fall back to Ark `ark-code-latest` with a visible `provider_fallback` event. Set `MINIMAX_ENABLED=0` only for local validation when the MiniMax key is unavailable or known invalid. Fuxi uses Ark `deepseek-v4-pro`.
 

@@ -495,6 +495,26 @@ async function handleHttp(req: IncomingMessage, res: ServerResponse) {
     }
   }
 
+  const fuxiRunMatch = url.pathname.match(/^\/api\/([^/]+)\/fuxi-run$/u);
+  if (fuxiRunMatch && req.method === 'POST') {
+    try {
+      const slug = normalizeSlug(decodeURIComponent(fuxiRunMatch[1]));
+      const body = await readJsonBody(req);
+      const codesRaw = Array.isArray(body.codes) ? body.codes : typeof body.code === 'string' ? [body.code] : [];
+      const codes = codesRaw.filter((c): c is string => typeof c === 'string' && c.trim().length > 0).map((c) => c.trim().toUpperCase());
+      if (!codes.length) {
+        writeJson(res, 400, { ok: false, error: 'codes required (e.g. ["B07","C13"])' });
+        return;
+      }
+      const result = await runLazyFuxiNodes(slug, codes);
+      writeJson(res, 200, result);
+      return;
+    } catch (error) {
+      writeJson(res, 500, { ok: false, error: error instanceof Error ? error.message : String(error) });
+      return;
+    }
+  }
+
   const confirmMatch = url.pathname.match(/^\/api\/([^/]+)\/memory\/confirm$/u);
   if (confirmMatch && req.method === 'POST') {
     try {
@@ -552,7 +572,7 @@ async function handleStart(state: SocketState, socket: WebSocket, input: Record<
   const gate = fuxiInitGate();
   emit(state, socket, {
     type: 'fuxi_init_started',
-    total: fuxiInitNodes.length,
+    total: gate === 'full' ? fuxiInitNodes.length : FUXI_CORE_CODES.size,
     concurrency: fuxiInitConcurrency,
     chartAssetId: chartAsset.chartAssetId,
     gate,
@@ -587,7 +607,7 @@ async function handleStart(state: SocketState, socket: WebSocket, input: Record<
       total: fuxiInitNodes.length,
       failed: coreFailed,
       skipped: coreSkipped,
-      message: `Core Fuxi initialization failed for ${coreFailed}/${coreNodes.length} nodes. Conversation is blocked until A01–A05 are complete.`,
+      message: `Core Fuxi initialization failed for ${coreFailed}/${coreNodes.length} nodes. Chat remains available; deep reports are incomplete.`,
     });
     return;
   }
@@ -595,11 +615,20 @@ async function handleStart(state: SocketState, socket: WebSocket, input: Record<
   emit(state, socket, {
     type: 'fuxi_init_chat_ready',
     coreDone: coreNodes.length,
-    total: fuxiInitNodes.length,
+    total: coreNodes.length,
     gate,
+    lazyRemaining: extendedNodes.map(([code]) => code),
   });
   await runBodhisattvaOpening(state, socket, birthProfile, 0);
-  void runExtendedFuxiInit(state, socket, extendedNodes, birthProfile, chartAsset, turnId);
+  // Lazy mode: do NOT auto-run B/C/D nodes. They start via POST /api/:slug/fuxi-run or Gongcao TRIGGER_FUXI.
+  emit(state, socket, {
+    type: 'fuxi_init_done',
+    total: coreNodes.length,
+    failed: 0,
+    skipped: 0,
+    gate: 'core',
+    lazyRemaining: extendedNodes.map(([code]) => code),
+  });
 }
 
 async function runFullFuxiInit(
@@ -629,7 +658,7 @@ async function runFullFuxiInit(
       total: fuxiInitNodes.length,
       failed,
       skipped,
-      message: `Fuxi initialization failed for ${failed}/${fuxiInitNodes.length} nodes and skipped ${skipped}. Conversation is blocked until the chart foundation is complete.`,
+      message: `Fuxi initialization failed for ${failed}/${fuxiInitNodes.length} nodes and skipped ${skipped}. Chat remains available; deep reports are incomplete.`,
     });
     return;
   }
@@ -674,6 +703,63 @@ async function runExtendedFuxiInit(
   }
 }
 
+/** On-demand Fuxi nodes (B/C/D etc.) after core A01–A05 init. */
+async function runLazyFuxiNodes(slug: string, codes: string[]) {
+  const wanted = new Set(codes.map((c) => c.toUpperCase()));
+  const nodes = fuxiInitNodes.filter(([code]) => wanted.has(code) && !FUXI_CORE_CODES.has(code));
+  // Allow re-running core codes too if explicitly requested
+  const coreRequested = fuxiInitNodes.filter(([code]) => wanted.has(code) && FUXI_CORE_CODES.has(code));
+  const selected = [...nodes, ...coreRequested];
+  if (!selected.length) {
+    return {
+      ok: false,
+      error: `No matching Fuxi nodes for codes: ${codes.join(',')}`,
+      available: fuxiInitNodes.map(([code]) => code),
+    };
+  }
+
+  const context = await createRuntimeContext(slug);
+  const state: SocketState = {
+    ...context,
+    activeRuns: new Set(),
+    closed: false,
+    messageQueue: Promise.resolve(),
+    background: createBackgroundQueues(),
+  };
+  const socket = { readyState: 3, OPEN: 1, send() {} } as unknown as WebSocket;
+  const chartAsset = await readLatestChartAssetRef(state.projectPath);
+  if (!chartAsset) {
+    return { ok: false, error: 'Missing L0 chart asset; complete birth intake first.' };
+  }
+
+  const turnId = randomUUID();
+  const results: Array<{ code: string; ok: boolean; error?: string; reused?: boolean }> = [];
+  for (const [code, relPath, name] of selected) {
+    const result = await runFuxiNode(state, socket, {
+      code,
+      relPath,
+      name,
+      triggerLevel: 'lazy',
+      triggerReason: 'user_or_api_lazy_load',
+      birthProfile: null,
+      chartAsset,
+      turnId,
+    });
+    results.push({
+      code,
+      ok: result.ok,
+      error: result.error,
+      reused: /"reused":\s*true/.test(result.rawText || ''),
+    });
+  }
+
+  return {
+    ok: results.every((r) => r.ok),
+    scheduled: results.length,
+    results,
+  };
+}
+
 async function runFuxiInitBatch(
   state: SocketState,
   socket: WebSocket,
@@ -715,7 +801,7 @@ async function runBodhisattvaOpening(
     sessionKey: 'bodhisattva',
     sessionMode: 'persistent',
     message: buildOpeningPrompt(state.slug, birthProfile, failedFuxiNodes, prefetchContext),
-    requiredToolPrefixes: prefetchContext ? undefined : ['mcp__fate_memory__memory_'],
+    requiredToolPrefixes: undefined,
     forwardText: true,
   });
   if (!opening.ok) {
@@ -750,7 +836,8 @@ async function handleMessage(state: SocketState, socket: WebSocket, input: Recor
     sessionKey: 'bodhisattva',
     sessionMode: 'persistent',
     message: buildBodhisattvaPrompt(state.slug, turnId, text, prefetchContext, recentTranscript),
-    requiredToolPrefixes: prefetchContext ? undefined : ['mcp__fate_memory__memory_'],
+    // Do not force memory tools — early turns may have no notes yet.
+    requiredToolPrefixes: undefined,
     forwardText: true,
   });
   if (!bodhisattva.ok) {
@@ -1530,7 +1617,9 @@ function buildBodhisattvaPrompt(
         '',
       ]
     : [
-        'Mandatory first action: before writing any answer, call at least one fate_memory tool (memory_list_notes, memory_build_context, or memory_read_note).',
+        'Progressive context rule: person memory / Fuxi reports may still be empty.',
+        'If memory tools return nothing useful, answer with general conversational ability grounded in the user message only. Do not invent detailed destiny reports.',
+        'Optional: call memory_list_notes once to check whether new notes appeared; if empty, continue without tools.',
         '',
       ];
   const transcriptBlock = recentTranscript.trim()
@@ -1550,10 +1639,11 @@ function buildBodhisattvaPrompt(
     '',
     ...prefetchBlock,
     ...transcriptBlock,
-    'You are the front-line Bodhisattva agent. Use fate_memory read tools to read sufficient context before answering.',
-    'Read enough from 01_命 L0-L3, 02_愿, 03_境, 04_缘, 05_力, 06_功曹, and 07_上下文包 to make this answer grounded. Do not answer from memory or impression when relevant notes exist.',
+    'You are the front-line Bodhisattva agent.',
+    'Progressive enrichment rule (critical): each turn prefer the newest available notes. When 01_命/_bootstrap_plan.md or Fuxi L1–L3 reports exist, ground the answer in them. When they do not exist yet, chat helpfully without pretending deep analysis is finished.',
+    'If context exists: use fate_memory read tools to read sufficient context before answering. Read enough from 01_命 L0-L3, 02_愿, 03_境, 04_缘, 05_力, 06_功曹, and 07_上下文包 when relevant.',
     'Hybrid bootstrap rule: if deep Fuxi reports are still generating, read 01_命/_bootstrap_plan.md first for life-language portrait, stage, and action hints. Once A01–A05+ Fuxi reports exist, prefer those over the bootstrap note.',
-    'Context sufficiency rule: start with memory.list_notes/search/build_context, then read the specific Fuxi reports, Luohan topic-network nodes, and Gongcao routing memory that the question needs. Prefer relevance over smallness.',
+    'Context sufficiency rule: when notes exist, start with memory.list_notes/search/build_context, then read the specific Fuxi reports, Luohan topic-network nodes, and Gongcao routing memory that the question needs.',
     'For chart foundation, prefer 01_命/L0_模型事实上下文.md plus 01_命/_bootstrap_plan.md or relevant L1/L2/L3 Fuxi reports. You may read long reports with explicit maxChars values large enough for the current issue, but do not use maxChars "full" in Bodhisattva turns.',
     'Do not use Claude Code built-in Read/Glob/Grep/Bash/Edit for person memory or contextual retrieval. Use fate_memory read/search/build_context/list tools only.',
     'Do not write long-term memory. Do not create or edit notes.',
@@ -1577,7 +1667,7 @@ function buildBodhisattvaPrompt(
     '</user_visible>',
     '',
     '<writeback_candidate>',
-    '用 Markdown 给功曹的候选材料：原文、显性事实、推测、待印证、可能涉及命/愿/境/缘/力、建议是否路由。只给候选，不给越权写入建议；命盘相关只能建议“不触发伏羲”或“触发伏羲”，不能建议功曹/罗汉改写 01_命。',
+    '用 Markdown 给功曹的候选材料：原文、显性事实、推测、待印证、可能涉及命/愿/境/缘/力、建议是否路由。只给候选，不给越权写入建议；命盘相关只能建议“不触发伏羲”或“触发伏羲”，不能建议功曹/罗汉改写 01_命。若本轮尚无可用记忆，写 NO_ACTION 即可。',
     '</writeback_candidate>',
   ].join('\n');
 }
@@ -1591,7 +1681,8 @@ function buildOpeningPrompt(slug: string, birthProfile: unknown, failedFuxiNodes
         '',
       ]
     : [
-        'Mandatory first action: before writing the opening, call at least one fate_memory tool (memory_list_notes, memory_build_context, or memory_read_note).',
+        'Progressive context rule: notes may still be empty after birth profile save.',
+        'If memory is empty, give a short warm opening and invite the user to talk. Do not invent deep destiny reports.',
         '',
       ];
   return [
@@ -1600,19 +1691,19 @@ function buildOpeningPrompt(slug: string, birthProfile: unknown, failedFuxiNodes
     `Person project slug: ${slug}`,
     '',
     ...prefetchBlock,
-    'Use fate_memory read tools to read the initialized 01_命 reports and any available context.',
-    'Hybrid bootstrap rule: if only the fast-track bootstrap exists, read 01_命/_bootstrap_plan.md with maxChars 4000. Otherwise read 01_命/L0_模型事实上下文.md.',
+    'Prefer fate_memory read tools when notes exist. If they do not, open the conversation without pretending analysis is finished.',
+    'Hybrid bootstrap rule: if only the fast-track bootstrap exists, read 01_命/_bootstrap_plan.md with maxChars 4000. Otherwise read 01_命/L0_模型事实上下文.md when available.',
     'Opening context budget rule: read only 01_命/L0_模型事实上下文.md, 01_命/_bootstrap_plan.md, or build_context with maxChars 4000. Do not read full Fuxi reports in the opening.',
     'Do not use Claude Code built-in Read/Glob/Grep/Bash/Edit for person memory or contextual retrieval. Use fate_memory read/search/build_context/list tools only.',
     'Do not write long-term memory.',
     'User-visible language rule: keep the opening short and life-facing. Do not mention internal report counts, node initialization, internal structure charts, file paths, birth details, gender labels like 男命/女命, 命盘, 命理术语, or internal labels like 偏燥/偏亢/底层结构/能量结构 unless the user explicitly asks.',
-    'Do not repeat the birth date, birth place, gender, chart foundation, or any metaphysics wording. The opening should only say the basic information is ready and invite the user to talk about the current issue.',
+    'Do not repeat the birth date, birth place, gender, chart foundation, or any metaphysics wording. The opening should only say basic information is ready (or that you can talk now while deeper understanding continues) and invite the user to talk about the current issue.',
     '',
     `Fuxi initialization failed nodes: ${failedFuxiNodes}`,
     '',
     'Required output protocol:',
     '<user_visible>',
-    '给用户一个简短开场：只说基础信息已经准备好，然后邀请用户说当前最想处理的问题。不要复述出生时间、出生地、性别、男命/女命，不要说命盘/命理/八字/紫微/流年/宫位，不要暴露内部路径、报告数量、节点初始化、底层结构图。',
+    '给用户一个简短开场：可以说基础信息已经准备好、可以先聊；若深度报告还在生成，不要渲染成“还不能聊”。不要复述出生时间、出生地、性别、男命/女命，不要说命盘/命理/八字/紫微/流年/宫位，不要暴露内部路径、报告数量、节点初始化、底层结构图。',
     '</user_visible>',
     '',
     '<writeback_candidate>',

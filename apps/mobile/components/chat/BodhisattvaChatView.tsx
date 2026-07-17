@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter, useSegments, useFocusEffect } from 'expo-router';
+import { useLocalSearchParams, useSegments, useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -17,7 +17,6 @@ import { useBodhisattvaChat } from '@/hooks/useBodhisattvaChat';
 import { guanxinColors, guanxinSpacing, guanxinTypography } from '@/theme/guanxin';
 import { useTranslation } from '@/hooks/useTranslation';
 import { api } from '@/lib/api';
-import { Button } from '@/components/ui/Button';
 
 type InitGate = {
   canChat?: boolean;
@@ -40,7 +39,6 @@ export function BodhisattvaChatView() {
   const insets = useSafeAreaInsets();
   const segments = useSegments();
   const isTabChat = segments[0] === '(tabs)' && segments[1] === 'chat';
-  const router = useRouter();
   const { t } = useTranslation();
   const [input, setInput] = useState('');
   const [initGate, setInitGate] = useState<InitGate | null>(null);
@@ -91,25 +89,17 @@ export function BodhisattvaChatView() {
     };
   }, []);
 
-  const gateBlocks =
-    initGate?.agentMode === 'claude' &&
-    initGate.canChat === false &&
-    !initGate.bootstrapReady;
-
-  const hardBlocked = gateBlocks && messages.length === 0 && !historyLoading;
+  // Soft hint only — never block sending. Analysis enriches chat in the background.
+  const showAnalysisHint =
+    initGate?.agentMode === 'claude' && initGate.bootstrapReady === false;
 
   useEffect(() => {
-    if (!gateBlocks) return undefined;
-    const timer = setInterval(refreshInitGate, 4000);
+    if (!showAnalysisHint) return undefined;
+    const timer = setInterval(refreshInitGate, 8000);
     return () => clearInterval(timer);
-  }, [gateBlocks, refreshInitGate]);
+  }, [showAnalysisHint, refreshInitGate]);
 
-  const canSend =
-    initGate == null ||
-    initGate.agentMode !== 'claude' ||
-    initGate.canChat === true ||
-    initGate.bootstrapReady === true;
-  const readyToSend = connected && agentReady && canSend && !gateBlocks;
+  const readyToSend = connected && agentReady;
 
   useEffect(() => {
     if (!prefill || prefillSentRef.current || !readyToSend || typeof prefill !== 'string') return;
@@ -132,19 +122,6 @@ export function BodhisattvaChatView() {
   // iOS: KeyboardAvoidingView handles most of it; still keep a small bottom pad when needed.
   const androidLift = Platform.OS === 'android' ? keyboardHeight : 0;
 
-  if (hardBlocked) {
-    return (
-      <View style={[styles.root, styles.blocked]}>
-        <Text style={styles.blockedTitle}>{t('chat.initBlockedTitle')}</Text>
-        <Text style={styles.blockedBody}>{t('chat.initBlockedBody')}</Text>
-        <Button title={t('today.viewInitProgress')} onPress={() => router.push('/(tabs)/today')} />
-        <Pressable onPress={refreshInitGate} style={styles.retryLink}>
-          <Text style={styles.retryText}>{t('chat.retryGate')}</Text>
-        </Pressable>
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.root} edges={['top']}>
       {isTabChat ? (
@@ -159,20 +136,17 @@ export function BodhisattvaChatView() {
         keyboardVerticalOffset={isTabChat ? 0 : insets.top + 44}
       >
         <View style={[styles.flex, androidLift > 0 ? { paddingBottom: androidLift } : null]}>
-          {gateBlocks ? (
-            <View style={styles.banner}>
-              <Text style={styles.bannerText}>{t('chat.initBlockedBody')}</Text>
-              <Pressable onPress={refreshInitGate}>
-                <Text style={styles.retryText}>{t('chat.retryGate')}</Text>
-              </Pressable>
-            </View>
-          ) : !readyToSend ? (
+          {!readyToSend ? (
             <View style={styles.banner}>
               {connecting || (connected && !agentReady) ? (
                 <ActivityIndicator color={guanxinColors.primary} />
               ) : (
                 <Text style={styles.bannerText}>{error ?? t('chat.connecting')}</Text>
               )}
+            </View>
+          ) : showAnalysisHint ? (
+            <View style={styles.banner}>
+              <Text style={styles.bannerText}>{t('chat.analysisPendingHint')}</Text>
             </View>
           ) : null}
 
@@ -334,18 +308,4 @@ const styles = StyleSheet.create({
   },
   sendDisabled: { opacity: 0.45 },
   sendLabel: { color: '#FFF', fontWeight: '600', fontSize: 15 },
-  blocked: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: guanxinSpacing.lg,
-    backgroundColor: guanxinColors.background,
-  },
-  blockedTitle: { ...guanxinTypography.title, marginBottom: guanxinSpacing.sm },
-  blockedBody: {
-    ...guanxinTypography.body,
-    color: guanxinColors.textSecondary,
-    marginBottom: guanxinSpacing.lg,
-  },
-  retryLink: { marginTop: guanxinSpacing.md, alignItems: 'center' },
-  retryText: { ...guanxinTypography.caption, color: guanxinColors.primary, fontWeight: '700' },
 });

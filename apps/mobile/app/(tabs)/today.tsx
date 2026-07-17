@@ -40,6 +40,8 @@ type InitStatus = {
   fuxiNodesDone: number;
   fuxiNodesTotal: number;
   fuxiCoreTotal?: number;
+  fuxiExtendedTotal?: number;
+  lazyPending?: string[];
   agentMode?: string;
   canChat?: boolean;
   bootstrapReady?: boolean;
@@ -73,6 +75,7 @@ export default function TodayScreen() {
   const [bootstrapReports, setBootstrapReports] = useState<PlanReport[]>([]);
   const [mingReports, setMingReports] = useState<MingReportIndex[]>([]);
   const [quickInput, setQuickInput] = useState('');
+  const [lazyStarting, setLazyStarting] = useState(false);
 
   const loadTodayData = useCallback(() => {
     api
@@ -116,8 +119,7 @@ export default function TodayScreen() {
   const waitingBootstrap =
     hasProfile === true &&
     initStatus?.agentMode === 'claude' &&
-    !initStatus?.bootstrapReady &&
-    !initStatus?.canChat;
+    !initStatus?.bootstrapReady;
 
   useEffect(() => {
     if (!waitingBootstrap) return undefined;
@@ -135,11 +137,7 @@ export default function TodayScreen() {
     } as Href);
   };
 
-  const canChat =
-    initStatus?.canChat ??
-    (initStatus?.agentMode !== 'claude' ||
-      initStatus?.phase === 'done' ||
-      initStatus?.phase === 'skipped');
+  const canChat = true;
 
   const initRunning =
     initStatus?.agentMode === 'claude' &&
@@ -197,7 +195,7 @@ export default function TodayScreen() {
               <Text style={styles.initMeta}>
                 {t('today.deepInitProgress', {
                   done: initStatus?.fuxiNodesDone ?? 0,
-                  total: initStatus?.fuxiNodesTotal ?? 16,
+                  total: initStatus?.fuxiNodesTotal ?? 5,
                 })}
               </Text>
               {initStatus?.bootstrapReady ? (
@@ -211,6 +209,31 @@ export default function TodayScreen() {
               <Pressable onPress={() => router.push('/onboarding/init-progress' as Href)}>
                 <Text style={styles.link}>{t('today.viewInitProgress')}</Text>
               </Pressable>
+            </Card>
+          ) : null}
+
+          {(initStatus?.lazyPending?.length ?? 0) > 0 ? (
+            <Card style={styles.initCard}>
+              <Text style={styles.initTitle}>{t('today.lazyReportsTitle')}</Text>
+              <Text style={styles.initMeta}>
+                {t('today.lazyReportsMeta', { count: initStatus?.lazyPending?.length ?? 0 })}
+              </Text>
+              <Button
+                title={lazyStarting ? t('common.generating') : t('today.lazyReportsAction')}
+                onPress={async () => {
+                  if (lazyStarting) return;
+                  setLazyStarting(true);
+                  try {
+                    await api.post('/agent/fuxi-run', {});
+                    loadTodayData();
+                  } catch {
+                    /* keep UI calm; user can retry */
+                  } finally {
+                    setLazyStarting(false);
+                  }
+                }}
+                style={{ marginTop: 12 }}
+              />
             </Card>
           ) : null}
 

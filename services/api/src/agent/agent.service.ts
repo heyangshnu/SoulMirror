@@ -66,19 +66,14 @@ export class AgentService {
   }
 
   private canChatFromInit(
-    phase: AgentInitPhase,
-    fuxiNodesDone: number,
-    bootstrapReady: boolean,
+    _phase: AgentInitPhase,
+    _fuxiNodesDone: number,
+    _bootstrapReady: boolean,
   ): boolean {
+    // Chat unlocks as soon as the user has entered the Hybrid agent path.
+    // Bootstrap / Fuxi reports enrich context progressively in the background.
     if (!this.isAgentEnabled()) return true;
-    if (bootstrapReady) return true;
-    // Fuxi may end as failed/partial after some nodes; still allow chat once core exists
-    if (['chat_ready', 'partial', 'done', 'skipped', 'failed'].includes(phase)) {
-      if (phase !== 'failed') return true;
-      if (fuxiNodesDone > 0) return true;
-    }
-    if (phase === 'running' && fuxiNodesDone >= FUXI_CORE_NODE_CODES.length) return true;
-    return false;
+    return true;
   }
 
   async hasBootstrapReports(userId: string): Promise<boolean> {
@@ -132,32 +127,70 @@ export class AgentService {
     record: AgentInitStatusDocument | null,
     hostStatus: AgentHostProjectStatus | null,
     bootstrapReady: boolean,
+    extraCodes: string[] = [],
   ) {
     const inferredDone = this.inferCompletedNodes(hostStatus);
-    const fuxiNodesDone = Math.max(record?.fuxiNodesDone ?? 0, inferredDone.length);
+    const knownCodes = new Set<string>([
+      ...(record?.completedNodeCodes ?? []),
+      ...inferredDone,
+      ...extraCodes,
+    ]);
+    const gate = this.fuxiInitGate();
+    const initTotal =
+      gate === 'core' ? FUXI_CORE_NODE_CODES.length : FUXI_INIT_NODES.length;
+    const coreDoneCount = FUXI_CORE_NODE_CODES.filter((code) => knownCodes.has(code)).length;
+    const allDoneCount = Math.max(
+      record?.fuxiNodesDone ?? 0,
+      knownCodes.size,
+      inferredDone.length,
+    );
+    // Under core gate, init progress is A01–A05 only; extended nodes are lazy.
+    const fuxiNodesDone = gate === 'core' ? coreDoneCount : allDoneCount;
     const phase = (record?.phase ?? 'pending') as AgentInitPhase;
     const nodes = FUXI_INIT_NODES.map((n) => ({
       ...n,
-      done:
-        (record?.completedNodeCodes.includes(n.code) ?? false) || inferredDone.includes(n.code),
+      done: knownCodes.has(n.code) || inferredDone.includes(n.code),
+      lazy: gate === 'core' && !(FUXI_CORE_NODE_CODES as readonly string[]).includes(n.code),
     }));
+    const lazyPending = nodes.filter((n) => n.lazy && !n.done).map((n) => n.code);
+
+    // Persist high-water mark so timeout fallbacks never drop the UI back to 0/16
+    if (
+      record &&
+      (allDoneCount > (record.fuxiNodesDone ?? 0) ||
+        knownCodes.size > (record.completedNodeCodes?.length ?? 0))
+    ) {
+      void this.initStatusModel.updateOne(
+        { userId: new Types.ObjectId(userId) },
+        {
+          $set: {
+            fuxiNodesDone: allDoneCount,
+            completedNodeCodes: Array.from(knownCodes),
+          },
+        },
+      );
+    }
 
     return {
       phase,
       slug: record?.slug ?? slug,
-      progress: Math.round((fuxiNodesDone / FUXI_INIT_NODES.length) * 100),
+      progress: Math.round((fuxiNodesDone / initTotal) * 100),
       fuxiNodesDone,
-      fuxiNodesTotal: record?.fuxiNodesTotal || FUXI_INIT_NODES.length,
+      fuxiNodesTotal: initTotal,
       fuxiCoreTotal: FUXI_CORE_NODE_CODES.length,
+      fuxiExtendedTotal: FUXI_INIT_NODES.length - FUXI_CORE_NODE_CODES.length,
+      fuxiAllDone: allDoneCount,
+      lazyPending,
       nodes,
       lastError: record?.lastError,
       startedAt: record?.startedAt,
       finishedAt: record?.finishedAt,
       bootstrapReady,
       agentMode: this.agentMode,
-      initGate: this.fuxiInitGate(),
+      initGate: gate,
       canChat: this.canChatFromInit(phase, fuxiNodesDone, bootstrapReady),
       memoryReady: hostStatus?.ok === true,
+      progressSource: hostStatus ? 'host+db' : 'db',
     };
   }
 
@@ -178,12 +211,36 @@ export class AgentService {
   async fetchProjectStatus(slug: string): Promise<AgentHostProjectStatus> {
     const res = await fetch(
       `${this.agentHostUrl}/api/${encodeURIComponent(slug)}/status`,
-      { signal: AbortSignal.timeout(15_000) },
+      { signal: AbortSignal.timeout(8_000) },
     );
     if (!res.ok) {
       throw new ServiceUnavailableException(`agent-host status ${res.status}`);
     }
     return (await res.json()) as AgentHostProjectStatus;
+  }
+
+  private async fetchMingReportCodes(slug: string): Promise<string[]> {
+    try {
+      const res = await fetch(
+        `${this.agentHostUrl}/api/${encodeURIComponent(slug)}/ming-reports`,
+        { signal: AbortSignal.timeout(8_000) },
+      );
+      if (!res.ok) return [];
+      const data = (await res.json()) as { reports?: Array<{ code?: string; title?: string; rel?: string }> };
+      const codes: string[] = [];
+      for (const node of FUXI_INIT_NODES) {
+        const hit = (data.reports ?? []).some(
+          (r) =>
+            r.code === node.code ||
+            (r.title && r.title.includes(node.title)) ||
+            (r.rel && (r.rel.includes(node.code) || r.rel.includes(node.title))),
+        );
+        if (hit) codes.push(node.code);
+      }
+      return codes;
+    } catch {
+      return [];
+    }
   }
 
   async getInitStatus(userId: string) {
@@ -198,7 +255,13 @@ export class AgentService {
       this.logger.warn(`agent-host status unavailable for ${slug}: ${String(err)}`);
     }
 
-    return this.buildInitStatusResponse(userId, slug, record, hostStatus, bootstrapReady);
+    // When status times out, still recover progress from ming-reports (files already on disk)
+    let mingCodes: string[] = [];
+    if (!hostStatus || this.inferCompletedNodes(hostStatus).length === 0) {
+      mingCodes = await this.fetchMingReportCodes(slug);
+    }
+
+    return this.buildInitStatusResponse(userId, slug, record, hostStatus, bootstrapReady, mingCodes);
   }
 
   async fetchTranscript(userId: string, limit = 50) {
@@ -233,20 +296,23 @@ export class AgentService {
 
     const slug = this.slugForUser(userId);
     const birthPayload = birthProfileToAgentPayload(profile);
+    const existing = await this.initStatusModel.findOne({ userId: new Types.ObjectId(userId) });
 
+    // Never wipe progress on re-save — UI was flickering 4/16 ↔ 0/16 when init restarted
+    // while agent-host status timed out and Mongo briefly showed fuxiNodesDone: 0.
     await this.initStatusModel.findOneAndUpdate(
       { userId: new Types.ObjectId(userId) },
       {
         userId: new Types.ObjectId(userId),
         slug,
-        phase: 'pending',
+        phase: existing?.phase === 'done' ? 'done' : 'pending',
         birthPayload,
-        fuxiNodesTotal: FUXI_INIT_NODES.length,
-        fuxiNodesDone: 0,
-        completedNodeCodes: [],
+        fuxiNodesTotal: FUXI_CORE_NODE_CODES.length,
+        fuxiNodesDone: existing?.fuxiNodesDone ?? 0,
+        completedNodeCodes: existing?.completedNodeCodes ?? [],
         lastError: undefined,
-        startedAt: undefined,
-        finishedAt: undefined,
+        startedAt: existing?.startedAt,
+        finishedAt: existing?.finishedAt,
       },
       { upsert: true, new: true },
     );
@@ -272,6 +338,61 @@ export class AgentService {
       this.logger.error(`retry init failed for ${record.slug}: ${String(err)}`);
     });
     return { ok: true, slug: record.slug };
+  }
+
+  /** Lazily generate extended Fuxi nodes (B/C/D). Core A01–A05 stay on default init. */
+  async runLazyFuxiNodes(userId: string, codes?: string[]) {
+    const slug = this.slugForUser(userId);
+    const status = await this.getInitStatus(userId);
+    const pending =
+      Array.isArray(codes) && codes.length
+        ? codes
+        : ((status as { lazyPending?: string[] }).lazyPending ?? []);
+    if (!pending.length) {
+      return { ok: true, scheduled: 0, message: '没有待生成的扩展节点', async: false };
+    }
+
+    // Fire-and-forget: extended nodes can take a long time under DeepSeek.
+    void fetch(`${this.agentHostUrl}/api/${encodeURIComponent(slug)}/fuxi-run`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ codes: pending }),
+      signal: AbortSignal.timeout(60 * 60_000),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const body = await res.text();
+          this.logger.warn(`lazy fuxi-run failed for ${slug}: ${res.status} ${body}`);
+          return;
+        }
+        const data = (await res.json()) as {
+          results?: Array<{ code: string; ok: boolean }>;
+        };
+        const doneCodes = (data.results ?? []).filter((r) => r.ok).map((r) => r.code);
+        if (!doneCodes.length) return;
+        const record = await this.initStatusModel.findOne({ userId: new Types.ObjectId(userId) });
+        const merged = new Set([...(record?.completedNodeCodes ?? []), ...doneCodes]);
+        await this.initStatusModel.updateOne(
+          { userId: new Types.ObjectId(userId) },
+          {
+            $set: {
+              completedNodeCodes: Array.from(merged),
+              fuxiNodesDone: merged.size,
+            },
+          },
+        );
+      })
+      .catch((err) => {
+        this.logger.warn(`lazy fuxi-run error for ${slug}: ${String(err)}`);
+      });
+
+    return {
+      ok: true,
+      scheduled: pending.length,
+      codes: pending,
+      async: true,
+      message: `已开始后台生成 ${pending.length} 份扩展报告`,
+    };
   }
 
   private inferCompletedNodes(status: AgentHostProjectStatus | null): string[] {
@@ -303,7 +424,8 @@ export class AgentService {
     this.initSessions.set(userId, ws);
 
     let runId = '';
-    const completedCodes = new Set<string>();
+    const existing = await this.initStatusModel.findOne({ userId: new Types.ObjectId(userId) });
+    const completedCodes = new Set<string>(existing?.completedNodeCodes ?? []);
 
     await new Promise<void>((resolve, reject) => {
       const timeout = setTimeout(() => {

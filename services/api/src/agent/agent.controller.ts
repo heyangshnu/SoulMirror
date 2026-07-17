@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Query, Req, ServiceUnavailableException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, ServiceUnavailableException, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AgentService } from './agent.service';
 
@@ -43,5 +43,14 @@ export class AgentController {
   @UseGuards(JwtAuthGuard)
   retryInit(@Req() req: { user: { userId: string } }) {
     return this.agentService.retryInit(req.user.userId);
+  }
+
+  @Post('fuxi-run')
+  @UseGuards(JwtAuthGuard)
+  runLazyFuxi(
+    @Req() req: { user: { userId: string } },
+    @Body() body?: { codes?: string[] },
+  ) {
+    return this.agentService.runLazyFuxiNodes(req.user.userId, body?.codes);
   }
 }
