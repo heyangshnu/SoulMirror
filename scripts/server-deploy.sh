@@ -11,6 +11,9 @@ git pull origin main
 echo "==> 安装依赖"
 npm install
 
+echo "==> 安装 agent-host 依赖（独立 package，不在 workspaces 内）"
+npm run agent:install
+
 echo "==> 构建 workspace 包 (types + chart + bazi)"
 npm run packages:build
 
